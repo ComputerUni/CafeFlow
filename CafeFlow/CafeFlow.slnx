@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="CafeFlow.Business/CafeFlow.Business.csproj" />
+  <Project Path="CafeFlow.DataAccess/CafeFlow.DataAccess.csproj" />
+  <Project Path="CafeFlow.DTO/CafeFlow.DTO.csproj" />
+  <Project Path="CafeFlow.Entity/CafeFlow.Entity.csproj" />
+  <Project Path="CafeFlow.WebUI/CafeFlow.WebUI.csproj" />
+</Solution>
