@@ -1,0 +1,13 @@
+C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.DTO\bin\Debug\net10.0\CafeFlow.DTO.deps.json
+C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.DTO\bin\Debug\net10.0\CafeFlow.DTO.dll
+C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.DTO\bin\Debug\net10.0\CafeFlow.DTO.pdb
+C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.DTO\obj\Debug\net10.0\CafeFlow.DTO.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.DTO\obj\Debug\net10.0\CafeFlow.DTO.AssemblyInfoInputs.cache
+C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.DTO\obj\Debug\net10.0\CafeFlow.DTO.AssemblyInfo.cs
+C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.DTO\obj\Debug\net10.0\CafeFlow.DTO.csproj.CoreCompileInputs.cache
+C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.DTO\obj\Debug\net10.0\CafeFlow.DTO.sourcelink.json
+C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.DTO\obj\Debug\net10.0\CafeFlow.DTO.dll
+C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.DTO\obj\Debug\net10.0\refint\CafeFlow.DTO.dll
+C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.DTO\obj\Debug\net10.0\CafeFlow.DTO.pdb
+C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.DTO\obj\Debug\net10.0\ref\CafeFlow.DTO.dll
+C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.DTO\obj\Debug\net10.0\CafeFlow.916A7B35.Up2Date
