@@ -1,11 +1,48 @@
 {
   "version": 4,
   "targets": {
-    "net10.0": {}
+    "net10.0": {
+      "CafeFlow.DataAccess/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v10.0",
+        "dependencies": {
+          "CafeFlow.Entity": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/CafeFlow.DataAccess.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/CafeFlow.DataAccess.dll": {}
+        }
+      },
+      "CafeFlow.Entity/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v10.0",
+        "compile": {
+          "bin/placeholder/CafeFlow.Entity.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/CafeFlow.Entity.dll": {}
+        }
+      }
+    }
   },
-  "libraries": {},
+  "libraries": {
+    "CafeFlow.DataAccess/1.0.0": {
+      "type": "project",
+      "path": "../CafeFlow.DataAccess/CafeFlow.DataAccess.csproj",
+      "msbuildProject": "../CafeFlow.DataAccess/CafeFlow.DataAccess.csproj"
+    },
+    "CafeFlow.Entity/1.0.0": {
+      "type": "project",
+      "path": "../CafeFlow.Entity/CafeFlow.Entity.csproj",
+      "msbuildProject": "../CafeFlow.Entity/CafeFlow.Entity.csproj"
+    }
+  },
   "projectFileDependencyGroups": {
-    "net10.0": []
+    "net10.0": [
+      "CafeFlow.DataAccess >= 1.0.0"
+    ]
   },
   "packageFolders": {
     "C:\\Users\\BURHAN\\.nuget\\packages\\": {},
@@ -40,7 +77,11 @@
         "net10.0": {
           "framework": "net10.0",
           "targetAlias": "net10.0",
-          "projectReferences": {}
+          "projectReferences": {
+            "C:\\Users\\BURHAN\\Desktop\\CafeFlow\\CafeFlow\\CafeFlow.DataAccess\\CafeFlow.DataAccess.csproj": {
+              "projectPath": "C:\\Users\\BURHAN\\Desktop\\CafeFlow\\CafeFlow\\CafeFlow.DataAccess\\CafeFlow.DataAccess.csproj"
+            }
+          }
         }
       },
       "warningProperties": {

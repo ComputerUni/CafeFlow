@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\CafeFlow.DataAccess\CafeFlow.DataAccess.csproj" />
+  </ItemGroup>
+
 </Project>
