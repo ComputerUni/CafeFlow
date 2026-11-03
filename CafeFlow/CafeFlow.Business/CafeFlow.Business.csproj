@@ -13,6 +13,13 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CafeFlow.DataAccess\CafeFlow.DataAccess.csproj" />
+    <ProjectReference Include="..\CafeFlow.DTO\CafeFlow.DTO.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Abstract\" />
+    <Folder Include="Concrete\" />
+    <Folder Include="DesignPatterns\" />
   </ItemGroup>
 
 </Project>
