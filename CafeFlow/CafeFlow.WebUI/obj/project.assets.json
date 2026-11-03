@@ -1125,6 +1125,7 @@
         "framework": ".NETCoreApp,Version=v10.0",
         "dependencies": {
           "AutoMapper": "16.2.0",
+          "CafeFlow.DTO": "1.0.0",
           "CafeFlow.DataAccess": "1.0.0",
           "System.Security.Cryptography.Pkcs": "10.0.14"
         },
@@ -1149,6 +1150,19 @@
         },
         "runtime": {
           "bin/placeholder/CafeFlow.DataAccess.dll": {}
+        }
+      },
+      "CafeFlow.DTO/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v10.0",
+        "dependencies": {
+          "CafeFlow.Entity": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/CafeFlow.DTO.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/CafeFlow.DTO.dll": {}
         }
       },
       "CafeFlow.Entity/1.0.0": {
@@ -3293,6 +3307,11 @@
       "type": "project",
       "path": "../CafeFlow.DataAccess/CafeFlow.DataAccess.csproj",
       "msbuildProject": "../CafeFlow.DataAccess/CafeFlow.DataAccess.csproj"
+    },
+    "CafeFlow.DTO/1.0.0": {
+      "type": "project",
+      "path": "../CafeFlow.DTO/CafeFlow.DTO.csproj",
+      "msbuildProject": "../CafeFlow.DTO/CafeFlow.DTO.csproj"
     },
     "CafeFlow.Entity/1.0.0": {
       "type": "project",

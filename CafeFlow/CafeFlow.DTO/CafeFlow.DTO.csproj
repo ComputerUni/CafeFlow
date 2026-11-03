@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\CafeFlow.Entity\CafeFlow.Entity.csproj" />
+  </ItemGroup>
+
 </Project>
