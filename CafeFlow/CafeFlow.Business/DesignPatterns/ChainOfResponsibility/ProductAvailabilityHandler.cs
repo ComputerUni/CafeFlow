@@ -1,13 +1,14 @@
 ﻿using CafeFlow.DataAccess.Repositories.GenericRepositories;
+using CafeFlow.DataAccess.Repositories.Products;
 using CafeFlow.Entity;
 
 namespace CafeFlow.Business.DesignPatterns.ChainOfResponsibility
 {
     public class ProductAvailabilityHandler : OrderValidationHandler
     {
-        private readonly IGenericRepository<Product> _productRepository;
+        private readonly IProductRepository _productRepository;
 
-        public ProductAvailabilityHandler(IGenericRepository<Product> productRepository)
+        public ProductAvailabilityHandler(IProductRepository productRepository)
         {
             _productRepository = productRepository;
         }

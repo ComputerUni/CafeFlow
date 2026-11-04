@@ -16,9 +16,4 @@
     <ProjectReference Include="..\CafeFlow.DTO\CafeFlow.DTO.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Abstract\" />
-    <Folder Include="Concrete\" />
-  </ItemGroup>
-
 </Project>

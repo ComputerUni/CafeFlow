@@ -1,0 +1,12 @@
+﻿using CafeFlow.DataAccess.Repositories.GenericRepositories;
+using CafeFlow.Entity;
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace CafeFlow.DataAccess.Repositories.Products
+{
+    public interface IProductRepository : IGenericRepository<Product> 
+    {
+    }
+}
