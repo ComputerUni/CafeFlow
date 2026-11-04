@@ -1,6 +1,7 @@
 ﻿using CafeFlow.DataAccess.Context;
 using CafeFlow.DataAccess.Repositories.GenericRepositories;
 using CafeFlow.Entity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -11,6 +12,11 @@ namespace CafeFlow.DataAccess.Repositories.Products
     {
         public ProductRepository(AppDbContext context) : base(context)
         {
+        }
+
+        public async Task<List<Product>> GetAllWithCategoryAsync()
+        {
+            return await _context.Products.Include(x => x.Category).Where(x => !x.IsDeleted).ToListAsync();
         }
     }
 }
