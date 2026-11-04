@@ -1,4 +1,5 @@
 ﻿using CafeFlow.DataAccess.Repositories.GenericRepositories;
+using CafeFlow.DataAccess.Repositories.Notifications;
 using CafeFlow.Entity;
 using CafeFlow.Entity.Enums;
 using System;
@@ -9,9 +10,9 @@ namespace CafeFlow.Business.DesignPatterns.Observer
 {
     public class NotificationObserver : IOrderObserver
     {
-        private readonly IGenericRepository<Notification> _notificationRepository;
+        private readonly INotificationRepository _notificationRepository;
 
-        public NotificationObserver(IGenericRepository<Notification> notificationRepository)
+        public NotificationObserver(INotificationRepository notificationRepository)
         {
             _notificationRepository = notificationRepository;
         }
