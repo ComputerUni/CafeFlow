@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace CafeFlow.Business.DesignPatterns.ChainOfResponsibility
+﻿namespace CafeFlow.Business.DesignPatterns.ChainOfResponsibility
 {
     public abstract class OrderValidationHandler
     {
