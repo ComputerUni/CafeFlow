@@ -1,22 +1,19 @@
-﻿using CafeFlow.DataAccess.Repositories.GenericRepositories;
-using CafeFlow.Entity;
+﻿using CafeFlow.Entity.Enums;
 
 namespace CafeFlow.Business.DesignPatterns.ChainOfResponsibility
 {
     public class MinimumAmountHandler : OrderValidationHandler
     {
-        private readonly IGenericRepository<Order> _orderRepository;
-
-        public MinimumAmountHandler(IGenericRepository<Order> orderRepository)
-        {
-            _orderRepository = orderRepository;
-        }
-
         public override async Task Validate(OrderValidationRequest request)
         {
-            if(request.TotalAmount < 100)
+            if (request.OrderType == OrderType.Online && request.TotalAmount < 100)
             {
-                throw new Exception("Minimum sipariş tutarınız en az 100 TL olmalıdır.");
+                throw new Exception("Online siparişlerde minimum sipariş tutarınız en az 100 TL olmalıdır.");
+            }
+
+            if (NextHandler != null)
+            {
+                await NextHandler.Validate(request);
             }
         }
     }
