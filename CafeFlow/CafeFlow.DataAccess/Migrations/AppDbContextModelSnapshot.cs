@@ -166,6 +166,9 @@ namespace CafeFlow.DataAccess.Migrations
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("AppUserId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -185,6 +188,10 @@ namespace CafeFlow.DataAccess.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AppUserId")
+                        .IsUnique()
+                        .HasFilter("[AppUserId] IS NOT NULL");
 
                     b.ToTable("Customers");
                 });
@@ -550,6 +557,15 @@ namespace CafeFlow.DataAccess.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("CafeFlow.Entity.Customer", b =>
+                {
+                    b.HasOne("CafeFlow.Entity.AppUser", "AppUser")
+                        .WithOne("Customer")
+                        .HasForeignKey("CafeFlow.Entity.Customer", "AppUserId");
+
+                    b.Navigation("AppUser");
+                });
+
             modelBuilder.Entity("CafeFlow.Entity.Notification", b =>
                 {
                     b.HasOne("CafeFlow.Entity.Order", "Order")
@@ -679,6 +695,11 @@ namespace CafeFlow.DataAccess.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("CafeFlow.Entity.AppUser", b =>
+                {
+                    b.Navigation("Customer");
                 });
 
             modelBuilder.Entity("CafeFlow.Entity.Category", b =>

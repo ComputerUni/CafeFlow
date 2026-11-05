@@ -8,11 +8,11 @@ namespace CafeFlow.Business.DesignPatterns.Observer
 {
     public class OrderObserverObject
     {
-        private readonly Collection<IOrderObserver> _orderObservers;
+        private readonly List<IOrderObserver> _orderObservers;
 
-        public OrderObserverObject(Collection<IOrderObserver> orderObservers)
+        public OrderObserverObject(IEnumerable<IOrderObserver> orderObservers)
         {
-            _orderObservers = orderObservers;
+            _orderObservers = orderObservers.ToList();
         }
 
         public async Task AddObserver(IOrderObserver observer)

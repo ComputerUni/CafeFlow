@@ -1,8 +1,5 @@
 ﻿using CafeFlow.DTO.OrderDetail;
 using CafeFlow.Entity.Enums;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace CafeFlow.DTO.Order
 {
@@ -10,9 +7,12 @@ namespace CafeFlow.DTO.Order
     {
         public OrderType OrderType { get; set; }
         public string? Address { get; set; }
-        public int CustomerId { get; set; }
         public int? TableId { get; set; }
         public decimal TotalAmount { get; set; }
+        public string CustomerName { get; set; }
+        public string Email { get; set; }
+        public string PhoneNumber { get; set; }
+        public int? AppUserId { get; set; }
         public List<CreateOrderDetailDto> OrderDetails { get; set; }
     }
 }

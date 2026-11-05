@@ -7,6 +7,8 @@ namespace CafeFlow.Entity
 {
     public class Customer : BaseEntity
     {
+        public int? AppUserId { get; set; }
+        public AppUser? AppUser { get; set; }
         public ICollection<Order> Orders { get; set; }
         public string FullName { get; set; }
         public string Email { get; set; }
