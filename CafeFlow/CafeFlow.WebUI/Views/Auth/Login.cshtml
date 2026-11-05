@@ -1,4 +1,7 @@
-﻿@{
+﻿@using CafeFlow.DTO.Auth
+@model LoginDto
+
+@{
     Layout = null;
 }
 
@@ -431,12 +434,12 @@
                     <p class="cf-auth-sub">CafeFlow hesabınıza erişmek için bilgilerinizi girin.</p>
                 </div>
 
-                <form id="loginForm" novalidate>
+                <form id="loginForm" asp-action="Login" asp-controller="Auth" method="post">
                     <div>
                         <label class="cf-label" for="loginEmail">E-posta Adresi</label>
                         <div class="cf-input-wrap">
                             <i class="bi bi-envelope cf-input-icon"></i>
-                            <input type="email" id="loginEmail" class="cf-input" placeholder="adiniz@example.com" required autocomplete="username" />
+                            <input asp-for="Email" type="email" id="loginEmail" class="cf-input" placeholder="adiniz@example.com" required autocomplete="username" />
                         </div>
                     </div>
 
@@ -444,7 +447,7 @@
                         <label class="cf-label" for="loginPassword">Şifre</label>
                         <div class="cf-input-wrap">
                             <i class="bi bi-lock cf-input-icon"></i>
-                            <input type="password" id="loginPassword" class="cf-input" placeholder="••••••••" required autocomplete="current-password" />
+                            <input asp-for="Password" type="password" id="loginPassword" class="cf-input" placeholder="••••••••" required autocomplete="current-password" />
                             <button type="button" class="cf-pwd-toggle" id="togglePassword" aria-label="Şifreyi göster/gizle">
                                 <i class="bi bi-eye"></i>
                             </button>
@@ -466,12 +469,12 @@
 
                 <div class="cf-or-divider">veya</div>
 
-                <a href="index.html" class="btn btn-outline-secondary w-100 rounded-pill py-2" style="border-color:var(--cf-pink-200); color:var(--cf-coffee); font-weight:600; font-size:.9rem;">
+                <a href="/Default/Index" class="btn btn-outline-secondary w-100 rounded-pill py-2" style="border-color:var(--cf-pink-200); color:var(--cf-coffee); font-weight:600; font-size:.9rem;">
                     <i class="bi bi-house me-1"></i> Misafir Olarak Menüye Dön
                 </a>
 
                 <div class="cf-auth-foot">
-                    Henüz hesabınız yok mu? <a href="register.html" class="cf-link">Hemen Kayıt Olun</a>
+                    Henüz hesabınız yok mu? <a asp-controller="Auth" asp-action="Register" class="cf-link">Hemen Kayıt Olun</a>
                 </div>
             </div>
 
@@ -479,27 +482,16 @@
     </main>
 
     <script>
-            // Şifre Göster / Gizle
+            // Şifre Göster / Gizle Mantığı
             const toggleBtn = document.getElementById("togglePassword");
             const pwdInput = document.getElementById("loginPassword");
-            toggleBtn.addEventListener("click", () => {
-                const isPwd = pwdInput.type === "password";
-                pwdInput.type = isPwd ? "text" : "password";
-                toggleBtn.querySelector("i").className = `bi bi-${isPwd ? "eye-slash" : "eye"}`;
-            });
-
-            // Form Gönderim Örneği
-            document.getElementById("loginForm").addEventListener("submit", (e) => {
-                e.preventDefault();
-                const email = document.getElementById("loginEmail").value.trim();
-                const pwd = document.getElementById("loginPassword").value.trim();
-                if (!email || !pwd) {
-                    alert("Lütfen e-posta adresinizi ve şifrenizi girin.");
-                    return;
-                }
-                // Demo yönlendirmesi
-                window.location.href = "products.html";
-            });
+            if (toggleBtn && pwdInput) {
+                toggleBtn.addEventListener("click", () => {
+                    const isPwd = pwdInput.type === "password";
+                    pwdInput.type = isPwd ? "text" : "password";
+                    toggleBtn.querySelector("i").className = `bi bi-${isPwd ? "eye-slash" : "eye"}`;
+                });
+            }
     </script>
 </body>
 </html>

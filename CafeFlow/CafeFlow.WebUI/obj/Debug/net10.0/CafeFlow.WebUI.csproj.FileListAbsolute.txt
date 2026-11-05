@@ -242,3 +242,8 @@ C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.WebUI\bin\Debug\net10.0\AutoM
 C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.WebUI\bin\Debug\net10.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
 C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.WebUI\bin\Debug\net10.0\CafeFlow.DTO.dll
 C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.WebUI\bin\Debug\net10.0\CafeFlow.DTO.pdb
+C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.WebUI\obj\Debug\net10.0\compressed\wyen57wqjv-{0}-qd4sy9imsc-qd4sy9imsc.gz
+C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.WebUI\obj\Debug\net10.0\compressed\mevv5qvf7u-{0}-pxvxqvs7bp-pxvxqvs7bp.gz
+C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.WebUI\obj\Debug\net10.0\compressed\c42z7uulkd-{0}-dgrqea8a32-dgrqea8a32.gz
+C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.WebUI\obj\Debug\net10.0\compressed\r3mfptyf19-{0}-lwl1edjm2k-lwl1edjm2k.gz
+C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.WebUI\obj\Debug\net10.0\compressed\ivhw1k8z6q-{0}-rj4wqdq9qr-rj4wqdq9qr.gz

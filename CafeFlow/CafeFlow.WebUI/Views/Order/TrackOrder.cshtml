@@ -1,0 +1,331 @@
+﻿@{
+    Layout = "~/Views/Shared/_CustomerLayout.cshtml";
+    ViewData["Title"] = "Sipariş Sorgula";
+}
+
+<style>
+    .cf-track-section {
+        padding: 130px 0 80px;
+        position: relative;
+        overflow: hidden;
+        min-height: 85vh;
+    }
+
+    .cf-track-card {
+        background: #fff;
+        border: 1px solid var(--cf-pink-100, #fde8ee);
+        border-radius: var(--cf-radius-lg, 24px);
+        box-shadow: 0 16px 45px rgba(212, 111, 140, 0.08);
+        padding: 36px;
+    }
+
+    .cf-track-header {
+        text-align: center;
+        margin-bottom: 34px;
+    }
+
+    .cf-track-title {
+        font-family: var(--cf-font-display, "Playfair Display", Georgia, serif);
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: var(--cf-coffee, #6b4a3a);
+        margin-bottom: 8px;
+    }
+
+    .cf-track-title span {
+        color: var(--cf-rose-deep, #d46f8c);
+    }
+
+    .cf-track-subtitle {
+        color: var(--cf-muted, #8a7470);
+        font-size: 0.96rem;
+    }
+
+    .cf-track-form .cf-input-wrap {
+        position: relative;
+    }
+
+    .cf-track-form .cf-input-icon {
+        position: absolute;
+        left: 18px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--cf-rose, #e88ea6);
+        font-size: 1.2rem;
+    }
+
+    .cf-track-input {
+        width: 100%;
+        height: 52px;
+        border-radius: 999px;
+        border: 1.5px solid var(--cf-pink-200, #f9d3de);
+        background: var(--cf-pink-50, #fff6f8);
+        color: var(--cf-ink, #3d2a24);
+        padding: 0 140px 0 50px;
+        font-size: 1rem;
+        outline: none;
+        transition: all 0.25s ease;
+    }
+
+    .cf-track-input:focus {
+        background: #fff;
+        border-color: var(--cf-rose, #e88ea6);
+        box-shadow: 0 0 0 4px rgba(244, 184, 201, 0.25);
+    }
+
+    .cf-track-btn {
+        position: absolute;
+        right: 5px;
+        top: 5px;
+        height: 42px;
+        padding: 0 24px;
+        border-radius: 999px;
+        border: none;
+        background: linear-gradient(135deg, var(--cf-rose, #e88ea6), var(--cf-rose-deep, #d46f8c));
+        color: #fff;
+        font-weight: 600;
+        font-size: 0.95rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.25s ease;
+    }
+
+    .cf-track-btn:hover {
+        opacity: 0.92;
+        transform: scale(1.02);
+        color: #fff;
+    }
+
+    /* Durum Zaman Çizelgesi (State Pattern) */
+    .cf-timeline {
+        display: flex;
+        justify-content: space-between;
+        position: relative;
+        margin: 45px 0 35px;
+    }
+
+    .cf-timeline::before {
+        content: '';
+        position: absolute;
+        top: 24px;
+        left: 40px;
+        right: 40px;
+        height: 4px;
+        background: var(--cf-pink-100, #fde8ee);
+        z-index: 0;
+    }
+
+    .cf-timeline-step {
+        position: relative;
+        z-index: 1;
+        text-align: center;
+        flex: 1;
+    }
+
+    .cf-timeline-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: #fff;
+        border: 3px solid var(--cf-pink-200, #f9d3de);
+        color: var(--cf-muted, #8a7470);
+        display: grid;
+        place-items: center;
+        font-size: 1.25rem;
+        margin: 0 auto 10px;
+        transition: all 0.3s ease;
+    }
+
+    .cf-timeline-label {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--cf-muted, #8a7470);
+        margin: 0;
+    }
+
+    .cf-timeline-step.completed .cf-timeline-icon {
+        background: linear-gradient(135deg, var(--cf-rose, #e88ea6), var(--cf-rose-deep, #d46f8c));
+        border-color: transparent;
+        color: #fff;
+        box-shadow: 0 6px 16px rgba(212, 111, 140, 0.35);
+    }
+
+    .cf-timeline-step.completed .cf-timeline-label {
+        color: var(--cf-coffee, #6b4a3a);
+    }
+
+    .cf-timeline-step.active .cf-timeline-icon {
+        border-color: var(--cf-rose-deep, #d46f8c);
+        color: var(--cf-rose-deep, #d46f8c);
+        transform: scale(1.15);
+        background: #fff;
+        box-shadow: 0 0 0 6px rgba(212, 111, 140, 0.15);
+    }
+
+    .cf-timeline-step.active .cf-timeline-label {
+        color: var(--cf-rose-deep, #d46f8c);
+        font-weight: 700;
+    }
+
+    .cf-order-info-box {
+        background: var(--cf-pink-50, #fff6f8);
+        border: 1px dashed var(--cf-pink-200, #f9d3de);
+        border-radius: 16px;
+        padding: 20px 24px;
+        margin-top: 25px;
+    }
+
+    .cf-info-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 0;
+        border-bottom: 1px solid rgba(244, 184, 201, 0.3);
+    }
+
+    .cf-info-row:last-child {
+        border-bottom: none;
+    }
+
+    .cf-info-label {
+        font-size: 0.92rem;
+        color: var(--cf-muted, #8a7470);
+    }
+
+    .cf-info-val {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: var(--cf-coffee, #6b4a3a);
+    }
+
+    .cf-badge-type {
+        background: var(--cf-peach, #ffe4d6);
+        color: var(--cf-coffee, #6b4a3a);
+        padding: 4px 12px;
+        border-radius: 999px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+</style>
+
+<div class="cf-track-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-md-10">
+
+                <div class="cf-track-header">
+                    <h1 class="cf-track-title">Siparişini <span>Takip Et</span></h1>
+                    <p class="cf-track-subtitle">Size iletilen benzersiz takip kodunu yazarak anlık hazırlık durumunu görüntüleyin.</p>
+                </div>
+
+                <!-- Sorgulama Formu -->
+                <div class="cf-track-card mb-4">
+                    <form asp-controller="Order" asp-action="TrackOrder" method="get" class="cf-track-form">
+                        <div class="cf-input-wrap">
+                            <i class="bi bi-qr-code-scan cf-input-icon"></i>
+                            <input type="text"
+                                   name="orderCode"
+                                   value="@ViewBag.OrderCode"
+                                   class="cf-track-input"
+                                   placeholder="Örn: CF-2026-12345678"
+                                   required
+                                   autocomplete="off" />
+                            <button type="submit" class="cf-track-btn">
+                                Sorgula <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                @if (ViewBag.NotFound == true)
+                {
+                    <div class="alert alert-warning text-center border-0 shadow-sm py-3" style="border-radius: 16px; background: #fff3cd; color: #856404;">
+                        <i class="bi bi-exclamation-circle-fill me-2"></i> Belirtilen takip koduna ait bir sipariş bulunamadı. Lütfen kodunuzu kontrol edip tekrar deneyin.
+                    </div>
+                }
+
+                @if (Model != null)
+                {
+                    int currentStatus = (int)Model.OrderStatus;
+
+                    <div class="cf-track-card">
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 pb-3 border-bottom">
+                            <div>
+                                <small class="text-muted d-block">Sipariş Kodu</small>
+                                <strong class="fs-5 text-dark">#@Model.OrderCode</strong>
+                            </div>
+                            <div>
+                                <span class="cf-badge-type">
+                                    <i class="bi bi-geo-alt-fill me-1"></i> @Model.OrderType
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- 4 Aşamalı Durum Çizgisi -->
+                        <div class="cf-timeline">
+                            <!-- 0: Alındı -->
+                            <div class="cf-timeline-step @(currentStatus > 0 ? "completed" : currentStatus == 0 ? "active" : "")">
+                                <div class="cf-timeline-icon">
+                                    <i class="bi bi-receipt"></i>
+                                </div>
+                                <p class="cf-timeline-label">Alındı</p>
+                            </div>
+
+                            <!-- 1: Hazırlanıyor -->
+                            <div class="cf-timeline-step @(currentStatus > 1 ? "completed" : currentStatus == 1 ? "active" : "")">
+                                <div class="cf-timeline-icon">
+                                    <i class="bi bi-cup-hot-fill"></i>
+                                </div>
+                                <p class="cf-timeline-label">Hazırlanıyor</p>
+                            </div>
+
+                            <!-- 2: Hazır / Yolda -->
+                            <div class="cf-timeline-step @(currentStatus > 2 ? "completed" : currentStatus == 2 ? "active" : "")">
+                                <div class="cf-timeline-icon">
+                                    <i class="bi bi-box2-heart-fill"></i>
+                                </div>
+                                <p class="cf-timeline-label">Hazır</p>
+                            </div>
+
+                            <!-- 3: Teslim Edildi -->
+                            <div class="cf-timeline-step @(currentStatus >= 3 ? "completed" : "")">
+                                <div class="cf-timeline-icon">
+                                    <i class="bi bi-check2-circle"></i>
+                                </div>
+                                <p class="cf-timeline-label">Teslim Edildi</p>
+                            </div>
+                        </div>
+
+                        <!-- Detay Özeti -->
+                        <div class="cf-order-info-box">
+                            <div class="cf-info-row">
+                                <span class="cf-info-label">Sipariş Tarihi</span>
+                                <span class="cf-info-val">@Model.CreatedAt.ToString("dd.MM.yyyy HH:mm")</span>
+                            </div>
+                            @if (!string.IsNullOrEmpty(Model.Address))
+                            {
+                                <div class="cf-info-row">
+                                    <span class="cf-info-label">Teslimat Adresi</span>
+                                    <span class="cf-info-val">@Model.Address</span>
+                                </div>
+                            }
+                            @if (Model.TableId.HasValue)
+                            {
+                                <div class="cf-info-row">
+                                    <span class="cf-info-label">Masa Numarası</span>
+                                    <span class="cf-info-val">Masa #@Model.TableId</span>
+                                </div>
+                            }
+                            <div class="cf-info-row">
+                                <span class="cf-info-label">Toplam Tutar</span>
+                                <span class="cf-info-val fs-5" style="color: var(--cf-rose-deep, #d46f8c);">@Model.TotalAmount.ToString("C2")</span>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+            </div>
+        </div>
+    </div>
+</div>

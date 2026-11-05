@@ -23,19 +23,6 @@ namespace CafeFlow.Business.Concrete
             if(createOrderDto.AppUserId.HasValue)
             {
                 customer = await _customerRepository.GetByAppUserIdAsync(createOrderDto.AppUserId.Value);
-
-                if(customer is null)
-                {
-                    customer = new Customer
-                    {
-                        AppUserId = createOrderDto.AppUserId.Value,
-                        FullName = createOrderDto.CustomerName,
-                        Email = createOrderDto.Email,
-                        Phone = createOrderDto.PhoneNumber,
-                        Address = createOrderDto.Address
-                    };
-                    await _customerRepository.CreateAsync(customer);
-                }
             }
             else
             {
@@ -77,6 +64,7 @@ namespace CafeFlow.Business.Concrete
             };
 
             var order = await orderFactory.CreateOrder(createOrderDto);
+            order.CustomerId = customer.Id;
             order.OrderCode = "CF" + "-" + DateTime.Now.Year + "-" + new Random().Next(10000000, 99999999);
             order.OrderStatus = OrderStatus.Received;
             order.TotalAmount = createOrderDto.TotalAmount + shippingStrategy.CalculateOrderShipping(createOrderDto.TotalAmount);

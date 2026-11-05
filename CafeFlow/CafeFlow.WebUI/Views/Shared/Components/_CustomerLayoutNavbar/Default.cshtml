@@ -1,0 +1,87 @@
+﻿<nav id="mainNav" class="navbar navbar-expand-lg cf-navbar fixed-top">
+    <div class="container">
+        <a class="navbar-brand cf-logo" asp-controller="Default" asp-action="Index">
+            <span class="cf-logo-mark"><i class="bi bi-cup-hot-fill"></i></span>
+            Cafe<span>Flow</span>
+        </a>
+
+        <div class="d-flex align-items-center gap-2 order-lg-3">
+            <button class="btn cf-cart-btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#cartDrawer" aria-label="Sepeti Aç">
+                <i class="bi bi-bag-heart"></i>
+                <span class="d-none d-sm-inline">Sepet</span>
+                <span class="cf-cart-count" id="cartCount">0</span>
+            </button>
+
+            @if (User.Identity.IsAuthenticated)
+            {
+   
+                <div class="dropdown">
+                    <button class="btn cf-btn-primary dropdown-toggle d-inline-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-person-circle"></i>
+                        <span class="d-none d-md-inline">@User.Identity.Name</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0" style="border-radius: 14px;">
+                        <li>
+                            <a class="dropdown-item py-2 d-flex align-items-center gap-2" asp-controller="Order" asp-action="MyOrders">
+                                <i class="bi bi-bag-check text-danger"></i> Siparişlerim
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item py-2 d-flex align-items-center gap-2" asp-controller="Favorite" asp-action="Index">
+                                <i class="bi bi-heart text-danger"></i> Favorilerim
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <a class="dropdown-item py-2 d-flex align-items-center gap-2 text-danger" asp-controller="Auth" asp-action="Logout">
+                                <i class="bi bi-box-arrow-right"></i> Çıkış Yap
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            }
+            else
+            {
+                <a asp-controller="Auth" asp-action="Login" class="btn btn-outline-secondary d-none d-sm-inline-flex" style="border-radius: 999px; font-weight: 500;">
+                    Giriş Yap
+                </a>
+            }
+
+            <button class="navbar-toggler cf-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navLinks" aria-controls="navLinks" aria-expanded="false" aria-label="Menüyü aç/kapat">
+                <i class="bi bi-list"></i>
+            </button>
+        </div>
+
+        <div class="collapse navbar-collapse order-lg-2" id="navLinks">
+            <ul class="navbar-nav mx-auto cf-nav-links">
+                <li class="nav-item">
+                    <a class="nav-link active" href="/#home">Ana Sayfa</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/#menu">Menü</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/#about">Hakkımızda</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-controller="Order" asp-action="TrackOrder">
+                        <i class="bi bi-search me-1"></i> Sipariş Sorgula
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/#contact">İletişim</a>
+                </li>
+
+                @if (!User.Identity.IsAuthenticated)
+                {
+                    <li class="nav-item d-md-none border-top pt-2 mt-2">
+                        <a class="nav-link text-primary" asp-controller="Auth" asp-action="Login">Giriş Yap</a>
+                    </li>
+                    <li class="nav-item d-md-none">
+                        <a class="nav-link text-success" asp-controller="Auth" asp-action="Register">Kayıt Ol</a>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+</nav>

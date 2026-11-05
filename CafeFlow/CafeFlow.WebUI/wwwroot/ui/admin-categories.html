@@ -1,0 +1,1835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Categories · CafeFlow Management Studio</title>
+  <meta name="robots" content="noindex" />
+
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+  <!-- Fonts (same as customer site) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+/* =====================================================================
+   CAFEFLOW ADMIN DESIGN SYSTEM  (shared by all admin pages)
+   ---------------------------------------------------------------------
+   Reuse this whole block on Order Management and future admin pages
+   (in ASP.NET Core MVC: wwwroot/css/admin.css + _AdminLayout.cshtml).
+   ===================================================================== */
+
+/* ---------- Tokens ---------- */
+:root {
+  /* Brand */
+  --adm-bg:            #FAF8F7;
+  --adm-surface:       #FFFFFF;
+  --adm-sidebar:       #F6ECEE;
+  --adm-primary:       #D88FA4;
+  --adm-primary-deep:  #C97590;
+  --adm-primary-soft:  #F9E7EC;
+  --adm-primary-ring:  rgba(216, 143, 164, .28);
+  --adm-cream:         #FBF4EC;
+  --adm-peach:         #FDE9DE;
+  --adm-coffee:        #6B4A3A;
+
+  /* Text & lines */
+  --adm-text:          #3E3438;
+  --adm-text-2:        #8A7D82;
+  --adm-text-3:        #B3A6AB;
+  --adm-border:        #EDE5E7;
+  --adm-border-strong: #E2D6D9;
+
+  /* Semantic */
+  --adm-success:       #4F8A5E;
+  --adm-success-soft:  #E7F3EA;
+  --adm-warning:       #B9763A;
+  --adm-warning-soft:  #FCEFDF;
+  --adm-danger:        #C24F69;
+  --adm-danger-soft:   #FBE6EB;
+  --adm-info:          #6A72B5;
+  --adm-info-soft:     #ECEDF8;
+  --adm-muted-soft:    #F3EDEE;
+
+  /* Shape & depth */
+  --adm-radius-sm: 10px;
+  --adm-radius:    14px;
+  --adm-radius-lg: 20px;
+  --adm-shadow-sm: 0 1px 2px rgba(62, 52, 56, .04), 0 2px 8px rgba(62, 52, 56, .04);
+  --adm-shadow:    0 8px 28px rgba(62, 52, 56, .08);
+  --adm-shadow-lg: 0 24px 60px rgba(62, 52, 56, .16);
+
+  /* Layout */
+  --adm-sidebar-w: 264px;
+  --adm-sidebar-mini: 84px;
+  --adm-topbar-h: 68px;
+
+  --adm-font: "DM Sans", system-ui, -apple-system, sans-serif;
+  --adm-font-display: "Playfair Display", Georgia, serif;
+  --adm-ease: cubic-bezier(.2, .8, .2, 1);
+}
+
+/* ---------- Base ---------- */
+html, body { overflow-x: hidden; }
+body.adm {
+  font-family: var(--adm-font);
+  background: var(--adm-bg);
+  color: var(--adm-text);
+  -webkit-font-smoothing: antialiased;
+  font-size: .95rem;
+}
+.adm a { color: inherit; text-decoration: none; }
+.adm ::selection { background: var(--adm-primary-soft); }
+.adm :focus-visible { outline: 2px solid var(--adm-primary); outline-offset: 2px; }
+
+/* ---------- Sidebar ---------- */
+.adm-sidebar {
+  position: fixed;
+  inset: 0 auto 0 0;
+  width: var(--adm-sidebar-w);
+  background: var(--adm-sidebar);
+  border-right: 1px solid var(--adm-border);
+  display: flex;
+  flex-direction: column;
+  z-index: 1040;
+  transition: width .35s var(--adm-ease), transform .35s var(--adm-ease);
+}
+.adm-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: var(--adm-topbar-h);
+  padding: 0 22px;
+  flex-shrink: 0;
+}
+.adm-brand-mark {
+  width: 40px; height: 40px;
+  border-radius: 13px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #F7D3DE, var(--adm-peach));
+  color: var(--adm-primary-deep);
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+.adm-brand-text { line-height: 1.1; white-space: nowrap; }
+.adm-brand-text strong { font-family: var(--adm-font-display); font-size: 1.35rem; color: var(--adm-coffee); }
+.adm-brand-text strong span { color: var(--adm-primary-deep); }
+.adm-brand-text small { display: block; font-size: .7rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--adm-text-2); margin-top: 3px; }
+
+.adm-nav { flex: 1; overflow-y: auto; padding: 10px 14px 20px; scrollbar-width: thin; }
+.adm-nav-group + .adm-nav-group { margin-top: 18px; padding-top: 14px; border-top: 1px dashed var(--adm-border-strong); }
+.adm-nav-label {
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--adm-text-3);
+  padding: 0 12px 8px;
+  white-space: nowrap;
+}
+.adm-nav-link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  color: var(--adm-text-2) !important;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: all .25s var(--adm-ease);
+}
+.adm-nav-link + .adm-nav-link { margin-top: 2px; }
+.adm-nav-link > i { font-size: 1.15rem; width: 22px; text-align: center; flex-shrink: 0; transition: transform .25s; }
+.adm-nav-link:hover { background: rgba(255, 255, 255, .65); color: var(--adm-text) !important; }
+.adm-nav-link:hover > i { transform: translateX(2px); }
+.adm-nav-link.active {
+  background: #fff;
+  color: var(--adm-primary-deep) !important;
+  box-shadow: var(--adm-shadow-sm);
+}
+.adm-nav-link.active::before {
+  content: "";
+  position: absolute;
+  left: -14px; top: 10px; bottom: 10px;
+  width: 4px;
+  border-radius: 0 4px 4px 0;
+  background: var(--adm-primary);
+}
+.adm-nav-tag {
+  margin-left: auto;
+  font-size: .64rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .7);
+  color: var(--adm-text-3);
+}
+.adm-nav-count {
+  margin-left: auto;
+  min-width: 22px;
+  font-size: .72rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: var(--adm-primary);
+  color: #fff;
+  text-align: center;
+}
+
+.adm-profile {
+  margin: 0 14px 14px;
+  padding: 12px;
+  border-radius: 16px;
+  background: #fff;
+  border: 1px solid var(--adm-border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+.adm-avatar {
+  width: 38px; height: 38px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  font-size: .85rem;
+  color: var(--adm-primary-deep);
+  background: linear-gradient(135deg, var(--adm-primary-soft), var(--adm-peach));
+  flex-shrink: 0;
+}
+.adm-profile-text { min-width: 0; flex: 1; line-height: 1.2; }
+.adm-profile-text strong { display: block; font-size: .88rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.adm-profile-text small { font-size: .74rem; color: var(--adm-text-2); }
+.adm-icon-btn {
+  width: 38px; height: 38px;
+  border-radius: 11px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--adm-text-2);
+  display: inline-grid;
+  place-items: center;
+  font-size: 1.1rem;
+  position: relative;
+  transition: all .2s;
+  flex-shrink: 0;
+}
+.adm-icon-btn:hover { background: var(--adm-primary-soft); color: var(--adm-primary-deep); }
+.adm-icon-btn.bordered { border-color: var(--adm-border); background: #fff; }
+
+/* Collapsed (desktop mini) */
+@media (min-width: 992px) {
+  body.adm-collapsed .adm-sidebar { width: var(--adm-sidebar-mini); }
+  body.adm-collapsed .adm-brand { padding: 0 22px; }
+  body.adm-collapsed .adm-brand-text,
+  body.adm-collapsed .adm-nav-link span,
+  body.adm-collapsed .adm-nav-tag,
+  body.adm-collapsed .adm-nav-count,
+  body.adm-collapsed .adm-profile-text,
+  body.adm-collapsed .adm-profile .adm-icon-btn { display: none; }
+  body.adm-collapsed .adm-nav-label { visibility: hidden; height: 6px; padding: 0; }
+  body.adm-collapsed .adm-nav-link { justify-content: center; padding: 11px 0; }
+  body.adm-collapsed .adm-profile { justify-content: center; padding: 10px 0; }
+  body.adm-collapsed .adm-main { margin-left: var(--adm-sidebar-mini); }
+}
+
+/* Mobile offcanvas sidebar */
+.adm-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(62, 52, 56, .32);
+  backdrop-filter: blur(2px);
+  z-index: 1035;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .3s;
+}
+@media (max-width: 991.98px) {
+  .adm-sidebar { transform: translateX(-100%); box-shadow: var(--adm-shadow-lg); }
+  body.adm-sidebar-open .adm-sidebar { transform: none; }
+  body.adm-sidebar-open .adm-backdrop { opacity: 1; pointer-events: auto; }
+  body.adm-sidebar-open { overflow: hidden; }
+}
+
+/* ---------- Main + topbar ---------- */
+.adm-main {
+  margin-left: var(--adm-sidebar-w);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  transition: margin-left .35s var(--adm-ease);
+}
+@media (max-width: 991.98px) { .adm-main { margin-left: 0; } }
+
+.adm-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 1020;
+  height: var(--adm-topbar-h);
+  background: rgba(255, 255, 255, .92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--adm-border);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 0 28px;
+}
+.adm-crumbs { display: flex; align-items: center; gap: 8px; font-size: .88rem; color: var(--adm-text-2); min-width: 0; }
+.adm-crumbs i { font-size: .7rem; color: var(--adm-text-3); }
+.adm-crumbs strong { color: var(--adm-text); font-weight: 600; }
+.adm-topbar-right { margin-left: auto; display: flex; align-items: center; gap: 6px; }
+
+.adm-search {
+  position: relative;
+  width: 280px;
+}
+.adm-search i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--adm-text-3); }
+.adm-search input {
+  width: 100%;
+  height: 40px;
+  border-radius: 12px;
+  border: 1px solid var(--adm-border);
+  background: var(--adm-bg);
+  padding: 0 44px 0 38px;
+  font-size: .88rem;
+  color: var(--adm-text);
+  outline: none;
+  transition: all .2s;
+}
+.adm-search input:focus { background: #fff; border-color: var(--adm-primary); box-shadow: 0 0 0 4px var(--adm-primary-ring); }
+.adm-search kbd {
+  position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+  font-family: var(--adm-font); font-size: .7rem; font-weight: 600;
+  background: #fff; color: var(--adm-text-2); border: 1px solid var(--adm-border); border-radius: 6px; padding: 2px 6px; box-shadow: none;
+}
+.adm-dot-badge {
+  position: absolute;
+  top: 6px; right: 6px;
+  min-width: 16px; height: 16px;
+  border-radius: 999px;
+  background: var(--adm-primary-deep);
+  color: #fff;
+  font-size: .62rem;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+  padding: 0 4px;
+  border: 2px solid #fff;
+}
+.adm-user-btn { display: flex; align-items: center; gap: 10px; padding: 4px 10px 4px 4px; border-radius: 14px; border: 1px solid transparent; background: none; color: var(--adm-text); transition: all .2s; }
+.adm-user-btn:hover, .adm-user-btn[aria-expanded="true"] { background: var(--adm-bg); border-color: var(--adm-border); }
+.adm-user-btn .adm-avatar { width: 34px; height: 34px; border-radius: 10px; }
+.adm-user-btn strong { font-size: .86rem; display: block; line-height: 1.1; text-align: left; }
+.adm-user-btn small { font-size: .72rem; color: var(--adm-text-2); }
+
+/* Dropdowns */
+.adm .dropdown-menu {
+  border: 1px solid var(--adm-border);
+  border-radius: var(--adm-radius);
+  box-shadow: var(--adm-shadow);
+  padding: 6px;
+  font-size: .9rem;
+  min-width: 220px;
+  animation: adm-pop .18s var(--adm-ease);
+}
+@keyframes adm-pop { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+.adm .dropdown-item {
+  border-radius: 9px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--adm-text);
+  font-weight: 500;
+}
+.adm .dropdown-item i { color: var(--adm-text-2); width: 18px; text-align: center; }
+.adm .dropdown-item:hover, .adm .dropdown-item:focus { background: var(--adm-primary-soft); color: var(--adm-primary-deep); }
+.adm .dropdown-item:hover i { color: var(--adm-primary-deep); }
+.adm .dropdown-item.text-danger:hover { background: var(--adm-danger-soft); color: var(--adm-danger) !important; }
+.adm .dropdown-item.text-danger i { color: var(--adm-danger); }
+.adm .dropdown-item:disabled, .adm .dropdown-item.disabled { color: var(--adm-text-3); }
+.adm .dropdown-divider { border-color: var(--adm-border); margin: 6px 4px; }
+.adm .dropdown-header { font-size: .7rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--adm-text-3); padding: 6px 12px; }
+.adm-notif-menu { width: 340px; padding: 0; overflow: hidden; }
+.adm-notif-head { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; border-bottom: 1px solid var(--adm-border); }
+.adm-notif-head strong { font-size: .95rem; }
+.adm-notif-head button { border: none; background: none; font-size: .8rem; font-weight: 600; color: var(--adm-primary-deep); }
+.adm-notif { display: flex; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--adm-border); transition: background .2s; }
+.adm-notif:hover { background: var(--adm-bg); }
+.adm-notif.unread { background: #FFFBFC; }
+.adm-notif-icon { width: 36px; height: 36px; border-radius: 11px; display: grid; place-items: center; flex-shrink: 0; }
+.adm-notif p { margin: 0; font-size: .86rem; font-weight: 600; line-height: 1.35; }
+.adm-notif small { font-size: .76rem; color: var(--adm-text-2); }
+.adm-notif-foot { display: block; text-align: center; padding: 10px; font-size: .84rem; font-weight: 600; color: var(--adm-primary-deep); }
+
+/* ---------- Content ---------- */
+.adm-content { padding: 28px 28px 40px; flex: 1; width: 100%; max-width: 1480px; }
+.adm-page-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; }
+.adm-page-title { font-family: var(--adm-font-display); font-weight: 600; font-size: 1.95rem; margin: 0 0 4px; color: var(--adm-text); }
+.adm-page-sub { color: var(--adm-text-2); margin: 0; }
+
+.adm-footer { padding: 18px 28px 26px; color: var(--adm-text-3); font-size: .8rem; display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.adm-footer button { border: none; background: none; color: var(--adm-text-2); font-weight: 600; font-size: .8rem; padding: 0; }
+.adm-footer button:hover { color: var(--adm-primary-deep); }
+
+/* ---------- Buttons ---------- */
+.adm-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 42px;
+  padding: 0 18px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: .9rem;
+  border: 1px solid transparent;
+  transition: all .2s var(--adm-ease);
+  white-space: nowrap;
+}
+.adm-btn-primary { background: var(--adm-primary); color: #fff; box-shadow: 0 6px 16px rgba(216, 143, 164, .32); }
+.adm-btn-primary:hover { background: var(--adm-primary-deep); color: #fff; transform: translateY(-1px); }
+.adm-btn-primary:disabled { opacity: .6; transform: none; }
+.adm-btn-light { background: #fff; color: var(--adm-text); border-color: var(--adm-border); }
+.adm-btn-light:hover { border-color: var(--adm-border-strong); background: var(--adm-bg); color: var(--adm-text); }
+.adm-btn-danger { background: var(--adm-danger); color: #fff; }
+.adm-btn-danger:hover { background: #A9405A; color: #fff; }
+.adm-btn-ghost { background: transparent; color: var(--adm-primary-deep); }
+.adm-btn-ghost:hover { background: var(--adm-primary-soft); color: var(--adm-primary-deep); }
+.adm-btn-sm { height: 34px; padding: 0 12px; font-size: .84rem; border-radius: 10px; }
+
+/* ---------- Stat cards ---------- */
+.adm-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-bottom: 24px; }
+.adm-stat {
+  background: var(--adm-surface);
+  border: 1px solid var(--adm-border);
+  border-radius: var(--adm-radius-lg);
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: var(--adm-shadow-sm);
+  transition: transform .25s var(--adm-ease), box-shadow .25s;
+}
+.adm-stat:hover { transform: translateY(-2px); box-shadow: var(--adm-shadow); }
+.adm-stat-icon { width: 48px; height: 48px; border-radius: 15px; display: grid; place-items: center; font-size: 1.3rem; flex-shrink: 0; }
+.adm-stat-value { font-size: 1.7rem; font-weight: 700; line-height: 1; color: var(--adm-text); font-variant-numeric: tabular-nums; }
+.adm-stat-label { font-size: .84rem; color: var(--adm-text-2); margin-top: 4px; }
+.adm-stat-value.bump { animation: adm-bump .5s var(--adm-ease); }
+@keyframes adm-bump { 40% { transform: scale(1.12); color: var(--adm-primary-deep); } }
+
+.adm-tone-rose    { background: var(--adm-primary-soft); color: var(--adm-primary-deep); }
+.adm-tone-green   { background: var(--adm-success-soft); color: var(--adm-success); }
+.adm-tone-muted   { background: var(--adm-muted-soft); color: #9C7F88; }
+.adm-tone-peach   { background: var(--adm-peach); color: var(--adm-warning); }
+.adm-tone-blue    { background: var(--adm-info-soft); color: var(--adm-info); }
+
+/* ---------- Cards / panels ---------- */
+.adm-card { background: var(--adm-surface); border: 1px solid var(--adm-border); border-radius: var(--adm-radius-lg); box-shadow: var(--adm-shadow-sm); }
+
+/* ---------- Toolbar ---------- */
+.adm-toolbar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 16px; border-bottom: 1px solid var(--adm-border); }
+.adm-input-icon { position: relative; flex: 1 1 260px; max-width: 380px; }
+.adm-input-icon > i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--adm-text-3); pointer-events: none; }
+.adm-input-icon .adm-input { padding-left: 40px; }
+.adm-input-clear { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); width: 26px; height: 26px; border-radius: 8px; border: none; background: var(--adm-muted-soft); color: var(--adm-text-2); display: none; place-items: center; font-size: .75rem; }
+.adm-input-clear.show { display: grid; }
+.adm-input, .adm-select, .adm-textarea {
+  width: 100%;
+  height: 42px;
+  border-radius: 12px;
+  border: 1px solid var(--adm-border);
+  background: #fff;
+  padding: 0 14px;
+  color: var(--adm-text);
+  font-size: .9rem;
+  outline: none;
+  transition: border-color .2s, box-shadow .2s;
+}
+.adm-textarea { height: auto; padding: 10px 14px; resize: vertical; min-height: 92px; }
+.adm-input::placeholder, .adm-textarea::placeholder { color: var(--adm-text-3); }
+.adm-input:focus, .adm-select:focus, .adm-textarea:focus { border-color: var(--adm-primary); box-shadow: 0 0 0 4px var(--adm-primary-ring); }
+.adm-select { appearance: none; padding-right: 36px; cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%238A7D82' viewBox='0 0 16 16'%3E%3Cpath d='M1.6 4.6a.6.6 0 0 1 .8 0L8 10.2l5.6-5.6a.6.6 0 1 1 .8.8l-6 6a.6.6 0 0 1-.8 0l-6-6a.6.6 0 0 1 0-.8z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; }
+.adm-toolbar .adm-select { width: auto; min-width: 150px; }
+.adm-input.is-invalid, .adm-textarea.is-invalid { border-color: var(--adm-danger); box-shadow: 0 0 0 4px rgba(194, 79, 105, .12); }
+.adm-feedback { display: none; font-size: .8rem; color: var(--adm-danger); margin-top: 6px; }
+.is-invalid ~ .adm-feedback, .adm-feedback.show { display: flex; gap: 6px; align-items: center; }
+.adm-label { display: block; font-size: .84rem; font-weight: 600; margin-bottom: 7px; color: var(--adm-text); }
+.adm-label .req { color: var(--adm-primary-deep); }
+.adm-label .opt { color: var(--adm-text-3); font-weight: 500; }
+.adm-hint { font-size: .78rem; color: var(--adm-text-2); margin-top: 6px; }
+
+.adm-segment { display: inline-flex; padding: 4px; border-radius: 12px; background: var(--adm-bg); border: 1px solid var(--adm-border); }
+.adm-segment button { border: none; background: none; height: 32px; padding: 0 12px; border-radius: 9px; color: var(--adm-text-2); font-weight: 600; font-size: .84rem; display: inline-flex; align-items: center; gap: 6px; transition: all .2s; }
+.adm-segment button.active { background: #fff; color: var(--adm-primary-deep); box-shadow: var(--adm-shadow-sm); }
+.adm-segment button:not(.active):hover { color: var(--adm-text); }
+
+.adm-counter { margin-left: auto; font-size: .86rem; color: var(--adm-text-2); white-space: nowrap; }
+.adm-counter strong { color: var(--adm-text); }
+
+/* Switch */
+.adm-switch { position: relative; display: inline-flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; }
+.adm-switch input { position: absolute; opacity: 0; pointer-events: none; }
+.adm-switch-track { width: 38px; height: 22px; border-radius: 999px; background: var(--adm-border-strong); position: relative; transition: background .25s; flex-shrink: 0; }
+.adm-switch-track::after { content: ""; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.15); transition: transform .25s var(--adm-ease); }
+.adm-switch input:checked + .adm-switch-track { background: var(--adm-success); }
+.adm-switch input:checked + .adm-switch-track::after { transform: translateX(16px); }
+.adm-switch input:focus-visible + .adm-switch-track { outline: 2px solid var(--adm-primary); outline-offset: 2px; }
+.adm-switch.lg .adm-switch-track { width: 46px; height: 26px; }
+.adm-switch.lg .adm-switch-track::after { width: 20px; height: 20px; }
+.adm-switch.lg input:checked + .adm-switch-track::after { transform: translateX(20px); }
+
+/* ---------- Badges ---------- */
+.adm-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-size: .76rem; font-weight: 700; white-space: nowrap; }
+.adm-badge::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.adm-badge.no-dot::before { display: none; }
+.adm-badge-success { background: var(--adm-success-soft); color: var(--adm-success); }
+.adm-badge-inactive { background: var(--adm-danger-soft); color: #B0657A; }
+.adm-badge-warning { background: var(--adm-warning-soft); color: var(--adm-warning); }
+.adm-badge-info { background: var(--adm-info-soft); color: var(--adm-info); }
+.adm-badge-neutral { background: var(--adm-muted-soft); color: var(--adm-text-2); }
+
+/* ---------- Table ---------- */
+.adm-table-wrap { overflow-x: auto; }
+.adm-table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: .9rem; }
+.adm-table thead th {
+  position: sticky;
+  top: 0;
+  background: #FCFAFA;
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--adm-text-2);
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--adm-border);
+  white-space: nowrap;
+  text-align: left;
+}
+.adm-table tbody td { padding: 14px 16px; border-bottom: 1px solid var(--adm-border); vertical-align: middle; }
+.adm-table tbody tr { transition: background .15s; }
+.adm-table tbody tr:hover { background: #FFFAFB; }
+.adm-table tbody tr:last-child td { border-bottom: none; }
+.adm-table .num { text-align: center; font-variant-numeric: tabular-nums; }
+.adm-table .end { text-align: right; }
+.adm-table tr.row-flash { animation: adm-flash 1.4s var(--adm-ease); }
+@keyframes adm-flash { 0%, 30% { background: var(--adm-primary-soft); } 100% { background: transparent; } }
+
+.adm-entity { display: flex; align-items: center; gap: 12px; min-width: 220px; }
+.adm-thumb {
+  width: 46px; height: 46px;
+  border-radius: 12px;
+  object-fit: cover;
+  background: var(--adm-primary-soft);
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  color: var(--adm-primary-deep);
+  font-size: 1.15rem;
+  overflow: hidden;
+}
+.adm-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.adm-entity strong { display: block; font-weight: 700; color: var(--adm-text); }
+.adm-entity small { font-size: .76rem; color: var(--adm-text-3); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+.adm-desc { color: var(--adm-text-2); max-width: 320px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.45; }
+.adm-pill-num { display: inline-flex; min-width: 34px; justify-content: center; padding: 3px 10px; border-radius: 999px; background: var(--adm-bg); border: 1px solid var(--adm-border); font-weight: 700; font-size: .84rem; }
+.adm-order { display: inline-grid; place-items: center; width: 30px; height: 30px; border-radius: 9px; background: var(--adm-cream); color: var(--adm-coffee); font-weight: 700; font-size: .84rem; }
+.adm-date { color: var(--adm-text-2); white-space: nowrap; }
+.adm-status-cell { display: flex; align-items: center; gap: 10px; }
+
+.adm-kebab { width: 34px; height: 34px; border-radius: 10px; border: 1px solid transparent; background: none; color: var(--adm-text-2); display: inline-grid; place-items: center; transition: all .2s; }
+.adm-kebab:hover, .adm-kebab[aria-expanded="true"] { background: var(--adm-primary-soft); color: var(--adm-primary-deep); }
+
+/* Mobile: table → stacked rows */
+@media (max-width: 767.98px) {
+  .adm-table-wrap { overflow: visible; }
+  .adm-table thead { display: none; }
+  .adm-table, .adm-table tbody, .adm-table tr, .adm-table td { display: block; width: 100%; }
+  .adm-table tbody tr { position: relative; padding: 14px 16px; border-bottom: 1px solid var(--adm-border); }
+  .adm-table tbody tr:last-child { border-bottom: none; }
+  .adm-table tbody td { padding: 6px 0; border: none; display: flex; justify-content: space-between; align-items: center; gap: 12px; text-align: right; }
+  .adm-table tbody td::before { content: attr(data-label); font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--adm-text-3); text-align: left; }
+  .adm-table tbody td.cell-main { padding-right: 44px; }
+  .adm-table tbody td.cell-main::before, .adm-table tbody td.cell-actions::before { display: none; }
+  .adm-table tbody td.cell-actions { position: absolute; top: 14px; right: 12px; width: auto; padding: 0; }
+  .adm-table tbody td.cell-desc { display: block; text-align: left; }
+  .adm-table tbody td.cell-desc::before { display: block; margin-bottom: 2px; }
+  .adm-table .num, .adm-table .end { text-align: right; }
+  .adm-entity { min-width: 0; }
+  .adm-desc { max-width: none; }
+}
+
+/* ---------- Pagination ---------- */
+.adm-pager { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 14px 16px; border-top: 1px solid var(--adm-border); font-size: .86rem; color: var(--adm-text-2); }
+.adm-pager-size { display: flex; align-items: center; gap: 8px; }
+.adm-pager-size .adm-select { height: 34px; width: auto; min-width: 72px; border-radius: 10px; padding-left: 12px; }
+.adm-pages { display: flex; align-items: center; gap: 4px; }
+.adm-page-btn { min-width: 34px; height: 34px; padding: 0 10px; border-radius: 10px; border: 1px solid var(--adm-border); background: #fff; color: var(--adm-text); font-weight: 600; font-size: .84rem; display: inline-flex; align-items: center; justify-content: center; gap: 4px; transition: all .2s; }
+.adm-page-btn:hover:not(:disabled):not(.active) { border-color: var(--adm-primary); color: var(--adm-primary-deep); }
+.adm-page-btn.active { background: var(--adm-primary); border-color: var(--adm-primary); color: #fff; }
+.adm-page-btn:disabled { opacity: .45; cursor: not-allowed; }
+.adm-page-gap { padding: 0 4px; color: var(--adm-text-3); }
+
+/* ---------- Empty states ---------- */
+.adm-empty { text-align: center; padding: 56px 20px; }
+.adm-empty-art { width: 92px; height: 92px; margin: 0 auto 18px; border-radius: 28px; display: grid; place-items: center; font-size: 2.2rem; background: linear-gradient(135deg, var(--adm-primary-soft), var(--adm-peach)); color: var(--adm-primary-deep); position: relative; }
+.adm-empty-art::after { content: ""; position: absolute; inset: -10px; border-radius: 34px; border: 1.5px dashed var(--adm-border-strong); }
+.adm-empty h3 { font-size: 1.15rem; font-weight: 700; margin-bottom: 6px; }
+.adm-empty p { color: var(--adm-text-2); max-width: 380px; margin: 0 auto 18px; }
+
+/* ---------- Modals ---------- */
+.adm .modal-content { border: none; border-radius: var(--adm-radius-lg); box-shadow: var(--adm-shadow-lg); overflow: hidden; }
+.adm .modal-header { padding: 20px 24px; border-bottom: 1px solid var(--adm-border); align-items: flex-start; }
+.adm .modal-title { font-weight: 700; font-size: 1.15rem; }
+.adm .modal-header p { margin: 2px 0 0; font-size: .84rem; color: var(--adm-text-2); }
+.adm .modal-body { padding: 22px 24px; }
+.adm .modal-footer { padding: 14px 24px; border-top: 1px solid var(--adm-border); background: #FCFAFA; gap: 8px; }
+.adm .modal-footer > * { margin: 0; }
+.adm .btn-close { box-shadow: none !important; opacity: .45; }
+.adm .btn-close:hover { opacity: .8; }
+.adm-modal-icon { width: 44px; height: 44px; border-radius: 13px; display: grid; place-items: center; font-size: 1.2rem; flex-shrink: 0; }
+
+.adm-confirm .modal-body { text-align: center; padding: 30px 28px 24px; }
+.adm-confirm .adm-modal-icon { width: 64px; height: 64px; border-radius: 20px; font-size: 1.6rem; margin: 0 auto 16px; }
+.adm-confirm h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; }
+.adm-confirm p { color: var(--adm-text-2); margin-bottom: 0; }
+.adm-callout { display: flex; gap: 10px; text-align: left; padding: 12px 14px; border-radius: 12px; font-size: .86rem; margin-top: 16px; }
+.adm-callout i { font-size: 1.05rem; margin-top: 1px; }
+.adm-callout.warn { background: var(--adm-warning-soft); color: #8A5627; }
+.adm-callout.info { background: var(--adm-info-soft); color: #4F568F; }
+
+/* Upload */
+.adm-upload {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px;
+  border: 1.5px dashed var(--adm-border-strong);
+  border-radius: var(--adm-radius);
+  background: var(--adm-bg);
+  transition: all .2s;
+}
+.adm-upload.dragover { border-color: var(--adm-primary); background: var(--adm-primary-soft); }
+.adm-upload-preview { width: 88px; height: 88px; border-radius: 16px; overflow: hidden; background: #fff; border: 1px solid var(--adm-border); display: grid; place-items: center; color: var(--adm-text-3); font-size: 1.8rem; flex-shrink: 0; }
+.adm-upload-preview img { width: 100%; height: 100%; object-fit: cover; }
+.adm-upload-body { flex: 1; min-width: 0; }
+.adm-upload-body strong { display: block; font-size: .9rem; }
+.adm-upload-body small { color: var(--adm-text-2); font-size: .78rem; }
+.adm-upload-actions { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+.adm-or { display: flex; align-items: center; gap: 10px; font-size: .74rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--adm-text-3); margin: 12px 0; }
+.adm-or::before, .adm-or::after { content: ""; flex: 1; height: 1px; background: var(--adm-border); }
+
+/* ---------- Toasts ---------- */
+.adm-toasts { position: fixed; top: 82px; right: 20px; z-index: 2000; display: flex; flex-direction: column; gap: 10px; width: min(360px, calc(100vw - 40px)); }
+.adm-toast {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 14px 14px 16px;
+  border-radius: 14px;
+  background: #fff;
+  border: 1px solid var(--adm-border);
+  box-shadow: var(--adm-shadow);
+  animation: adm-toast-in .35s var(--adm-ease);
+  position: relative;
+  overflow: hidden;
+}
+.adm-toast.hide { animation: adm-toast-out .3s var(--adm-ease) forwards; }
+.adm-toast-icon { width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center; flex-shrink: 0; }
+.adm-toast strong { display: block; font-size: .88rem; }
+.adm-toast span { font-size: .82rem; color: var(--adm-text-2); }
+.adm-toast button { margin-left: auto; border: none; background: none; color: var(--adm-text-3); padding: 0 2px; }
+.adm-toast::after { content: ""; position: absolute; left: 0; bottom: 0; height: 3px; background: currentColor; opacity: .25; animation: adm-toast-timer linear forwards; animation-duration: var(--t, 3.5s); width: 100%; transform-origin: left; }
+.adm-toast.success { color: var(--adm-success); }
+.adm-toast.error { color: var(--adm-danger); }
+.adm-toast.info { color: var(--adm-info); }
+.adm-toast > div { color: var(--adm-text); }
+.adm-toast.success .adm-toast-icon { background: var(--adm-success-soft); }
+.adm-toast.error .adm-toast-icon { background: var(--adm-danger-soft); }
+.adm-toast.info .adm-toast-icon { background: var(--adm-info-soft); }
+@keyframes adm-toast-in { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: none; } }
+@keyframes adm-toast-out { to { opacity: 0; transform: translateX(24px); } }
+@keyframes adm-toast-timer { from { transform: scaleX(1); } to { transform: scaleX(0); } }
+
+/* ---------- Responsive (shared) ---------- */
+@media (max-width: 1199.98px) {
+  .adm-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .adm-search { width: 220px; }
+}
+@media (max-width: 767.98px) {
+  .adm-topbar { padding: 0 14px; gap: 8px; }
+  .adm-content { padding: 20px 14px 32px; }
+  .adm-search, .adm-user-btn .adm-user-meta, .adm-hide-sm { display: none !important; }
+  .adm-page-title { font-size: 1.6rem; }
+  .adm-page-head .adm-btn { width: 100%; }
+  .adm-stats { gap: 10px; }
+  .adm-stat { padding: 14px; gap: 12px; }
+  .adm-stat-icon { width: 40px; height: 40px; font-size: 1.1rem; border-radius: 12px; }
+  .adm-stat-value { font-size: 1.4rem; }
+  .adm-toolbar .adm-select { flex: 1 1 140px; }
+  .adm-input-icon { max-width: none; flex-basis: 100%; }
+  .adm-counter { margin-left: 0; width: 100%; }
+  .adm-pager { justify-content: center; }
+  .adm-notif-menu { width: calc(100vw - 28px); }
+  .adm-toasts { top: auto; bottom: 16px; right: 14px; }
+  .adm .modal-dialog { margin: 12px; }
+}
+@media (max-width: 400px) {
+  .adm-stats { grid-template-columns: 1fr 1fr; }
+  .adm-stat { flex-direction: column; align-items: flex-start; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+/* =====================================================================
+   CATEGORY MANAGEMENT — page-specific styles
+   ===================================================================== */
+.cat-grid { padding: 18px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+@media (max-width: 1399.98px) { .cat-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 991.98px)  { .cat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 575.98px)  { .cat-grid { grid-template-columns: 1fr; padding: 14px; } }
+
+.cat-card { border: 1px solid var(--adm-border); border-radius: 18px; overflow: hidden; background: #fff; display: flex; flex-direction: column; transition: transform .25s var(--adm-ease), box-shadow .25s; animation: adm-pop .3s var(--adm-ease) both; }
+.cat-card:hover { transform: translateY(-3px); box-shadow: var(--adm-shadow); }
+.cat-card.is-inactive .cat-card-img img { filter: grayscale(.55) opacity(.8); }
+.cat-card-img { position: relative; aspect-ratio: 16 / 10; background: var(--adm-primary-soft); display: grid; place-items: center; color: var(--adm-primary-deep); font-size: 2.4rem; overflow: hidden; }
+.cat-card-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s var(--adm-ease); }
+.cat-card:hover .cat-card-img img { transform: scale(1.05); }
+.cat-card-img .adm-badge { position: absolute; top: 12px; left: 12px; background: rgba(255,255,255,.95); }
+.cat-card-img .adm-badge.adm-badge-inactive { color: #B0657A; }
+.cat-card-img .adm-badge.adm-badge-success { color: var(--adm-success); }
+.cat-card-order { position: absolute; top: 12px; right: 12px; background: rgba(255,255,255,.95); border-radius: 8px; padding: 3px 8px; font-size: .74rem; font-weight: 700; color: var(--adm-coffee); }
+.cat-card-body { padding: 16px; flex: 1; display: flex; flex-direction: column; }
+.cat-card-body h3 { font-size: 1.02rem; font-weight: 700; margin: 0 0 2px; }
+.cat-card-body small.code { font-size: .74rem; color: var(--adm-text-3); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+.cat-card-body p { color: var(--adm-text-2); font-size: .86rem; margin: 10px 0 14px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 2.6em; }
+.cat-card-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding-top: 12px; border-top: 1px solid var(--adm-border); margin-top: auto; }
+.cat-card-meta { display: flex; align-items: center; gap: 6px; font-size: .84rem; color: var(--adm-text-2); }
+.cat-card-meta strong { color: var(--adm-text); }
+.cat-card-actions { display: flex; gap: 4px; }
+.cat-card-actions .adm-icon-btn { width: 34px; height: 34px; font-size: 1rem; }
+.cat-card-actions .adm-icon-btn.danger:hover { background: var(--adm-danger-soft); color: var(--adm-danger); }
+
+.cat-view-hero { position: relative; height: 180px; background: var(--adm-primary-soft); display: grid; place-items: center; color: var(--adm-primary-deep); font-size: 3rem; }
+.cat-view-hero img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.cat-view-hero .btn-close { position: absolute; top: 14px; right: 14px; background-color: #fff; border-radius: 50%; padding: 10px; opacity: .9; z-index: 2; }
+.cat-view-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 16px 0; }
+.cat-view-stats div { background: var(--adm-bg); border: 1px solid var(--adm-border); border-radius: 12px; padding: 10px 12px; }
+.cat-view-stats small { display: block; font-size: .72rem; color: var(--adm-text-2); text-transform: uppercase; letter-spacing: .08em; font-weight: 700; }
+.cat-view-stats strong { font-size: 1rem; }
+  </style>
+</head>
+<body class="adm">
+
+  <!-- =====================================================================
+       SHARED ADMIN SHELL: SIDEBAR
+       ===================================================================== -->
+  <aside class="adm-sidebar" id="admSidebar" aria-label="Admin navigation">
+    <a href="admin-categories.html" class="adm-brand" aria-label="CafeFlow Management Studio">
+      <span class="adm-brand-mark"><i class="bi bi-cup-hot-fill"></i></span>
+      <span class="adm-brand-text">
+        <strong>Cafe<span>Flow</span></strong>
+        <small>Management Studio</small>
+      </span>
+    </a>
+
+    <nav class="adm-nav">
+      <div class="adm-nav-group">
+        <div class="adm-nav-label">Overview</div>
+        <a href="#" class="adm-nav-link" data-placeholder="Dashboard" title="Dashboard"><i class="bi bi-grid-1x2"></i><span>Dashboard</span><em class="adm-nav-tag">Soon</em></a>
+      </div>
+      <div class="adm-nav-group">
+        <div class="adm-nav-label">Management</div>
+        <a href="admin-categories.html" class="adm-nav-link active" aria-current="page" title="Categories"><i class="bi bi-tags"></i><span>Categories</span><em class="adm-nav-count" id="navCategoryCount">0</em></a>
+        <a href="#" class="adm-nav-link" data-placeholder="Products" title="Products"><i class="bi bi-cup-straw"></i><span>Products</span><em class="adm-nav-tag">Soon</em></a>
+        <a href="#" class="adm-nav-link" data-placeholder="Orders" title="Orders"><i class="bi bi-receipt"></i><span>Orders</span><em class="adm-nav-tag">Next</em></a>
+        <a href="#" class="adm-nav-link" data-placeholder="Tables" title="Tables"><i class="bi bi-qr-code"></i><span>Tables</span><em class="adm-nav-tag">Soon</em></a>
+        <a href="#" class="adm-nav-link" data-placeholder="Customers" title="Customers"><i class="bi bi-people"></i><span>Customers</span><em class="adm-nav-tag">Soon</em></a>
+      </div>
+      <div class="adm-nav-group">
+        <div class="adm-nav-label">System</div>
+        <a href="#" class="adm-nav-link" data-placeholder="Notifications" title="Notifications"><i class="bi bi-bell"></i><span>Notifications</span><em class="adm-nav-tag">Soon</em></a>
+        <a href="#" class="adm-nav-link" data-placeholder="Settings" title="Settings"><i class="bi bi-gear"></i><span>Settings</span><em class="adm-nav-tag">Soon</em></a>
+      </div>
+    </nav>
+
+    <div class="adm-profile">
+      <span class="adm-avatar">SA</span>
+      <div class="adm-profile-text">
+        <strong>Selin Aydın</strong>
+        <small>Cafe Manager</small>
+      </div>
+      <button type="button" class="adm-icon-btn" data-action="logout" title="Log out" aria-label="Log out"><i class="bi bi-box-arrow-right"></i></button>
+    </div>
+  </aside>
+  <div class="adm-backdrop" id="admBackdrop"></div>
+
+  <div class="adm-main">
+    <!-- =====================================================================
+         SHARED ADMIN SHELL: TOP NAVBAR
+         ===================================================================== -->
+    <header class="adm-topbar">
+      <button type="button" class="adm-icon-btn bordered" id="sidebarToggle" aria-label="Toggle sidebar" aria-controls="admSidebar" aria-expanded="true">
+        <i class="bi bi-layout-sidebar"></i>
+      </button>
+      <nav class="adm-crumbs" aria-label="Breadcrumb">
+        <span class="adm-hide-sm">Management</span>
+        <i class="bi bi-chevron-right adm-hide-sm"></i>
+        <strong>Categories</strong>
+      </nav>
+
+      <div class="adm-topbar-right">
+        <label class="adm-search" for="globalSearch">
+          <i class="bi bi-search"></i>
+          <input type="search" id="globalSearch" placeholder="Search categories..." autocomplete="off" aria-label="Search" />
+          <kbd>/</kbd>
+        </label>
+
+        <!-- Quick actions -->
+        <div class="dropdown">
+          <button type="button" class="adm-icon-btn" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Quick actions" title="Quick actions">
+            <i class="bi bi-lightning-charge"></i>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><h6 class="dropdown-header">Quick actions</h6></li>
+            <li><button class="dropdown-item" type="button" data-action="add-category"><i class="bi bi-plus-circle"></i> Add Category</button></li>
+            <li><button class="dropdown-item" type="button" data-placeholder="Products"><i class="bi bi-cup-straw"></i> View Products</button></li>
+            <li><button class="dropdown-item" type="button" data-placeholder="Orders"><i class="bi bi-receipt"></i> View Orders</button></li>
+            <li><hr class="dropdown-divider" /></li>
+            <li><a class="dropdown-item" href="index.html" target="_blank" rel="noopener"><i class="bi bi-box-arrow-up-right"></i> Open customer site</a></li>
+          </ul>
+        </div>
+
+        <!-- Notifications -->
+        <div class="dropdown">
+          <button type="button" class="adm-icon-btn" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" aria-label="Notifications" title="Notifications" id="notifBtn">
+            <i class="bi bi-bell"></i>
+            <span class="adm-dot-badge" id="notifCount">3</span>
+          </button>
+          <div class="dropdown-menu dropdown-menu-end adm-notif-menu">
+            <div class="adm-notif-head">
+              <strong>Notifications</strong>
+              <button type="button" id="markAllRead">Mark all as read</button>
+            </div>
+            <div id="notifList">
+              <div class="adm-notif unread">
+                <span class="adm-notif-icon adm-tone-rose"><i class="bi bi-bag-check"></i></span>
+                <div><p>New online order received</p><small>Order #CF-1048 · 2 min ago</small></div>
+              </div>
+              <div class="adm-notif unread">
+                <span class="adm-notif-icon adm-tone-peach"><i class="bi bi-exclamation-triangle"></i></span>
+                <div><p>Product stock running low</p><small>Almond Croissant · 18 min ago</small></div>
+              </div>
+              <div class="adm-notif unread">
+                <span class="adm-notif-icon adm-tone-green"><i class="bi bi-tags"></i></span>
+                <div><p>New category created</p><small>Seasonal Specials · 1 h ago</small></div>
+              </div>
+            </div>
+            <a href="#" class="adm-notif-foot" data-placeholder="Notifications">View all notifications</a>
+          </div>
+        </div>
+
+        <!-- Profile -->
+        <div class="dropdown">
+          <button type="button" class="adm-user-btn" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Account menu">
+            <span class="adm-avatar">SA</span>
+            <span class="adm-user-meta">
+              <strong>Selin Aydın</strong>
+              <small>Cafe Manager</small>
+            </span>
+            <i class="bi bi-chevron-down small text-muted adm-hide-sm"></i>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><h6 class="dropdown-header">Signed in as admin</h6></li>
+            <li><button class="dropdown-item" type="button" data-placeholder="My Profile"><i class="bi bi-person"></i> My Profile</button></li>
+            <li><button class="dropdown-item" type="button" data-placeholder="Account Settings"><i class="bi bi-sliders"></i> Account Settings</button></li>
+            <li><hr class="dropdown-divider" /></li>
+            <li><button class="dropdown-item text-danger" type="button" data-action="logout"><i class="bi bi-box-arrow-right"></i> Logout</button></li>
+          </ul>
+        </div>
+      </div>
+    </header>
+
+    <!-- =====================================================================
+         PAGE: CATEGORY MANAGEMENT
+         ===================================================================== -->
+    <main class="adm-content" id="main">
+      <div class="adm-page-head">
+        <div>
+          <h1 class="adm-page-title">Category Management</h1>
+          <p class="adm-page-sub">Organize your cafe menu with beautifully structured categories.</p>
+        </div>
+        <button type="button" class="adm-btn adm-btn-primary" data-action="add-category">
+          <i class="bi bi-plus-lg"></i> Add New Category
+        </button>
+      </div>
+
+      <!-- Summary -->
+      <section class="adm-stats" aria-label="Category summary">
+        <div class="adm-stat">
+          <span class="adm-stat-icon adm-tone-rose"><i class="bi bi-tags"></i></span>
+          <div><div class="adm-stat-value" id="statTotal">0</div><div class="adm-stat-label">Total Categories</div></div>
+        </div>
+        <div class="adm-stat">
+          <span class="adm-stat-icon adm-tone-green"><i class="bi bi-check2-circle"></i></span>
+          <div><div class="adm-stat-value" id="statActive">0</div><div class="adm-stat-label">Active Categories</div></div>
+        </div>
+        <div class="adm-stat">
+          <span class="adm-stat-icon adm-tone-muted"><i class="bi bi-pause-circle"></i></span>
+          <div><div class="adm-stat-value" id="statInactive">0</div><div class="adm-stat-label">Inactive Categories</div></div>
+        </div>
+        <div class="adm-stat">
+          <span class="adm-stat-icon adm-tone-peach"><i class="bi bi-cup-straw"></i></span>
+          <div><div class="adm-stat-value" id="statProducts">0</div><div class="adm-stat-label">Total Products</div></div>
+        </div>
+      </section>
+
+      <!-- List card -->
+      <section class="adm-card" aria-label="Categories">
+        <div class="adm-toolbar">
+          <div class="adm-input-icon">
+            <i class="bi bi-search"></i>
+            <input type="search" class="adm-input" id="searchInput" placeholder="Search categories..." aria-label="Search categories" autocomplete="off" />
+            <button type="button" class="adm-input-clear" id="searchClear" aria-label="Clear search"><i class="bi bi-x-lg"></i></button>
+          </div>
+          <select class="adm-select" id="statusFilter" aria-label="Filter by status">
+            <option value="all">All Statuses</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
+          <select class="adm-select" id="sortSelect" aria-label="Sort categories">
+            <option value="order">Display Order</option>
+            <option value="name-asc">Name: A to Z</option>
+            <option value="name-desc">Name: Z to A</option>
+            <option value="products">Most Products</option>
+            <option value="newest">Newest First</option>
+          </select>
+          <div class="adm-segment" role="group" aria-label="View mode">
+            <button type="button" class="active" data-view="table" aria-pressed="true"><i class="bi bi-list-ul"></i> <span class="adm-hide-sm">Table</span></button>
+            <button type="button" data-view="grid" aria-pressed="false"><i class="bi bi-grid"></i> <span class="adm-hide-sm">Grid</span></button>
+          </div>
+          <span class="adm-counter" id="resultCounter" aria-live="polite">Showing <strong>0</strong> categories</span>
+        </div>
+
+        <!-- Table view -->
+        <div class="adm-table-wrap" id="tableView">
+          <table class="adm-table">
+            <thead>
+              <tr>
+                <th scope="col">Category</th>
+                <th scope="col">Description</th>
+                <th scope="col" class="num">Products</th>
+                <th scope="col" class="num">Display Order</th>
+                <th scope="col">Status</th>
+                <th scope="col">Created</th>
+                <th scope="col" class="end"><span class="visually-hidden">Actions</span></th>
+              </tr>
+            </thead>
+            <tbody id="categoryRows"></tbody>
+          </table>
+        </div>
+
+        <!-- Grid view -->
+        <div class="cat-grid d-none" id="gridView"></div>
+
+        <!-- Empty state -->
+        <div class="adm-empty d-none" id="emptyState">
+          <div class="adm-empty-art"><i class="bi bi-tags" id="emptyIcon"></i></div>
+          <h3 id="emptyTitle">No categories found</h3>
+          <p id="emptyText">Try adjusting your search or create your first category.</p>
+          <div class="d-flex gap-2 justify-content-center flex-wrap" id="emptyActions"></div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="adm-pager" id="pager">
+          <div class="adm-pager-size">
+            <label for="pageSize">Rows per page</label>
+            <select class="adm-select" id="pageSize">
+              <option value="5">5</option>
+              <option value="10" selected>10</option>
+              <option value="20">20</option>
+            </select>
+          </div>
+          <span id="pageInfo">1–8 of 8</span>
+          <nav class="adm-pages" id="pages" aria-label="Pagination"></nav>
+        </div>
+      </section>
+    </main>
+
+    <footer class="adm-footer">
+      <span>© <span id="year"></span> CafeFlow Management Studio · Demo data stored in this browser only</span>
+      <button type="button" id="resetDemo"><i class="bi bi-arrow-counterclockwise"></i> Reset demo data</button>
+    </footer>
+  </div>
+
+  <!-- =====================================================================
+       MODALS
+       ===================================================================== -->
+
+  <!-- Create / Edit category -->
+  <div class="modal fade" id="categoryModal" tabindex="-1" aria-labelledby="categoryModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+      <form class="modal-content" id="categoryForm" novalidate>
+        <div class="modal-header">
+          <div class="d-flex gap-3 align-items-center">
+            <span class="adm-modal-icon adm-tone-rose"><i class="bi bi-tag" id="categoryModalIcon"></i></span>
+            <div>
+              <h2 class="modal-title" id="categoryModalTitle">Create New Category</h2>
+              <p id="categoryModalSub">Add a new section to your cafe menu.</p>
+            </div>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row g-3">
+            <div class="col-md-8">
+              <label class="adm-label" for="fName">Category Name <span class="req">*</span></label>
+              <input type="text" class="adm-input" id="fName" maxlength="40" placeholder="e.g. Tea & Infusions" required />
+              <div class="adm-feedback" id="fNameError"><i class="bi bi-exclamation-circle"></i> <span>Please enter a category name.</span></div>
+            </div>
+            <div class="col-md-4">
+              <label class="adm-label" for="fOrder">Display Order</label>
+              <input type="number" class="adm-input" id="fOrder" min="1" max="999" step="1" placeholder="1" />
+              <div class="adm-feedback"><i class="bi bi-exclamation-circle"></i> <span>Use a whole number from 1 to 999.</span></div>
+            </div>
+            <div class="col-12">
+              <label class="adm-label" for="fDesc">Category Description <span class="opt">(optional)</span></label>
+              <textarea class="adm-textarea" id="fDesc" maxlength="160" rows="3" placeholder="A short line customers will see on the menu"></textarea>
+              <div class="adm-hint d-flex justify-content-between"><span>Keep it short and friendly.</span><span><span id="fDescCount">0</span>/160</span></div>
+            </div>
+
+            <div class="col-12">
+              <span class="adm-label">Category Image <span class="opt">(optional)</span></span>
+              <div class="adm-upload" id="uploadZone">
+                <div class="adm-upload-preview" id="imgPreview"><i class="bi bi-image"></i></div>
+                <div class="adm-upload-body">
+                  <strong>Upload an image</strong>
+                  <small>JPG, PNG or WebP, up to 5 MB. Drag &amp; drop or browse. Preview only: it stays in this browser.</small>
+                  <div class="adm-upload-actions">
+                    <label class="adm-btn adm-btn-light adm-btn-sm mb-0" for="fFile"><i class="bi bi-upload"></i> Choose file</label>
+                    <input type="file" id="fFile" accept="image/png,image/jpeg,image/webp" class="visually-hidden" />
+                    <button type="button" class="adm-btn adm-btn-ghost adm-btn-sm d-none" id="imgRemove"><i class="bi bi-x-lg"></i> Remove</button>
+                  </div>
+                </div>
+              </div>
+              <div class="adm-feedback" id="fFileError"><i class="bi bi-exclamation-circle"></i> <span></span></div>
+              <div class="adm-or">or</div>
+              <label class="adm-label" for="fUrl">Image URL</label>
+              <div class="d-flex gap-2">
+                <input type="url" class="adm-input" id="fUrl" data-feedback="fUrlError" placeholder="https://images.example.com/category.jpg" />
+                <button type="button" class="adm-btn adm-btn-light" id="urlPreviewBtn">Preview</button>
+              </div>
+              <div class="adm-feedback" id="fUrlError"><i class="bi bi-exclamation-circle"></i> <span>We couldn't load an image from that URL.</span></div>
+            </div>
+
+            <div class="col-12">
+              <div class="d-flex align-items-center justify-content-between gap-3 p-3 rounded-4" style="background:var(--adm-bg);border:1px solid var(--adm-border)">
+                <div>
+                  <strong class="d-block" style="font-size:.9rem">Active Status</strong>
+                  <small class="text-muted" id="fActiveHint">Active categories are visible on the customer menu.</small>
+                </div>
+                <label class="adm-switch lg" for="fActive">
+                  <input type="checkbox" id="fActive" checked />
+                  <span class="adm-switch-track"></span>
+                  <span class="visually-hidden">Active</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="adm-btn adm-btn-light" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="adm-btn adm-btn-primary" id="categorySubmit"><i class="bi bi-check2"></i> Save Category</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- View category -->
+  <div class="modal fade" id="viewModal" tabindex="-1" aria-labelledby="viewTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="cat-view-hero" id="viewHero">
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="d-flex justify-content-between align-items-start gap-2">
+            <div>
+              <h2 class="modal-title fs-4" id="viewTitle">Category</h2>
+              <small class="text-muted font-monospace" id="viewCode"></small>
+            </div>
+            <span id="viewStatus"></span>
+          </div>
+          <p class="text-muted mt-3 mb-0" id="viewDesc"></p>
+          <div class="cat-view-stats">
+            <div><small>Products</small><strong id="viewProducts">0</strong></div>
+            <div><small>Order</small><strong id="viewOrder">0</strong></div>
+            <div><small>Created</small><strong id="viewCreated">—</strong></div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="adm-btn adm-btn-light me-auto" id="viewToggle"></button>
+          <button type="button" class="adm-btn adm-btn-primary" id="viewEdit"><i class="bi bi-pencil"></i> Edit</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirm (delete / deactivate / blocked) -->
+  <div class="modal fade adm-confirm" id="confirmModal" tabindex="-1" aria-labelledby="confirmTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width:440px">
+      <div class="modal-content">
+        <div class="modal-body">
+          <span class="adm-modal-icon" id="confirmIcon"><i class="bi bi-trash3"></i></span>
+          <h3 id="confirmTitle">Delete Category?</h3>
+          <p id="confirmText">Are you sure you want to delete this category? This action cannot be undone.</p>
+          <div id="confirmExtra"></div>
+        </div>
+        <div class="modal-footer justify-content-center">
+          <button type="button" class="adm-btn adm-btn-light" data-bs-dismiss="modal" id="confirmCancel">Cancel</button>
+          <button type="button" class="adm-btn adm-btn-danger" id="confirmOk">Delete Category</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toasts -->
+  <div class="adm-toasts" id="toasts" aria-live="polite" aria-atomic="false"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- =====================================================================
+       SHARED ADMIN SHELL SCRIPT (reuse on every admin page)
+       ===================================================================== -->
+  <script>
+/* AdminShell: sidebar, placeholders, toasts, confirm dialog, notifications. */
+window.AdminShell = (() => {
+  "use strict";
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const body = document.body;
+  const desktop = window.matchMedia("(min-width: 992px)");
+  const SIDEBAR_KEY = "cafeflow_admin_sidebar";
+
+  /* ---- Sidebar (mini on desktop, offcanvas on mobile) ---- */
+  const toggleBtn = $("#sidebarToggle");
+  function setCollapsed(collapsed) {
+    body.classList.toggle("adm-collapsed", collapsed);
+    toggleBtn.setAttribute("aria-expanded", String(!collapsed));
+    try { localStorage.setItem(SIDEBAR_KEY, collapsed ? "1" : "0"); } catch { /* ignore */ }
+  }
+  function setMobileOpen(open) {
+    body.classList.toggle("adm-sidebar-open", open);
+    toggleBtn.setAttribute("aria-expanded", String(open));
+    if (open) $(".adm-nav-link.active")?.focus({ preventScroll: true });
+  }
+  toggleBtn.addEventListener("click", () => {
+    if (desktop.matches) setCollapsed(!body.classList.contains("adm-collapsed"));
+    else setMobileOpen(!body.classList.contains("adm-sidebar-open"));
+  });
+  $("#admBackdrop").addEventListener("click", () => setMobileOpen(false));
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && body.classList.contains("adm-sidebar-open")) setMobileOpen(false); });
+  desktop.addEventListener("change", () => { setMobileOpen(false); toggleBtn.setAttribute("aria-expanded", String(!body.classList.contains("adm-collapsed"))); });
+  try { if (localStorage.getItem(SIDEBAR_KEY) === "1") setCollapsed(true); } catch { /* ignore */ }
+
+  /* ---- Toasts ---- */
+  const ICONS = { success: "bi-check2-circle", error: "bi-exclamation-octagon", info: "bi-info-circle" };
+  function toast(title, message = "", type = "success", duration = 3500) {
+    const el = document.createElement("div");
+    el.className = `adm-toast ${type}`;
+    el.setAttribute("role", type === "error" ? "alert" : "status");
+    el.style.setProperty("--t", `${duration}ms`);
+    el.innerHTML = `
+      <span class="adm-toast-icon"><i class="bi ${ICONS[type] || ICONS.info}"></i></span>
+      <div><strong></strong>${message ? "<span></span>" : ""}</div>
+      <button type="button" aria-label="Dismiss"><i class="bi bi-x-lg"></i></button>`;
+    el.querySelector("strong").textContent = title;
+    if (message) el.querySelector("div span").textContent = message;
+    const close = () => { el.classList.add("hide"); setTimeout(() => el.remove(), 300); };
+    el.querySelector("button").addEventListener("click", close);
+    $("#toasts").appendChild(el);
+    setTimeout(close, duration);
+  }
+
+  /* ---- Placeholder links (pages not built yet) ---- */
+  document.addEventListener("click", (e) => {
+    const link = e.target.closest("[data-placeholder]");
+    if (!link) return;
+    e.preventDefault();
+    setMobileOpen(false);
+    toast(`${link.dataset.placeholder} is coming soon`, "This page hasn't been built yet.", "info");
+  });
+
+  /* ---- Logout (demo) ---- */
+  $$("[data-action='logout']").forEach((b) => b.addEventListener("click", () =>
+    toast("Logout is not connected yet", "Authentication will be added with the backend.", "info")));
+
+  /* ---- Notifications ---- */
+  $("#markAllRead")?.addEventListener("click", () => {
+    $$(".adm-notif.unread").forEach((n) => n.classList.remove("unread"));
+    $("#notifCount")?.remove();
+  });
+
+  /* ---- Reusable confirm dialog ---- */
+  const confirmModalEl = $("#confirmModal");
+  const confirmModal = confirmModalEl ? new bootstrap.Modal(confirmModalEl) : null;
+  let confirmHandler = null;
+  /**
+   * confirm({ title, text, okLabel, tone: "danger"|"warning"|"info", icon, extra, onConfirm, hideOk })
+   */
+  function confirm(opts) {
+    const tone = opts.tone || "danger";
+    const toneClass = { danger: "adm-tone-rose", warning: "adm-tone-peach", info: "adm-tone-blue" }[tone];
+    $("#confirmIcon").className = `adm-modal-icon ${toneClass}`;
+    $("#confirmIcon").innerHTML = `<i class="bi ${opts.icon || "bi-trash3"}"></i>`;
+    $("#confirmTitle").textContent = opts.title;
+    $("#confirmText").textContent = opts.text;
+    $("#confirmExtra").innerHTML = opts.extra || "";
+    const ok = $("#confirmOk");
+    ok.textContent = opts.okLabel || "Confirm";
+    ok.className = `adm-btn ${tone === "danger" ? "adm-btn-danger" : "adm-btn-primary"}`;
+    ok.classList.toggle("d-none", Boolean(opts.hideOk));
+    $("#confirmCancel").textContent = opts.cancelLabel || "Cancel";
+    confirmHandler = opts.onConfirm || null;
+    confirmModal.show();
+  }
+  $("#confirmOk")?.addEventListener("click", () => {
+    const fn = confirmHandler;
+    confirmHandler = null;
+    confirmModal.hide();
+    if (fn) fn();
+  });
+
+  /* ---- Footer year ---- */
+  const y = $("#year"); if (y) y.textContent = new Date().getFullYear();
+
+  return { toast, confirm, closeMobileSidebar: () => setMobileOpen(false) };
+})();
+  </script>
+
+  <!-- =====================================================================
+       PAGE SCRIPT: CATEGORY MANAGEMENT
+       ===================================================================== -->
+  <script>
+(() => {
+  "use strict";
+  const { toast, confirm } = window.AdminShell;
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+
+  /* ---------- 1. DATA ----------
+     Product counts match the customer-site catalog (products.html).
+     Admin data lives under its own key and never touches the cart or catalog. */
+  const STORAGE_KEY = "cafeflow_admin_categories";
+  const IMG = (id) => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=600&q=80`;
+
+  const SEED = [
+    { id: 1, code: "CAT-001", slug: "hot",       name: "Hot Coffees",       description: "Velvety lattes, bold espressos and comforting signature brews.", products: 3, order: 1, active: true,  createdAt: "2026-01-12", icon: "bi-cup-hot",   image: IMG("1509042239860-f550ce710b93") },
+    { id: 2, code: "CAT-002", slug: "iced",      name: "Iced Coffees",      description: "Chilled espresso drinks and slow-steeped cold brew over ice.",   products: 3, order: 2, active: true,  createdAt: "2026-01-12", icon: "bi-cup-straw", image: IMG("1461023058943-07fcbe16d735") },
+    { id: 3, code: "CAT-003", slug: "signature", name: "Signature Drinks",  description: "Our pink house favorites: strawberry, rose and berry creations.", products: 3, order: 3, active: true,  createdAt: "2026-02-03", icon: "bi-stars",     image: IMG("1572490122747-3968b75cc699") },
+    { id: 4, code: "CAT-004", slug: "cakes",     name: "Cakes & Desserts",  description: "Cakes, cheesecakes and macarons baked fresh every morning.",     products: 4, order: 4, active: true,  createdAt: "2026-02-03", icon: "bi-cake2",     image: IMG("1578985545062-69928b1d9587") },
+    { id: 5, code: "CAT-005", slug: "bakery",    name: "Bakery",            description: "Buttery croissants, cinnamon rolls and morning pastries.",       products: 3, order: 5, active: true,  createdAt: "2026-03-18", icon: "bi-basket",    image: IMG("1555507036-ab1f4038808a") },
+    { id: 6, code: "CAT-006", slug: "snacks",    name: "Snacks",            description: "Toasts, sandwiches and light bites to enjoy any time of day.",   products: 4, order: 6, active: true,  createdAt: "2026-04-07", icon: "bi-egg-fried", image: IMG("1541519227354-08fa5d50c44d") },
+    { id: 7, code: "CAT-007", slug: "tea",       name: "Tea & Infusions",   description: "Loose-leaf teas, herbal infusions and matcha alternatives.",     products: 0, order: 7, active: true,  createdAt: "2026-08-20", icon: "bi-cup",       image: IMG("1544787219-7f47ccb76574") },
+    { id: 8, code: "CAT-008", slug: "seasonal",  name: "Seasonal Specials", description: "Limited-time drinks and treats inspired by the season.",         products: 0, order: 8, active: false, createdAt: "2026-09-30", icon: "bi-flower1",   image: IMG("1512568400610-62da28bc8a13") },
+  ];
+
+  const store = {
+    load() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        const data = raw ? JSON.parse(raw) : null;
+        return Array.isArray(data) ? data : structuredClone(SEED);
+      } catch { return structuredClone(SEED); }
+    },
+    save(list) {
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(list)); return true; }
+      catch {
+        toast("Couldn't save changes", "Browser storage is full or unavailable. Try a smaller image.", "error", 5000);
+        return false;
+      }
+    },
+  };
+
+  let categories = store.load();
+  const state = { search: "", status: "all", sort: "order", view: "table", page: 1, pageSize: 10 };
+
+  /* ---------- 2. HELPERS ---------- */
+  const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const fmtDate = (iso) => new Date(`${iso}T12:00:00`).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+  const normalize = (s) => s.trim().replace(/\s+/g, " ").toLocaleLowerCase("en");
+  const byId = (id) => categories.find((c) => c.id === id);
+  const nextId = () => Math.max(0, ...categories.map((c) => c.id)) + 1;
+  const statusBadge = (c) => c.active
+    ? `<span class="adm-badge adm-badge-success">Active</span>`
+    : `<span class="adm-badge adm-badge-inactive">Inactive</span>`;
+
+  function thumb(c, cls = "adm-thumb") {
+    return c.image
+      ? `<span class="${cls}"><img src="${esc(c.image)}" alt="" loading="lazy" data-icon="${c.icon || "bi-tag"}" /></span>`
+      : `<span class="${cls}"><i class="bi ${c.icon || "bi-tag"}"></i></span>`;
+  }
+  // Broken image → icon fallback
+  function applyImgFallback(root) {
+    $$("img[data-icon]", root).forEach((img) => {
+      const swap = () => { const i = document.createElement("i"); i.className = `bi ${img.dataset.icon}`; img.replaceWith(i); };
+      if (img.complete && img.naturalWidth === 0) swap();
+      else img.addEventListener("error", swap, { once: true });
+    });
+  }
+
+  function persist() {
+    const ok = store.save(categories);
+    render();
+    return ok;
+  }
+
+  /* ---------- 3. QUERY ---------- */
+  function visibleCategories() {
+    const term = normalize(state.search);
+    let list = categories.filter((c) => {
+      if (state.status === "active" && !c.active) return false;
+      if (state.status === "inactive" && c.active) return false;
+      if (term && !`${c.name} ${c.description}`.toLocaleLowerCase("en").includes(term)) return false;
+      return true;
+    });
+    const sorters = {
+      order: (a, b) => a.order - b.order || a.name.localeCompare(b.name),
+      "name-asc": (a, b) => a.name.localeCompare(b.name),
+      "name-desc": (a, b) => b.name.localeCompare(a.name),
+      products: (a, b) => b.products - a.products || a.name.localeCompare(b.name),
+      newest: (a, b) => b.createdAt.localeCompare(a.createdAt) || b.id - a.id,
+    };
+    return [...list].sort(sorters[state.sort]);
+  }
+
+  /* ---------- 4. RENDER ---------- */
+  let lastStats = {};
+  function renderStats() {
+    const stats = {
+      statTotal: categories.length,
+      statActive: categories.filter((c) => c.active).length,
+      statInactive: categories.filter((c) => !c.active).length,
+      statProducts: categories.reduce((s, c) => s + c.products, 0),
+    };
+    Object.entries(stats).forEach(([id, value]) => {
+      const el = $(`#${id}`);
+      el.textContent = value;
+      if (lastStats[id] !== undefined && lastStats[id] !== value) {
+        el.classList.remove("bump"); void el.offsetWidth; el.classList.add("bump");
+      }
+    });
+    lastStats = stats;
+    $("#navCategoryCount").textContent = stats.statTotal;
+  }
+
+  function actionMenu(c) {
+    return `
+      <div class="dropdown">
+        <button type="button" class="adm-kebab" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Actions for ${esc(c.name)}">
+          <i class="bi bi-three-dots-vertical"></i>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end">
+          <li><button class="dropdown-item" type="button" data-act="view" data-id="${c.id}"><i class="bi bi-eye"></i> View</button></li>
+          <li><button class="dropdown-item" type="button" data-act="edit" data-id="${c.id}"><i class="bi bi-pencil"></i> Edit</button></li>
+          <li><button class="dropdown-item" type="button" data-act="toggle" data-id="${c.id}"><i class="bi ${c.active ? "bi-pause-circle" : "bi-play-circle"}"></i> ${c.active ? "Deactivate" : "Activate"}</button></li>
+          <li><hr class="dropdown-divider" /></li>
+          <li><button class="dropdown-item text-danger" type="button" data-act="delete" data-id="${c.id}"><i class="bi bi-trash3"></i> Delete</button></li>
+        </ul>
+      </div>`;
+  }
+
+  function statusSwitch(c) {
+    return `
+      <label class="adm-switch" title="${c.active ? "Deactivate" : "Activate"} category">
+        <input type="checkbox" data-act="switch" data-id="${c.id}" ${c.active ? "checked" : ""} />
+        <span class="adm-switch-track"></span>
+        <span class="visually-hidden">Toggle ${esc(c.name)} status</span>
+      </label>`;
+  }
+
+  function rowTemplate(c) {
+    return `
+      <tr data-row="${c.id}">
+        <td class="cell-main" data-label="Category">
+          <div class="adm-entity">
+            ${thumb(c)}
+            <div><strong>${esc(c.name)}</strong><small>${esc(c.code)}</small></div>
+          </div>
+        </td>
+        <td class="cell-desc" data-label="Description"><span class="adm-desc">${esc(c.description) || '<span class="text-muted">—</span>'}</span></td>
+        <td class="num" data-label="Products"><span class="adm-pill-num">${c.products}</span></td>
+        <td class="num" data-label="Display Order"><span class="adm-order">${c.order}</span></td>
+        <td data-label="Status"><div class="adm-status-cell">${statusSwitch(c)}${statusBadge(c)}</div></td>
+        <td data-label="Created"><span class="adm-date">${fmtDate(c.createdAt)}</span></td>
+        <td class="end cell-actions" data-label="Actions">${actionMenu(c)}</td>
+      </tr>`;
+  }
+
+  function cardTemplate(c) {
+    return `
+      <article class="cat-card${c.active ? "" : " is-inactive"}" data-row="${c.id}">
+        <div class="cat-card-img">
+          ${c.image ? `<img src="${esc(c.image)}" alt="" loading="lazy" data-icon="${c.icon || "bi-tag"}" />` : `<i class="bi ${c.icon || "bi-tag"}"></i>`}
+          ${statusBadge(c)}
+          <span class="cat-card-order">#${c.order}</span>
+        </div>
+        <div class="cat-card-body">
+          <div class="d-flex justify-content-between align-items-start gap-2">
+            <div><h3>${esc(c.name)}</h3><small class="code">${esc(c.code)}</small></div>
+            ${statusSwitch(c)}
+          </div>
+          <p>${esc(c.description) || "No description yet."}</p>
+          <div class="cat-card-foot">
+            <span class="cat-card-meta"><i class="bi bi-cup-straw"></i> <strong>${c.products}</strong> ${c.products === 1 ? "product" : "products"}</span>
+            <div class="cat-card-actions">
+              <button type="button" class="adm-icon-btn" data-act="view" data-id="${c.id}" aria-label="View ${esc(c.name)}" title="View"><i class="bi bi-eye"></i></button>
+              <button type="button" class="adm-icon-btn" data-act="edit" data-id="${c.id}" aria-label="Edit ${esc(c.name)}" title="Edit"><i class="bi bi-pencil"></i></button>
+              <button type="button" class="adm-icon-btn danger" data-act="delete" data-id="${c.id}" aria-label="Delete ${esc(c.name)}" title="Delete"><i class="bi bi-trash3"></i></button>
+            </div>
+          </div>
+        </div>
+      </article>`;
+  }
+
+  function renderEmpty(list) {
+    const empty = $("#emptyState");
+    const show = list.length === 0;
+    empty.classList.toggle("d-none", !show);
+    $("#pager").classList.toggle("d-none", show);
+    if (!show) return;
+
+    const addBtn = `<button type="button" class="adm-btn adm-btn-primary" data-action="add-category"><i class="bi bi-plus-lg"></i> Add Category</button>`;
+    const clearBtn = `<button type="button" class="adm-btn adm-btn-light" data-action="clear-filters"><i class="bi bi-x-circle"></i> Clear filters</button>`;
+    let icon = "bi-tags", title = "No categories found", text = "Try adjusting your search or create your first category.", actions = addBtn;
+
+    if (categories.length === 0) {
+      title = "No categories yet";
+      text = "Create your first category to start organizing the menu.";
+    } else if (state.search.trim()) {
+      icon = "bi-search";
+      title = "No search results";
+      text = `Nothing matches "${state.search.trim()}". Try a different word or clear the search.`;
+      actions = clearBtn + addBtn;
+    } else if (state.status !== "all") {
+      icon = "bi-funnel";
+      title = `No ${state.status} categories`;
+      text = "No categories match the selected filter.";
+      actions = clearBtn;
+    }
+    $("#emptyIcon").className = `bi ${icon}`;
+    $("#emptyTitle").textContent = title;
+    $("#emptyText").textContent = text;
+    $("#emptyActions").innerHTML = actions;
+  }
+
+  function renderPager(total) {
+    const pages = Math.max(1, Math.ceil(total / state.pageSize));
+    state.page = Math.min(Math.max(1, state.page), pages);
+    const start = total ? (state.page - 1) * state.pageSize + 1 : 0;
+    const end = Math.min(total, state.page * state.pageSize);
+    $("#pageInfo").textContent = `${start}–${end} of ${total}`;
+
+    // Compact page list: 1 … 4 5 6 … 12
+    const nums = [];
+    for (let p = 1; p <= pages; p++) {
+      if (p === 1 || p === pages || Math.abs(p - state.page) <= 1) nums.push(p);
+      else if (nums[nums.length - 1] !== "…") nums.push("…");
+    }
+    $("#pages").innerHTML = `
+      <button type="button" class="adm-page-btn" data-page="${state.page - 1}" ${state.page === 1 ? "disabled" : ""} aria-label="Previous page"><i class="bi bi-chevron-left"></i><span class="adm-hide-sm">Previous</span></button>
+      ${nums.map((n) => n === "…"
+        ? `<span class="adm-page-gap">…</span>`
+        : `<button type="button" class="adm-page-btn${n === state.page ? " active" : ""}" data-page="${n}" ${n === state.page ? 'aria-current="page"' : ""}>${n}</button>`).join("")}
+      <button type="button" class="adm-page-btn" data-page="${state.page + 1}" ${state.page === pages ? "disabled" : ""} aria-label="Next page"><span class="adm-hide-sm">Next</span><i class="bi bi-chevron-right"></i></button>`;
+  }
+
+  function render() {
+    renderStats();
+    const list = visibleCategories();
+    renderPager(list.length);
+    const pageItems = list.slice((state.page - 1) * state.pageSize, state.page * state.pageSize);
+
+    $("#resultCounter").innerHTML = `Showing <strong>${list.length}</strong> ${list.length === 1 ? "category" : "categories"}`;
+    $("#categoryRows").innerHTML = pageItems.map(rowTemplate).join("");
+    $("#gridView").innerHTML = pageItems.map(cardTemplate).join("");
+    $("#tableView").classList.toggle("d-none", state.view !== "table" || list.length === 0);
+    $("#gridView").classList.toggle("d-none", state.view !== "grid" || list.length === 0);
+    renderEmpty(list);
+    applyImgFallback($("#categoryRows"));
+    applyImgFallback($("#gridView"));
+  }
+
+  function flashRow(id) {
+    requestAnimationFrame(() => $$(`[data-row="${id}"]`).forEach((r) => {
+      r.classList.remove("row-flash"); void r.offsetWidth; r.classList.add("row-flash");
+    }));
+  }
+
+  /* ---------- 5. CREATE / EDIT MODAL ---------- */
+  const modalEl = $("#categoryModal");
+  const modal = new bootstrap.Modal(modalEl);
+  const form = $("#categoryForm");
+  const f = { name: $("#fName"), desc: $("#fDesc"), order: $("#fOrder"), active: $("#fActive"), url: $("#fUrl"), file: $("#fFile") };
+  let editingId = null;
+  let pendingImage = null; // data URL or remote URL currently previewed
+
+  function setPreview(src) {
+    pendingImage = src || null;
+    $("#imgPreview").innerHTML = src ? `<img src="${esc(src)}" alt="Category image preview" />` : `<i class="bi bi-image"></i>`;
+    $("#imgRemove").classList.toggle("d-none", !src);
+  }
+
+  function clearErrors() {
+    $$(".is-invalid", form).forEach((el) => el.classList.remove("is-invalid"));
+    $$(".adm-feedback.show", form).forEach((el) => el.classList.remove("show"));
+  }
+
+  function openForm(id = null) {
+    editingId = id;
+    clearErrors();
+    form.reset();
+    f.file.value = "";
+    const c = id ? byId(id) : null;
+    $("#categoryModalTitle").textContent = c ? "Edit Category" : "Create New Category";
+    $("#categoryModalSub").textContent = c ? `Update details for ${c.name}.` : "Add a new section to your cafe menu.";
+    $("#categoryModalIcon").className = c ? "bi bi-pencil" : "bi bi-tag";
+    $("#categorySubmit").innerHTML = c ? `<i class="bi bi-check2"></i> Save Changes` : `<i class="bi bi-check2"></i> Save Category`;
+
+    f.name.value = c ? c.name : "";
+    f.desc.value = c ? c.description : "";
+    f.order.value = c ? c.order : Math.max(0, ...categories.map((x) => x.order)) + 1;
+    f.active.checked = c ? c.active : true;
+    f.url.value = c && c.image && !c.image.startsWith("data:") ? c.image : "";
+    setPreview(c ? c.image : null);
+    $("#fDescCount").textContent = f.desc.value.length;
+    updateActiveHint();
+    modal.show();
+  }
+  modalEl.addEventListener("shown.bs.modal", () => f.name.focus());
+
+  function updateActiveHint() {
+    $("#fActiveHint").textContent = f.active.checked
+      ? "Active categories are visible on the customer menu."
+      : "Inactive categories and their products are hidden from customers.";
+  }
+  f.active.addEventListener("change", updateActiveHint);
+  f.desc.addEventListener("input", () => ($("#fDescCount").textContent = f.desc.value.length));
+
+  function showError(input, message) {
+    input.classList.add("is-invalid");
+    const fb = input.dataset.feedback ? $(`#${input.dataset.feedback}`) : input.nextElementSibling;
+    if (!fb || !fb.classList.contains("adm-feedback")) return;
+    if (message) fb.querySelector("span").textContent = message;
+    fb.classList.add("show");
+  }
+
+  function validate() {
+    clearErrors();
+    let ok = true;
+    const name = f.name.value.trim().replace(/\s+/g, " ");
+    if (!name) { showError(f.name, "Please enter a category name."); ok = false; }
+    else if (name.length < 2) { showError(f.name, "The name should be at least 2 characters."); ok = false; }
+    else {
+      const dup = categories.find((c) => c.id !== editingId && normalize(c.name) === normalize(name));
+      if (dup) { showError(f.name, `"${dup.name}" already exists. Please choose a different name.`); ok = false; }
+    }
+    const order = f.order.value === "" ? null : Number(f.order.value);
+    if (order !== null && (!Number.isInteger(order) || order < 1 || order > 999)) { showError(f.order); ok = false; }
+    if (!ok) form.querySelector(".is-invalid")?.focus();
+    return ok;
+  }
+
+  // Live re-validation of name
+  f.name.addEventListener("input", () => { if (f.name.classList.contains("is-invalid")) validate(); });
+
+  /* Image: local file → downscaled data URL (frontend preview only) */
+  function readImageFile(file) {
+    const err = $("#fFileError");
+    err.classList.remove("show");
+    if (!file) return;
+    if (!/^image\/(png|jpe?g|webp)$/.test(file.type)) {
+      err.querySelector("span").textContent = "Please choose a JPG, PNG or WebP image.";
+      err.classList.add("show");
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      err.querySelector("span").textContent = "That image is larger than 5 MB.";
+      err.classList.add("show");
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        // Downscale so the preview fits comfortably in localStorage
+        const max = 480;
+        const scale = Math.min(1, max / Math.max(img.width, img.height));
+        const canvas = document.createElement("canvas");
+        canvas.width = Math.round(img.width * scale);
+        canvas.height = Math.round(img.height * scale);
+        canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+        setPreview(canvas.toDataURL("image/jpeg", 0.82));
+        f.url.value = "";
+        $("#fUrlError").classList.remove("show");
+        f.url.classList.remove("is-invalid");
+      };
+      img.onerror = () => { err.querySelector("span").textContent = "We couldn't read that image."; err.classList.add("show"); };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  }
+  f.file.addEventListener("change", () => readImageFile(f.file.files[0]));
+
+  const zone = $("#uploadZone");
+  ["dragenter", "dragover"].forEach((ev) => zone.addEventListener(ev, (e) => { e.preventDefault(); zone.classList.add("dragover"); }));
+  ["dragleave", "drop"].forEach((ev) => zone.addEventListener(ev, (e) => { e.preventDefault(); zone.classList.remove("dragover"); }));
+  zone.addEventListener("drop", (e) => readImageFile(e.dataTransfer.files[0]));
+  $("#imgRemove").addEventListener("click", () => { setPreview(null); f.file.value = ""; f.url.value = ""; });
+
+  /* Image: remote URL → verify it loads before using it */
+  function previewUrl() {
+    return new Promise((resolve) => {
+      const url = f.url.value.trim();
+      f.url.classList.remove("is-invalid");
+      $("#fUrlError").classList.remove("show");
+      if (!url) return resolve(true);
+      if (!/^https?:\/\/\S+$/i.test(url)) { showError(f.url, "Please enter a full link starting with https://"); return resolve(false); }
+      const test = new Image();
+      test.onload = () => { setPreview(url); resolve(true); };
+      test.onerror = () => { showError(f.url, "We couldn't load an image from that URL."); resolve(false); };
+      test.src = url;
+    });
+  }
+  $("#urlPreviewBtn").addEventListener("click", previewUrl);
+  f.url.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); previewUrl(); } });
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (!validate()) return;
+    if (f.url.value.trim() && f.url.value.trim() !== pendingImage) {
+      const submit = $("#categorySubmit");
+      submit.disabled = true;
+      const ok = await previewUrl();
+      submit.disabled = false;
+      if (!ok) return;
+    }
+
+    const data = {
+      name: f.name.value.trim().replace(/\s+/g, " "),
+      description: f.desc.value.trim(),
+      order: f.order.value === "" ? Math.max(0, ...categories.map((c) => c.order)) + 1 : Number(f.order.value),
+      active: f.active.checked,
+      image: pendingImage,
+    };
+
+    if (editingId) {
+      const c = byId(editingId);
+      Object.assign(c, data);
+      if (!persist()) return;
+      modal.hide();
+      flashRow(c.id);
+      toast("Category updated", `${c.name} has been saved.`);
+    } else {
+      const id = nextId();
+      const c = {
+        id,
+        code: `CAT-${String(id).padStart(3, "0")}`,
+        slug: data.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, ""),
+        products: 0,
+        createdAt: new Date().toISOString().slice(0, 10),
+        icon: "bi-tag",
+        ...data,
+      };
+      categories.push(c);
+      if (!persist()) { categories = categories.filter((x) => x.id !== id); render(); return; }
+      modal.hide();
+      // Jump to the page that contains the new category
+      const idx = visibleCategories().findIndex((x) => x.id === id);
+      if (idx >= 0) { state.page = Math.floor(idx / state.pageSize) + 1; render(); }
+      flashRow(id);
+      toast("Category created", `${c.name} was added to your menu structure.`);
+    }
+  });
+
+  /* ---------- 6. VIEW MODAL ---------- */
+  const viewModal = new bootstrap.Modal($("#viewModal"));
+  let viewingId = null;
+  function openView(id) {
+    const c = byId(id);
+    if (!c) return;
+    viewingId = id;
+    const hero = $("#viewHero");
+    hero.querySelectorAll(":scope > img, :scope > i").forEach((n) => n.remove());
+    hero.insertAdjacentHTML("afterbegin", c.image ? `<img src="${esc(c.image)}" alt="" data-icon="${c.icon || "bi-tag"}" />` : `<i class="bi ${c.icon || "bi-tag"}"></i>`);
+    applyImgFallback(hero);
+    $("#viewTitle").textContent = c.name;
+    $("#viewCode").textContent = c.code;
+    $("#viewStatus").innerHTML = statusBadge(c);
+    $("#viewDesc").textContent = c.description || "No description yet.";
+    $("#viewProducts").textContent = c.products;
+    $("#viewOrder").textContent = `#${c.order}`;
+    $("#viewCreated").textContent = fmtDate(c.createdAt);
+    $("#viewToggle").innerHTML = c.active ? `<i class="bi bi-pause-circle"></i> Deactivate` : `<i class="bi bi-play-circle"></i> Activate`;
+    viewModal.show();
+  }
+  $("#viewEdit").addEventListener("click", () => { viewModal.hide(); setTimeout(() => openForm(viewingId), 250); });
+  $("#viewToggle").addEventListener("click", () => { viewModal.hide(); setTimeout(() => requestToggle(viewingId), 250); });
+
+  /* ---------- 7. STATUS & DELETE ---------- */
+  function setActive(c, active) {
+    c.active = active;
+    persist();
+    flashRow(c.id);
+    toast(active ? "Category activated" : "Category deactivated",
+      active ? `${c.name} is visible on the menu again.` : `${c.name} is now hidden from customers.`);
+  }
+
+  function requestToggle(id) {
+    const c = byId(id);
+    if (!c) return;
+    if (c.active && c.products > 0) {
+      confirm({
+        tone: "warning",
+        icon: "bi-eye-slash",
+        title: `Deactivate ${c.name}?`,
+        text: `This category has ${c.products} ${c.products === 1 ? "product" : "products"}. They may become hidden from the customer menu while it's inactive.`,
+        okLabel: "Deactivate",
+        onConfirm: () => setActive(c, false),
+      });
+      render(); // revert any switch that was flipped before confirming
+      return;
+    }
+    setActive(c, !c.active);
+  }
+
+  function requestDelete(id) {
+    const c = byId(id);
+    if (!c) return;
+    if (c.products > 0) {
+      confirm({
+        tone: "warning",
+        icon: "bi-shield-lock",
+        title: "This category can't be deleted",
+        text: `${c.name} still contains ${c.products} ${c.products === 1 ? "product" : "products"}.`,
+        extra: `<div class="adm-callout warn"><i class="bi bi-info-circle"></i><span>Reassign these products to another category or remove them first. You can also deactivate the category to hide it from customers.</span></div>`,
+        hideOk: true,
+        cancelLabel: "Got it",
+      });
+      return;
+    }
+    confirm({
+      tone: "danger",
+      icon: "bi-trash3",
+      title: "Delete Category?",
+      text: "Are you sure you want to delete this category? This action cannot be undone.",
+      extra: `<div class="adm-callout info"><i class="bi bi-tag"></i><span><strong>${esc(c.name)}</strong> · ${esc(c.code)}</span></div>`,
+      okLabel: "Delete Category",
+      onConfirm: () => {
+        categories = categories.filter((x) => x.id !== id);
+        persist();
+        toast("Category deleted", `${c.name} has been removed.`);
+      },
+    });
+  }
+
+  /* ---------- 8. EVENTS ---------- */
+  // Row / card actions (delegated)
+  document.addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-act]");
+    if (btn && btn.dataset.act !== "switch") {
+      const id = Number(btn.dataset.id);
+      ({ view: openView, edit: openForm, delete: requestDelete, toggle: requestToggle })[btn.dataset.act]?.(id);
+      return;
+    }
+    const action = e.target.closest("[data-action]");
+    if (!action) return;
+    if (action.dataset.action === "add-category") { window.AdminShell.closeMobileSidebar(); openForm(); }
+    if (action.dataset.action === "clear-filters") clearFilters();
+  });
+  document.addEventListener("change", (e) => {
+    if (e.target.matches("[data-act='switch']")) requestToggle(Number(e.target.dataset.id));
+  });
+
+  // Search (toolbar + navbar global search stay in sync)
+  const searchInput = $("#searchInput");
+  const globalSearch = $("#globalSearch");
+  function setSearch(value, source) {
+    state.search = value;
+    state.page = 1;
+    if (source !== searchInput) searchInput.value = value;
+    if (source !== globalSearch) globalSearch.value = value;
+    $("#searchClear").classList.toggle("show", value.length > 0);
+    render();
+  }
+  searchInput.addEventListener("input", () => setSearch(searchInput.value, searchInput));
+  globalSearch.addEventListener("input", () => setSearch(globalSearch.value, globalSearch));
+  $("#searchClear").addEventListener("click", () => { setSearch("", null); searchInput.focus(); });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "/" && !/input|textarea|select/i.test(document.activeElement.tagName) && !document.querySelector(".modal.show")) {
+      e.preventDefault();
+      (globalSearch.offsetParent ? globalSearch : searchInput).focus();
+    }
+  });
+
+  $("#statusFilter").addEventListener("change", (e) => { state.status = e.target.value; state.page = 1; render(); });
+  $("#sortSelect").addEventListener("change", (e) => { state.sort = e.target.value; state.page = 1; render(); });
+  $("#pageSize").addEventListener("change", (e) => { state.pageSize = Number(e.target.value); state.page = 1; render(); });
+  $("#pages").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-page]");
+    if (!b || b.disabled) return;
+    state.page = Number(b.dataset.page);
+    render();
+    document.querySelector(".adm-card").scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+
+  $$(".adm-segment [data-view]").forEach((b) => b.addEventListener("click", () => {
+    state.view = b.dataset.view;
+    $$(".adm-segment [data-view]").forEach((x) => { x.classList.toggle("active", x === b); x.setAttribute("aria-pressed", x === b); });
+    try { localStorage.setItem("cafeflow_admin_category_view", state.view); } catch { /* ignore */ }
+    render();
+  }));
+
+  function clearFilters() {
+    state.status = "all";
+    $("#statusFilter").value = "all";
+    setSearch("", null);
+  }
+
+  $("#resetDemo").addEventListener("click", () => confirm({
+    tone: "info",
+    icon: "bi-arrow-counterclockwise",
+    title: "Reset demo data?",
+    text: "All category changes saved in this browser will be replaced with the original 8 sample categories.",
+    okLabel: "Reset data",
+    onConfirm: () => {
+      categories = structuredClone(SEED);
+      persist();
+      toast("Demo data restored", "The original sample categories are back.", "info");
+    },
+  }));
+
+  // Keep multiple admin tabs in sync
+  window.addEventListener("storage", (e) => {
+    if (e.key === STORAGE_KEY) { categories = store.load(); render(); }
+  });
+
+  /* ---------- 9. INIT ---------- */
+  try {
+    const savedView = localStorage.getItem("cafeflow_admin_category_view");
+    if (savedView === "grid") $(".adm-segment [data-view='grid']").click();
+  } catch { /* ignore */ }
+  render();
+})();
+  </script>
+</body>
+</html>

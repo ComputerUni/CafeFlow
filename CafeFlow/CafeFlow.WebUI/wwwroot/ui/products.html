@@ -1,0 +1,2407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Our Menu — CafeFlow</title>
+  <meta name="description" content="Explore CafeFlow's handcrafted coffees, signature drinks, cakes, bakery treats and snacks. Order online in a few taps." />
+
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+/* =========================================================
+   SHARED CAFEFLOW DESIGN SYSTEM (identical to the Homepage)
+   ========================================================= */
+/* =========================================================
+   CafeFlow — Homepage Styles
+   ========================================================= */
+
+/* ---------- Design tokens ---------- */
+:root {
+  --cf-pink-50:  #fff6f8;
+  --cf-pink-100: #fde8ee;
+  --cf-pink-200: #f9d3de;
+  --cf-pink-300: #f4b8c9;
+  --cf-rose:     #e88ea6;
+  --cf-rose-deep:#d46f8c;
+  --cf-peach:    #ffe4d6;
+  --cf-cream:    #fdf8f2;
+  --cf-offwhite: #fffcfa;
+  --cf-coffee:   #6b4a3a;
+  --cf-coffee-2: #9a7462;
+  --cf-ink:      #3d2a24;
+  --cf-muted:    #8a7470;
+
+  --cf-radius-sm: 12px;
+  --cf-radius:    20px;
+  --cf-radius-lg: 32px;
+  --cf-shadow-sm: 0 4px 14px rgba(212, 111, 140, 0.08);
+  --cf-shadow:    0 14px 40px rgba(212, 111, 140, 0.12);
+  --cf-shadow-lg: 0 24px 60px rgba(150, 80, 100, 0.16);
+
+  --cf-font-display: "Playfair Display", Georgia, serif;
+  --cf-font-body: "DM Sans", system-ui, -apple-system, sans-serif;
+  --cf-ease: cubic-bezier(.2, .8, .2, 1);
+}
+
+/* ---------- Base ---------- */
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--cf-font-body);
+  color: var(--cf-ink);
+  background: var(--cf-offwhite);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5 { color: var(--cf-ink); }
+a { color: inherit; text-decoration: none; }
+img { max-width: 100%; display: block; }
+::selection { background: var(--cf-pink-200); }
+
+.cf-section { padding: 110px 0; position: relative; }
+.cf-section-tint { background: linear-gradient(180deg, var(--cf-pink-50), #fff 100%); }
+.cf-section-cream { background: var(--cf-cream); }
+
+.cf-section-head { text-align: center; max-width: 640px; margin: 0 auto 56px; }
+.cf-section-head.d-md-flex { max-width: none; }
+
+.cf-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: .78rem;
+  font-weight: 600;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--cf-rose-deep);
+  margin-bottom: 14px;
+}
+
+.cf-section-title {
+  font-family: var(--cf-font-display);
+  font-weight: 600;
+  font-size: clamp(2rem, 3.6vw, 2.9rem);
+  line-height: 1.15;
+  margin-bottom: 16px;
+}
+
+.cf-section-sub, .cf-body-lg {
+  color: var(--cf-muted);
+  font-size: 1.08rem;
+  line-height: 1.75;
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+  font-weight: 600;
+  border-radius: 999px;
+  padding: 11px 24px;
+  transition: all .35s var(--cf-ease);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.cf-btn-lg { padding: 15px 30px; font-size: 1rem; }
+
+.cf-btn-primary {
+  background: linear-gradient(135deg, var(--cf-rose), var(--cf-rose-deep));
+  color: #fff;
+  border: none;
+  box-shadow: 0 10px 24px rgba(212, 111, 140, .3);
+}
+.cf-btn-primary:hover, .cf-btn-primary:focus {
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 16px 32px rgba(212, 111, 140, .4);
+}
+
+.cf-btn-outline {
+  background: #fff;
+  color: var(--cf-coffee);
+  border: 1.5px solid var(--cf-pink-200);
+}
+.cf-btn-outline:hover {
+  background: var(--cf-pink-100);
+  border-color: var(--cf-pink-300);
+  color: var(--cf-coffee);
+  transform: translateY(-2px);
+}
+
+.cf-btn-dark {
+  background: var(--cf-coffee);
+  color: #fff;
+  border: none;
+}
+.cf-btn-dark:hover { background: var(--cf-ink); color: #fff; transform: translateY(-2px); }
+
+.cf-text-link {
+  font-weight: 600;
+  color: var(--cf-rose-deep);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.cf-text-link i { transition: transform .3s var(--cf-ease); }
+.cf-text-link:hover { color: var(--cf-coffee); }
+.cf-text-link:hover i { transform: translateX(4px); }
+
+/* ---------- Navbar ---------- */
+.cf-navbar {
+  padding: 18px 0;
+  transition: all .4s var(--cf-ease);
+  background: transparent;
+}
+.cf-navbar.scrolled {
+  padding: 10px 0;
+  background: rgba(255, 252, 250, .85);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 6px 30px rgba(212, 111, 140, .08);
+}
+
+.cf-logo {
+  font-family: var(--cf-font-display);
+  font-weight: 700;
+  font-size: 1.55rem;
+  color: var(--cf-coffee);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.cf-logo span:not(.cf-logo-mark) { color: var(--cf-rose-deep); }
+.cf-logo:hover { color: var(--cf-coffee); }
+
+.cf-logo-mark {
+  width: 40px; height: 40px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, var(--cf-pink-200), var(--cf-peach));
+  color: var(--cf-rose-deep);
+  font-size: 1.1rem;
+}
+
+.cf-nav-links .nav-link {
+  font-weight: 500;
+  color: var(--cf-coffee-2);
+  padding: 8px 18px !important;
+  border-radius: 999px;
+  transition: all .3s var(--cf-ease);
+}
+.cf-nav-links .nav-link:hover { color: var(--cf-rose-deep); }
+.cf-nav-links .nav-link.active {
+  color: var(--cf-rose-deep);
+  background: var(--cf-pink-100);
+}
+
+.cf-cart-btn {
+  background: #fff;
+  border: 1.5px solid var(--cf-pink-200);
+  color: var(--cf-coffee);
+  position: relative;
+  padding: 9px 18px;
+}
+.cf-cart-btn:hover { background: var(--cf-pink-50); color: var(--cf-rose-deep); }
+.cf-cart-btn i { font-size: 1.1rem; }
+
+.cf-cart-count {
+  min-width: 22px; height: 22px;
+  border-radius: 999px;
+  background: var(--cf-rose-deep);
+  color: #fff;
+  font-size: .72rem;
+  display: grid;
+  place-items: center;
+  padding: 0 6px;
+  transition: transform .3s var(--cf-ease);
+}
+.cf-cart-count.bump { transform: scale(1.35); }
+
+.cf-toggler {
+  border: none;
+  font-size: 1.6rem;
+  color: var(--cf-coffee);
+  padding: 4px 8px;
+}
+.cf-toggler:focus { box-shadow: none; }
+
+/* ---------- Hero ---------- */
+.cf-hero {
+  padding: 170px 0 110px;
+  background:
+    radial-gradient(1200px 600px at 85% 10%, var(--cf-pink-100), transparent 60%),
+    radial-gradient(900px 500px at 0% 100%, var(--cf-peach), transparent 60%),
+    var(--cf-offwhite);
+  position: relative;
+  overflow: hidden;
+}
+
+.cf-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: .55;
+  pointer-events: none;
+}
+.cf-blob-1 { width: 380px; height: 380px; background: var(--cf-pink-200); top: -80px; right: 20%; animation: cf-float 14s ease-in-out infinite; }
+.cf-blob-2 { width: 300px; height: 300px; background: var(--cf-peach); bottom: -60px; left: -60px; animation: cf-float 18s ease-in-out infinite reverse; }
+
+.cf-hero-title {
+  font-family: var(--cf-font-display);
+  font-weight: 600;
+  font-size: clamp(2.7rem, 6vw, 4.6rem);
+  line-height: 1.05;
+  letter-spacing: -.01em;
+  margin-bottom: 24px;
+}
+.cf-hero-title em {
+  font-style: italic;
+  color: var(--cf-rose-deep);
+  position: relative;
+}
+.cf-hero-title em::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: 6px;
+  height: 12px;
+  background: var(--cf-pink-200);
+  opacity: .6;
+  z-index: -1;
+  border-radius: 6px;
+}
+
+.cf-hero-text {
+  font-size: 1.15rem;
+  line-height: 1.75;
+  color: var(--cf-muted);
+  max-width: 520px;
+  margin-bottom: 36px;
+}
+
+.cf-hero-stats {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  flex-wrap: wrap;
+}
+.cf-hero-stats strong {
+  display: block;
+  font-family: var(--cf-font-display);
+  font-size: 1.7rem;
+  color: var(--cf-coffee);
+}
+.cf-hero-stats span { font-size: .88rem; color: var(--cf-muted); }
+.cf-hero-stats .bi-star-fill { color: #f2b45a; }
+.cf-stat-divider { width: 1px; height: 40px; background: var(--cf-pink-200); }
+
+.cf-hero-visual {
+  position: relative;
+  max-width: 500px;
+  margin: 0 auto;
+}
+.cf-hero-arch {
+  border-radius: 260px 260px var(--cf-radius-lg) var(--cf-radius-lg);
+  overflow: hidden;
+  aspect-ratio: 4 / 5;
+  box-shadow: var(--cf-shadow-lg);
+  border: 10px solid #fff;
+  background: var(--cf-pink-100);
+}
+.cf-hero-arch img { width: 100%; height: 100%; object-fit: cover; }
+
+.cf-float-card {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, .92);
+  backdrop-filter: blur(10px);
+  padding: 12px 18px 12px 12px;
+  border-radius: 18px;
+  box-shadow: var(--cf-shadow);
+  animation: cf-float 6s ease-in-out infinite;
+}
+.cf-float-card small { display: block; font-size: .74rem; color: var(--cf-muted); }
+.cf-float-card strong { font-size: .95rem; color: var(--cf-coffee); }
+.cf-float-1 { top: 18%; left: -40px; }
+.cf-float-2 { bottom: 14%; right: -30px; animation-delay: -3s; }
+
+.cf-float-icon {
+  width: 42px; height: 42px;
+  border-radius: 13px;
+  display: grid;
+  place-items: center;
+  background: var(--cf-pink-100);
+  color: var(--cf-rose-deep);
+  font-size: 1.1rem;
+}
+
+.cf-hero-badge {
+  position: absolute;
+  top: -10px; right: 10px;
+  width: 92px; height: 92px;
+  border-radius: 50%;
+  background: var(--cf-coffee);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--cf-shadow);
+  border: 4px solid #fff;
+}
+.cf-hero-badge span { font-size: .7rem; letter-spacing: .14em; text-transform: uppercase; opacity: .8; }
+.cf-hero-badge strong { font-family: var(--cf-font-display); font-size: 1.35rem; }
+
+/* ---------- Icon color variants ---------- */
+.cf-icon-peach { background: var(--cf-peach) !important; color: #c97a55 !important; }
+.cf-icon-cream { background: #f6ecdf !important; color: var(--cf-coffee) !important; }
+.cf-icon-rose  { background: #fbe1e8 !important; color: #c25d7b !important; }
+
+/* ---------- Category cards ---------- */
+.cf-category-card {
+  display: block;
+  height: 100%;
+  background: #fff;
+  border-radius: var(--cf-radius);
+  padding: 34px 26px;
+  border: 1px solid var(--cf-pink-100);
+  box-shadow: var(--cf-shadow-sm);
+  transition: all .45s var(--cf-ease);
+  position: relative;
+  overflow: hidden;
+}
+.cf-category-card::before {
+  content: "";
+  position: absolute;
+  inset: auto -40% -60% auto;
+  width: 200px; height: 200px;
+  border-radius: 50%;
+  background: var(--cf-pink-50);
+  transition: transform .5s var(--cf-ease);
+  z-index: 0;
+}
+.cf-category-card > * { position: relative; z-index: 1; }
+.cf-category-card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--cf-shadow);
+  border-color: var(--cf-pink-200);
+}
+.cf-category-card:hover::before { transform: scale(1.6); }
+
+.cf-cat-icon {
+  width: 64px; height: 64px;
+  border-radius: 20px;
+  display: grid;
+  place-items: center;
+  font-size: 1.6rem;
+  background: var(--cf-pink-100);
+  color: var(--cf-rose-deep);
+  margin-bottom: 22px;
+}
+.cf-category-card h3 {
+  font-family: var(--cf-font-display);
+  font-size: 1.35rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.cf-category-card p { color: var(--cf-muted); font-size: .94rem; line-height: 1.6; margin-bottom: 18px; }
+.cf-cat-link { font-size: .85rem; font-weight: 600; color: var(--cf-rose-deep); }
+
+/* ---------- Filter pills ---------- */
+.cf-filter {
+  display: inline-flex;
+  background: #fff;
+  border-radius: 999px;
+  padding: 5px;
+  box-shadow: var(--cf-shadow-sm);
+  border: 1px solid var(--cf-pink-100);
+}
+.cf-filter button {
+  border: none;
+  background: transparent;
+  padding: 9px 20px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: .9rem;
+  color: var(--cf-coffee-2);
+  transition: all .3s var(--cf-ease);
+}
+.cf-filter button.active { background: var(--cf-rose-deep); color: #fff; }
+.cf-filter button:not(.active):hover { color: var(--cf-rose-deep); }
+
+/* ---------- Product cards ---------- */
+.cf-product-card {
+  background: #fff;
+  border-radius: var(--cf-radius);
+  overflow: hidden;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--cf-shadow-sm);
+  border: 1px solid var(--cf-pink-100);
+  transition: all .45s var(--cf-ease);
+}
+.cf-product-card:hover { transform: translateY(-8px); box-shadow: var(--cf-shadow); }
+
+.cf-product-img {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  margin: 10px 10px 0;
+  border-radius: 16px;
+  background: var(--cf-pink-100);
+}
+.cf-product-img img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform .8s var(--cf-ease);
+}
+.cf-product-card:hover .cf-product-img img { transform: scale(1.07); }
+
+.cf-tag {
+  position: absolute;
+  top: 14px; left: 14px;
+  background: rgba(255, 255, 255, .95);
+  color: var(--cf-rose-deep);
+  font-size: .74rem;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 999px;
+  letter-spacing: .03em;
+}
+.cf-fav {
+  position: absolute;
+  top: 12px; right: 12px;
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, .95);
+  color: var(--cf-rose-deep);
+  display: grid;
+  place-items: center;
+  transition: transform .3s var(--cf-ease);
+}
+.cf-fav:hover { transform: scale(1.1); }
+.cf-fav.liked i::before { content: "\f415"; } /* bi-heart-fill */
+
+.cf-product-body { padding: 20px 22px 24px; display: flex; flex-direction: column; flex: 1; }
+.cf-rating { font-size: .82rem; font-weight: 600; color: var(--cf-coffee-2); margin-bottom: 6px; }
+.cf-rating i { color: #f2b45a; }
+.cf-product-body h3 { font-family: var(--cf-font-display); font-size: 1.3rem; font-weight: 600; margin-bottom: 8px; }
+.cf-product-body p { color: var(--cf-muted); font-size: .93rem; line-height: 1.6; margin-bottom: 20px; flex: 1; }
+
+.cf-product-foot { display: flex; align-items: center; justify-content: space-between; }
+.cf-price { font-family: var(--cf-font-display); font-size: 1.45rem; font-weight: 700; color: var(--cf-coffee); }
+
+.cf-add-btn:not(.cf-btn-dark) {
+  background: var(--cf-pink-100);
+  color: var(--cf-rose-deep);
+  border: none;
+  padding: 10px 20px;
+}
+.cf-add-btn:not(.cf-btn-dark):hover { background: var(--cf-rose-deep); color: #fff; }
+.cf-add-btn.added { background: var(--cf-coffee) !important; color: #fff !important; }
+
+.cf-hidden { display: none !important; }
+
+/* ---------- Order cards ---------- */
+.cf-order-card {
+  background: #fff;
+  border-radius: var(--cf-radius-lg);
+  padding: 42px 34px;
+  height: 100%;
+  position: relative;
+  border: 1px solid var(--cf-pink-100);
+  box-shadow: var(--cf-shadow-sm);
+  transition: all .45s var(--cf-ease);
+}
+.cf-order-card:hover { transform: translateY(-8px); box-shadow: var(--cf-shadow); }
+.cf-order-featured {
+  background: linear-gradient(160deg, var(--cf-pink-100), var(--cf-peach));
+  border-color: transparent;
+}
+.cf-order-num {
+  position: absolute;
+  top: 28px; right: 32px;
+  font-family: var(--cf-font-display);
+  font-size: 2.6rem;
+  font-weight: 700;
+  color: var(--cf-pink-200);
+  line-height: 1;
+}
+.cf-order-featured .cf-order-num { color: #fff; }
+
+.cf-order-icon {
+  width: 70px; height: 70px;
+  border-radius: 22px;
+  display: grid;
+  place-items: center;
+  font-size: 1.8rem;
+  background: var(--cf-pink-50);
+  color: var(--cf-rose-deep);
+  margin-bottom: 26px;
+  border: 1px solid var(--cf-pink-100);
+}
+.cf-order-featured .cf-order-icon { background: #fff; border-color: #fff; }
+.cf-order-card h3 { font-family: var(--cf-font-display); font-size: 1.5rem; font-weight: 600; margin-bottom: 12px; }
+.cf-order-card p { color: var(--cf-muted); line-height: 1.7; margin-bottom: 22px; }
+.cf-order-featured p { color: var(--cf-coffee-2); }
+
+/* ---------- About ---------- */
+.cf-collage {
+  position: relative;
+  padding-right: 18%;
+  padding-bottom: 14%;
+}
+.cf-collage-main {
+  border-radius: var(--cf-radius-lg);
+  overflow: hidden;
+  aspect-ratio: 4 / 5;
+  box-shadow: var(--cf-shadow);
+  background: var(--cf-pink-100);
+}
+.cf-collage-main img, .cf-collage-side img { width: 100%; height: 100%; object-fit: cover; }
+.cf-collage-side {
+  position: absolute;
+  right: 0; bottom: 0;
+  width: 48%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 10px solid var(--cf-cream);
+  box-shadow: var(--cf-shadow);
+  background: var(--cf-peach);
+}
+.cf-collage-note {
+  position: absolute;
+  left: -14px; bottom: 22%;
+  background: #fff;
+  padding: 14px 20px;
+  border-radius: 16px;
+  box-shadow: var(--cf-shadow);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--cf-font-display);
+  font-style: italic;
+  color: var(--cf-coffee);
+  max-width: 240px;
+}
+.cf-collage-note i { color: var(--cf-rose-deep); font-size: 1.3rem; }
+
+.cf-feature {
+  display: flex;
+  gap: 14px;
+  background: #fff;
+  padding: 18px;
+  border-radius: var(--cf-radius-sm);
+  height: 100%;
+  border: 1px solid #f3e7da;
+  transition: all .35s var(--cf-ease);
+}
+.cf-feature:hover { border-color: var(--cf-pink-200); box-shadow: var(--cf-shadow-sm); }
+.cf-feature-icon {
+  flex-shrink: 0;
+  width: 44px; height: 44px;
+  border-radius: 14px;
+  background: var(--cf-pink-100);
+  color: var(--cf-rose-deep);
+  display: grid;
+  place-items: center;
+  font-size: 1.15rem;
+}
+.cf-feature h4 { font-size: 1rem; font-weight: 700; margin-bottom: 3px; }
+.cf-feature p { font-size: .88rem; color: var(--cf-muted); margin: 0; }
+
+/* ---------- Offer ---------- */
+.cf-offer {
+  position: relative;
+  overflow: hidden;
+  border-radius: 40px;
+  padding: 64px;
+  background: linear-gradient(120deg, var(--cf-pink-200) 0%, var(--cf-pink-100) 45%, var(--cf-peach) 100%);
+  box-shadow: var(--cf-shadow);
+}
+.cf-offer-shape {
+  position: absolute;
+  width: 520px; height: 520px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .35);
+  top: -220px; left: -160px;
+}
+.cf-offer-pill {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  background: #fff;
+  color: var(--cf-rose-deep);
+  font-weight: 600;
+  font-size: .85rem;
+  padding: 8px 16px;
+  border-radius: 999px;
+  margin-bottom: 20px;
+}
+.cf-offer-title {
+  font-family: var(--cf-font-display);
+  font-size: clamp(2.4rem, 5vw, 3.8rem);
+  font-weight: 700;
+  color: var(--cf-coffee);
+  margin-bottom: 14px;
+}
+.cf-offer-text { font-size: 1.1rem; color: var(--cf-coffee-2); max-width: 470px; line-height: 1.7; margin-bottom: 30px; }
+.cf-offer-price { display: flex; align-items: baseline; gap: 12px; }
+.cf-old { text-decoration: line-through; color: var(--cf-coffee-2); opacity: .7; font-size: 1.1rem; }
+.cf-new { font-family: var(--cf-font-display); font-size: 2.6rem; font-weight: 700; color: var(--cf-coffee); }
+
+.cf-offer-visual { position: relative; max-width: 360px; margin-left: auto; }
+.cf-offer-visual img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 10px solid rgba(255, 255, 255, .8);
+  box-shadow: var(--cf-shadow-lg);
+  background: #fff;
+}
+.cf-offer-badge {
+  position: absolute;
+  top: 6%; left: -4%;
+  width: 96px; height: 96px;
+  border-radius: 50%;
+  background: var(--cf-rose-deep);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transform: rotate(-12deg);
+  box-shadow: var(--cf-shadow);
+  animation: cf-pulse 3s ease-in-out infinite;
+}
+.cf-offer-badge strong { font-family: var(--cf-font-display); font-size: 1.6rem; line-height: 1; }
+.cf-offer-badge span { font-size: .78rem; text-transform: uppercase; letter-spacing: .12em; }
+
+/* ---------- Reviews ---------- */
+.cf-review {
+  background: #fff;
+  border-radius: var(--cf-radius);
+  padding: 34px 30px;
+  margin: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--cf-pink-100);
+  box-shadow: var(--cf-shadow-sm);
+  position: relative;
+  transition: all .45s var(--cf-ease);
+}
+.cf-review::before {
+  content: "\201C";
+  position: absolute;
+  top: 6px; right: 26px;
+  font-family: var(--cf-font-display);
+  font-size: 6rem;
+  color: var(--cf-pink-100);
+  line-height: 1;
+}
+.cf-review:hover { transform: translateY(-6px); box-shadow: var(--cf-shadow); }
+.cf-review-featured { border-color: var(--cf-pink-200); box-shadow: var(--cf-shadow); }
+
+.cf-stars { color: #f2b45a; display: flex; gap: 3px; margin-bottom: 18px; }
+.cf-review blockquote {
+  font-size: 1.03rem;
+  line-height: 1.75;
+  color: var(--cf-coffee-2);
+  flex: 1;
+  margin-bottom: 26px;
+  position: relative;
+}
+.cf-review figcaption { display: flex; align-items: center; gap: 14px; }
+.cf-review figcaption strong { display: block; color: var(--cf-ink); }
+.cf-review figcaption small { color: var(--cf-muted); }
+
+.cf-avatar {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  background: var(--cf-pink-200);
+  color: var(--cf-rose-deep);
+}
+.cf-avatar-peach { background: var(--cf-peach); color: #c97a55; }
+.cf-avatar-cream { background: #f3e7da; color: var(--cf-coffee); }
+
+/* ---------- Footer ---------- */
+.cf-footer {
+  background: var(--cf-cream);
+  padding: 0 0 30px;
+  margin-top: 60px;
+  border-top: 1px solid #f3e7da;
+}
+.cf-newsletter {
+  background: #fff;
+  border-radius: var(--cf-radius-lg);
+  padding: 40px 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+  box-shadow: var(--cf-shadow);
+  transform: translateY(-60px);
+  border: 1px solid var(--cf-pink-100);
+}
+.cf-newsletter h3 { font-family: var(--cf-font-display); font-weight: 600; font-size: 1.7rem; margin-bottom: 4px; }
+.cf-newsletter p { color: var(--cf-muted); margin: 0; }
+.cf-newsletter-form {
+  display: flex;
+  gap: 8px;
+  background: var(--cf-pink-50);
+  padding: 6px;
+  border-radius: 999px;
+  border: 1px solid var(--cf-pink-100);
+  flex: 1;
+  max-width: 440px;
+  min-width: 260px;
+}
+.cf-newsletter-form input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 0 18px;
+  outline: none;
+  color: var(--cf-ink);
+  min-width: 0;
+}
+
+.cf-footer-main { padding-bottom: 50px; }
+.cf-footer h5 {
+  font-size: .82rem;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--cf-coffee);
+  margin-bottom: 20px;
+}
+.cf-footer-text { color: var(--cf-muted); line-height: 1.7; max-width: 320px; }
+
+.cf-footer-links, .cf-contact-list, .cf-hours { list-style: none; padding: 0; margin: 0; }
+.cf-footer-links li, .cf-contact-list li { margin-bottom: 12px; }
+.cf-footer-links a, .cf-contact-list a { color: var(--cf-muted); transition: color .3s; }
+.cf-footer-links a:hover, .cf-contact-list a:hover { color: var(--cf-rose-deep); }
+.cf-contact-list li { display: flex; gap: 10px; color: var(--cf-muted); }
+.cf-contact-list i { color: var(--cf-rose-deep); }
+
+.cf-hours li {
+  display: flex;
+  justify-content: space-between;
+  padding: 9px 0;
+  border-bottom: 1px dashed #ead9c8;
+  color: var(--cf-muted);
+  font-size: .94rem;
+}
+.cf-hours li span:last-child { color: var(--cf-coffee); font-weight: 600; }
+
+.cf-open-now {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  font-size: .85rem;
+  font-weight: 600;
+  color: #5c8a6a;
+  background: #e8f3ea;
+  padding: 6px 14px;
+  border-radius: 999px;
+}
+.cf-open-now.closed { color: var(--cf-rose-deep); background: var(--cf-pink-100); }
+.cf-dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; animation: cf-pulse 2s infinite; }
+
+.cf-socials { display: flex; gap: 10px; margin-top: 22px; }
+.cf-socials a {
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  background: #fff;
+  border: 1px solid var(--cf-pink-100);
+  display: grid;
+  place-items: center;
+  color: var(--cf-rose-deep);
+  transition: all .35s var(--cf-ease);
+}
+.cf-socials a:hover { background: var(--cf-rose-deep); color: #fff; transform: translateY(-3px); }
+
+.cf-footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding-top: 26px;
+  border-top: 1px solid #ead9c8;
+  font-size: .88rem;
+  color: var(--cf-muted);
+}
+.cf-footer-bottom .bi-heart-fill { color: var(--cf-rose); }
+
+/* ---------- Cart drawer ---------- */
+.cf-cart-drawer { background: var(--cf-offwhite); border-left: none; }
+.cf-cart-drawer .offcanvas-header { border-bottom: 1px solid var(--cf-pink-100); padding: 22px 26px; }
+.cf-cart-drawer .offcanvas-title { font-family: var(--cf-font-display); font-weight: 600; display: flex; gap: 10px; color: var(--cf-coffee); }
+.cf-cart-drawer .offcanvas-body { padding: 22px 26px; }
+
+.cf-cart-empty { text-align: center; margin: auto; color: var(--cf-muted); }
+.cf-cart-empty .cf-cat-icon { margin: 0 auto 18px; }
+
+.cf-cart-items { list-style: none; padding: 0; margin: 0; flex: 1; overflow-y: auto; }
+.cf-cart-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: #fff;
+  border: 1px solid var(--cf-pink-100);
+  border-radius: 16px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+}
+.cf-cart-item strong { display: block; font-size: .96rem; }
+.cf-cart-item small { color: var(--cf-muted); }
+.cf-qty { display: flex; align-items: center; gap: 8px; }
+.cf-qty button {
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  border: none;
+  background: var(--cf-pink-100);
+  color: var(--cf-rose-deep);
+  font-weight: 700;
+  line-height: 1;
+}
+.cf-qty button:hover { background: var(--cf-rose-deep); color: #fff; }
+.cf-qty span { min-width: 18px; text-align: center; font-weight: 600; }
+.cf-cart-footer { border-top: 1px solid var(--cf-pink-100); padding-top: 20px; margin-top: 10px; }
+.cf-cart-footer strong { font-family: var(--cf-font-display); font-size: 1.4rem; color: var(--cf-coffee); }
+
+/* ---------- Toast ---------- */
+.cf-toast {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translate(-50%, 140%);
+  background: var(--cf-coffee);
+  color: #fff;
+  padding: 14px 24px;
+  border-radius: 999px;
+  box-shadow: var(--cf-shadow-lg);
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  font-weight: 500;
+  z-index: 2000;
+  transition: transform .5s var(--cf-ease);
+}
+.cf-toast i { color: var(--cf-pink-300); }
+.cf-toast.show { transform: translate(-50%, 0); }
+
+/* ---------- Image fallback placeholder ---------- */
+.cf-img-fallback {
+  width: 100%; height: 100%;
+  display: grid;
+  place-items: center;
+  font-size: 3rem;
+  color: var(--cf-rose-deep);
+  background:
+    radial-gradient(circle at 30% 30%, #fff 0, transparent 45%),
+    linear-gradient(135deg, var(--cf-pink-100), var(--cf-peach));
+}
+
+/* ---------- Reveal on scroll ---------- */
+.reveal { opacity: 0; transform: translateY(28px); transition: opacity .9s var(--cf-ease), transform .9s var(--cf-ease); }
+.reveal.visible { opacity: 1; transform: none; }
+
+/* ---------- Animations ---------- */
+@keyframes cf-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-14px); }
+}
+@keyframes cf-pulse {
+  0%, 100% { transform: rotate(-12deg) scale(1); }
+  50% { transform: rotate(-12deg) scale(1.06); }
+}
+.cf-dot { animation-name: cf-blink; }
+@keyframes cf-blink { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .reveal { opacity: 1; transform: none; }
+  html { scroll-behavior: auto; }
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 991.98px) {
+  .cf-navbar { background: rgba(255, 252, 250, .92); backdrop-filter: blur(14px); }
+  .navbar-collapse {
+    background: #fff;
+    border-radius: var(--cf-radius);
+    margin-top: 14px;
+    padding: 12px;
+    box-shadow: var(--cf-shadow);
+  }
+  .cf-nav-links .nav-link { padding: 12px 16px !important; }
+  .cf-hero { padding: 140px 0 80px; text-align: center; }
+  .cf-hero-text { margin-left: auto; margin-right: auto; }
+  .cf-hero .d-flex.flex-wrap, .cf-hero-stats { justify-content: center; }
+  .cf-float-1 { left: -10px; }
+  .cf-float-2 { right: -10px; }
+  .cf-section { padding: 80px 0; }
+  .cf-offer { padding: 44px 32px; text-align: center; }
+  .cf-offer-text { margin-left: auto; margin-right: auto; }
+  .cf-offer .d-flex { justify-content: center; }
+  .cf-offer-visual { margin: 10px auto 0; }
+  .cf-filter { margin-top: 10px; }
+}
+
+@media (max-width: 575.98px) {
+  .cf-hero-title { font-size: 2.5rem; }
+  .cf-stat-divider { display: none; }
+  .cf-hero-stats { gap: 22px; }
+  .cf-float-card { padding: 8px 12px 8px 8px; }
+  .cf-float-card strong { font-size: .82rem; }
+  .cf-float-icon { width: 34px; height: 34px; font-size: .95rem; }
+  .cf-hero-badge { width: 72px; height: 72px; }
+  .cf-hero-badge strong { font-size: 1.05rem; }
+  .cf-category-card { padding: 24px 18px; }
+  .cf-cat-icon { width: 52px; height: 52px; font-size: 1.3rem; }
+  .cf-category-card h3 { font-size: 1.12rem; }
+  .cf-category-card p { font-size: .85rem; }
+  .cf-order-card { padding: 34px 26px; }
+  .cf-newsletter { padding: 30px 24px; }
+  .cf-newsletter-form { min-width: 100%; }
+  .cf-collage-note { left: 0; font-size: .9rem; }
+  .cf-offer { border-radius: 28px; padding: 36px 22px; }
+}
+
+
+/* =========================================================
+   PRODUCTS PAGE — page-specific styles
+   ========================================================= */
+
+/* ---------- Navbar on inner pages: always solid ---------- */
+.cf-navbar.cf-navbar-solid {
+  background: rgba(255, 252, 250, .88);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+/* ---------- Page header ---------- */
+.cf-page-header {
+  position: relative;
+  overflow: hidden;
+  padding: 160px 0 80px;
+  text-align: center;
+  background:
+    radial-gradient(700px 360px at 50% 0%, #fff 0%, transparent 70%),
+    linear-gradient(180deg, var(--cf-pink-100) 0%, var(--cf-pink-50) 70%, var(--cf-offwhite) 100%);
+}
+.cf-page-header .cf-blob-1 { top: -120px; right: 8%; }
+.cf-page-header .cf-blob-2 { bottom: -120px; left: 4%; }
+
+.cf-breadcrumb {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, .8);
+  border: 1px solid var(--cf-pink-200);
+  border-radius: 999px;
+  padding: 7px 16px;
+  font-size: .85rem;
+  font-weight: 500;
+  color: var(--cf-coffee-2);
+  margin-bottom: 22px;
+}
+.cf-breadcrumb a { color: var(--cf-rose-deep); }
+.cf-breadcrumb a:hover { color: var(--cf-coffee); }
+.cf-breadcrumb i { font-size: .7rem; opacity: .6; }
+
+.cf-page-title {
+  font-family: var(--cf-font-display);
+  font-weight: 600;
+  font-size: clamp(2.4rem, 5.4vw, 4rem);
+  line-height: 1.08;
+  margin-bottom: 18px;
+}
+.cf-page-title em { font-style: italic; color: var(--cf-rose-deep); }
+.cf-page-sub {
+  max-width: 560px;
+  margin: 0 auto;
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: var(--cf-muted);
+}
+
+.cf-deco {
+  position: absolute;
+  width: 62px; height: 62px;
+  border-radius: 20px;
+  display: grid;
+  place-items: center;
+  font-size: 1.5rem;
+  background: rgba(255, 255, 255, .85);
+  color: var(--cf-rose-deep);
+  box-shadow: var(--cf-shadow);
+  animation: cf-float 7s ease-in-out infinite;
+}
+.cf-deco-1 { top: 34%; left: 9%; transform: rotate(-8deg); }
+.cf-deco-2 { top: 62%; left: 17%; width: 48px; height: 48px; font-size: 1.15rem; border-radius: 16px; color: #c97a55; animation-delay: -2s; }
+.cf-deco-3 { top: 30%; right: 10%; color: var(--cf-coffee); animation-delay: -4s; }
+.cf-deco-4 { top: 64%; right: 18%; width: 48px; height: 48px; font-size: 1.15rem; border-radius: 16px; animation-delay: -1s; }
+
+/* ---------- Category pills ---------- */
+.cf-menu-section { padding: 10px 0 100px; }
+
+.cf-cat-scroll {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 6px 4px 14px;
+  scrollbar-width: none;
+  scroll-snap-type: x proximity;
+}
+.cf-cat-scroll::-webkit-scrollbar { display: none; }
+@media (min-width: 1200px) { .cf-cat-scroll { justify-content: center; flex-wrap: wrap; } }
+
+.cf-pill {
+  flex-shrink: 0;
+  scroll-snap-align: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 20px;
+  border-radius: 999px;
+  border: 1.5px solid #f3e7da;
+  background: #fff;
+  color: var(--cf-coffee-2);
+  font-weight: 600;
+  font-size: .93rem;
+  white-space: nowrap;
+  transition: all .35s var(--cf-ease);
+}
+.cf-pill i { font-size: 1rem; color: var(--cf-rose); transition: color .3s; }
+.cf-pill .cf-pill-count {
+  font-size: .72rem;
+  background: var(--cf-cream);
+  color: var(--cf-coffee-2);
+  border-radius: 999px;
+  padding: 2px 8px;
+}
+.cf-pill:hover { border-color: var(--cf-pink-300); color: var(--cf-rose-deep); transform: translateY(-2px); }
+.cf-pill.active {
+  background: linear-gradient(135deg, var(--cf-rose), var(--cf-rose-deep));
+  border-color: transparent;
+  color: #fff;
+  box-shadow: 0 10px 22px rgba(212, 111, 140, .28);
+}
+.cf-pill.active i { color: #fff; }
+.cf-pill.active .cf-pill-count { background: rgba(255, 255, 255, .25); color: #fff; }
+
+/* ---------- Toolbar ---------- */
+.cf-toolbar {
+  background: #fff;
+  border: 1px solid var(--cf-pink-100);
+  border-radius: var(--cf-radius);
+  box-shadow: var(--cf-shadow-sm);
+  padding: 14px;
+  margin: 14px 0 14px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, .8fr);
+  gap: 12px;
+}
+@media (min-width: 992px) {
+  .cf-toolbar { grid-template-columns: minmax(0, 1.3fr) 220px auto; align-items: center; }
+}
+
+.cf-search {
+  position: relative;
+}
+.cf-search > i {
+  position: absolute;
+  left: 18px; top: 50%;
+  transform: translateY(-50%);
+  color: var(--cf-rose);
+}
+.cf-search input {
+  width: 100%;
+  height: 50px;
+  border-radius: 999px;
+  border: 1.5px solid var(--cf-pink-100);
+  background: var(--cf-pink-50);
+  padding: 0 44px 0 46px;
+  color: var(--cf-ink);
+  outline: none;
+  transition: all .3s var(--cf-ease);
+}
+.cf-search input::placeholder { color: #b49c97; }
+.cf-search input:focus { border-color: var(--cf-pink-300); background: #fff; box-shadow: 0 0 0 4px rgba(244, 184, 201, .25); }
+.cf-search-clear {
+  position: absolute;
+  right: 10px; top: 50%;
+  transform: translateY(-50%);
+  width: 30px; height: 30px;
+  border: none;
+  border-radius: 50%;
+  background: var(--cf-pink-100);
+  color: var(--cf-rose-deep);
+  display: none;
+  place-items: center;
+}
+.cf-search-clear.show { display: grid; }
+
+.cf-select {
+  height: 50px;
+  border-radius: 999px;
+  border: 1.5px solid var(--cf-pink-100);
+  background-color: #fff;
+  color: var(--cf-coffee);
+  font-weight: 600;
+  padding-left: 20px;
+  cursor: pointer;
+}
+.cf-select:focus { border-color: var(--cf-pink-300); box-shadow: 0 0 0 4px rgba(244, 184, 201, .25); }
+
+.cf-chips { display: flex; gap: 8px; flex-wrap: wrap; grid-column: 1 / -1; }
+@media (min-width: 992px) { .cf-chips { grid-column: auto; flex-wrap: nowrap; } }
+
+.cf-chip input { position: absolute; opacity: 0; pointer-events: none; }
+.cf-chip span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 42px;
+  padding: 0 16px;
+  border-radius: 999px;
+  border: 1.5px dashed var(--cf-pink-200);
+  color: var(--cf-coffee-2);
+  font-weight: 600;
+  font-size: .88rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all .3s var(--cf-ease);
+  user-select: none;
+}
+.cf-chip span:hover { border-color: var(--cf-rose); color: var(--cf-rose-deep); }
+.cf-chip input:checked + span {
+  border-style: solid;
+  border-color: var(--cf-pink-300);
+  background: var(--cf-pink-100);
+  color: var(--cf-rose-deep);
+}
+.cf-chip input:focus-visible + span { outline: 2px solid var(--cf-rose); outline-offset: 2px; }
+
+.cf-results-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 26px;
+  color: var(--cf-muted);
+  font-size: .95rem;
+}
+.cf-results-bar strong { color: var(--cf-coffee); }
+.cf-reset-link {
+  border: none;
+  background: none;
+  color: var(--cf-rose-deep);
+  font-weight: 600;
+  font-size: .9rem;
+  display: none;
+  align-items: center;
+  gap: 6px;
+}
+.cf-reset-link.show { display: inline-flex; }
+.cf-reset-link:hover { color: var(--cf-coffee); }
+
+/* ---------- Product grid ---------- */
+.cf-product-card .cf-product-img { display: block; }
+.cf-product-img-link { display: block; width: 100%; height: 100%; }
+.cf-product-body h3 a { color: inherit; transition: color .3s; }
+.cf-product-body h3 a:hover { color: var(--cf-rose-deep); }
+.cf-product-body h3 { font-size: 1.22rem; }
+.cf-product-body p {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 3.2em;
+}
+.cf-product-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+.cf-cat-label { font-size: .74rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--cf-rose); }
+.cf-veg { color: #6d9b77; font-size: .8rem; font-weight: 600; display: inline-flex; gap: 4px; align-items: center; }
+
+.cf-price small { font-family: var(--cf-font-body); font-size: .72rem; font-weight: 500; color: var(--cf-muted); display: block; margin-bottom: -2px; }
+
+.cf-tag-best    { background: #fff; color: var(--cf-rose-deep); }
+.cf-tag-new     { background: #e6f3ea; color: #4f8a5e; }
+.cf-tag-popular { background: var(--cf-peach); color: #b9673f; }
+.cf-tag-chef    { background: #efe8f8; color: #7c62a8; }
+
+.cf-fav.liked { background: var(--cf-rose-deep); color: #fff; }
+.cf-fav.pop { animation: cf-heart .45s var(--cf-ease); }
+@keyframes cf-heart { 0% { transform: scale(1); } 40% { transform: scale(1.3); } 100% { transform: scale(1); } }
+
+.cf-add-btn .bi-sliders { font-size: .85rem; }
+
+.cf-grid-item { animation: cf-card-in .5s var(--cf-ease) both; }
+@keyframes cf-card-in { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+
+.cf-empty-state {
+  text-align: center;
+  padding: 70px 20px;
+  background: #fff;
+  border: 1.5px dashed var(--cf-pink-200);
+  border-radius: var(--cf-radius-lg);
+}
+.cf-empty-state .cf-cat-icon { margin: 0 auto 18px; }
+.cf-empty-state h3 { font-family: var(--cf-font-display); font-weight: 600; margin-bottom: 8px; }
+.cf-empty-state p { color: var(--cf-muted); margin-bottom: 22px; }
+
+/* ---------- Promo banner ---------- */
+.cf-promo {
+  position: relative;
+  overflow: hidden;
+  border-radius: 36px;
+  background: linear-gradient(110deg, var(--cf-pink-100) 0%, var(--cf-pink-200) 55%, var(--cf-peach) 100%);
+  box-shadow: var(--cf-shadow);
+  padding: 50px 56px;
+}
+.cf-promo::before, .cf-promo::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .35);
+}
+.cf-promo::before { width: 340px; height: 340px; right: -100px; top: -140px; }
+.cf-promo::after { width: 180px; height: 180px; left: 38%; bottom: -110px; }
+.cf-promo > .row { position: relative; z-index: 1; }
+.cf-promo-title {
+  font-family: var(--cf-font-display);
+  font-weight: 700;
+  font-size: clamp(1.9rem, 3.4vw, 2.7rem);
+  color: var(--cf-coffee);
+  line-height: 1.15;
+  margin-bottom: 12px;
+}
+.cf-promo-text { color: var(--cf-coffee-2); font-size: 1.06rem; margin-bottom: 26px; max-width: 440px; }
+.cf-promo-photos { display: flex; justify-content: center; align-items: center; }
+.cf-promo-photo {
+  width: 190px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 8px solid rgba(255, 255, 255, .85);
+  box-shadow: var(--cf-shadow-lg);
+  background: #fff;
+}
+.cf-promo-photo img { width: 100%; height: 100%; object-fit: cover; }
+.cf-promo-photo + .cf-promo-photo { margin-left: -36px; transform: translateY(26px); }
+.cf-promo-plus {
+  position: absolute;
+  width: 46px; height: 46px;
+  border-radius: 50%;
+  background: var(--cf-rose-deep);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  font-size: 1.2rem;
+  box-shadow: var(--cf-shadow);
+  z-index: 2;
+}
+
+/* ---------- Customize modal ---------- */
+.cf-modal .modal-content {
+  border: none;
+  border-radius: 28px;
+  overflow: hidden;
+  background: var(--cf-offwhite);
+  box-shadow: var(--cf-shadow-lg);
+}
+.cf-modal-img {
+  height: 100%;
+  min-height: 260px;
+  position: relative;
+  background: var(--cf-pink-100);
+}
+.cf-modal-img img { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; }
+.cf-modal-img .cf-img-fallback { position: absolute; inset: 0; }
+.cf-modal-close {
+  position: absolute;
+  top: 16px; right: 16px;
+  z-index: 3;
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  border: none;
+  background: #fff;
+  color: var(--cf-coffee);
+  display: grid;
+  place-items: center;
+  box-shadow: var(--cf-shadow-sm);
+}
+.cf-modal-close:hover { color: var(--cf-rose-deep); }
+.cf-modal-body { padding: 34px 32px 28px; }
+.cf-modal-title { font-family: var(--cf-font-display); font-weight: 600; font-size: 1.8rem; margin-bottom: 6px; }
+.cf-modal-desc { color: var(--cf-muted); font-size: .95rem; margin-bottom: 22px; }
+
+.cf-opt-group { margin-bottom: 18px; }
+.cf-opt-label {
+  font-size: .78rem;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--cf-coffee);
+  margin-bottom: 10px;
+  display: block;
+}
+.cf-opt-choices { display: flex; gap: 8px; flex-wrap: wrap; }
+.cf-opt input { position: absolute; opacity: 0; pointer-events: none; }
+.cf-opt span {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 92px;
+  padding: 9px 14px;
+  border-radius: 16px;
+  border: 1.5px solid #f3e7da;
+  background: #fff;
+  color: var(--cf-coffee-2);
+  font-weight: 600;
+  font-size: .9rem;
+  cursor: pointer;
+  transition: all .25s var(--cf-ease);
+  line-height: 1.25;
+}
+.cf-opt span small { font-weight: 500; font-size: .72rem; color: var(--cf-muted); }
+.cf-opt span:hover { border-color: var(--cf-pink-300); }
+.cf-opt input:checked + span {
+  border-color: var(--cf-rose);
+  background: var(--cf-pink-100);
+  color: var(--cf-rose-deep);
+}
+.cf-opt input:checked + span small { color: var(--cf-rose-deep); }
+.cf-opt input:focus-visible + span { outline: 2px solid var(--cf-rose); outline-offset: 2px; }
+
+.cf-modal-foot {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  padding-top: 18px;
+  margin-top: 6px;
+  border-top: 1px solid var(--cf-pink-100);
+}
+.cf-modal-total small { display: block; color: var(--cf-muted); font-size: .78rem; }
+.cf-modal-total strong { font-family: var(--cf-font-display); font-size: 1.7rem; color: var(--cf-coffee); }
+.cf-modal-foot .btn { margin-left: auto; }
+
+.cf-stepper {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #fff;
+  border: 1.5px solid var(--cf-pink-100);
+  border-radius: 999px;
+  padding: 4px;
+}
+.cf-stepper button {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: var(--cf-pink-100);
+  color: var(--cf-rose-deep);
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+  transition: all .25s;
+}
+.cf-stepper button:hover { background: var(--cf-rose-deep); color: #fff; }
+.cf-stepper button:disabled { opacity: .4; pointer-events: none; }
+.cf-stepper span { min-width: 26px; text-align: center; font-weight: 700; color: var(--cf-coffee); }
+
+/* ---------- Cart drawer (extended) ---------- */
+.cf-cart-drawer { width: 420px !important; max-width: 100vw; background: linear-gradient(180deg, #fff 0%, var(--cf-pink-50) 100%); }
+.cf-cart-drawer .offcanvas-title small { font-family: var(--cf-font-body); font-size: .8rem; color: var(--cf-muted); font-weight: 500; align-self: center; }
+
+.cf-cart-line {
+  display: grid;
+  grid-template-columns: 72px 1fr;
+  gap: 14px;
+  background: #fff;
+  border: 1px solid var(--cf-pink-100);
+  border-radius: 18px;
+  padding: 12px;
+  margin-bottom: 12px;
+  box-shadow: var(--cf-shadow-sm);
+  animation: cf-card-in .35s var(--cf-ease) both;
+}
+.cf-cart-thumb {
+  width: 72px; height: 72px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--cf-pink-100);
+}
+.cf-cart-thumb img, .cf-cart-thumb .cf-img-fallback { width: 100%; height: 100%; object-fit: cover; font-size: 1.5rem; }
+.cf-cart-line-top { display: flex; justify-content: space-between; gap: 8px; }
+.cf-cart-line h6 { font-weight: 700; font-size: .96rem; margin: 2px 0 2px; color: var(--cf-ink); }
+.cf-cart-opts { font-size: .78rem; color: var(--cf-muted); line-height: 1.4; margin-bottom: 8px; }
+.cf-cart-remove {
+  border: none;
+  background: none;
+  color: #c2a8a3;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  transition: all .25s;
+}
+.cf-cart-remove:hover { background: var(--cf-pink-100); color: var(--cf-rose-deep); }
+.cf-cart-line-bottom { display: flex; justify-content: space-between; align-items: center; }
+.cf-cart-line-bottom .cf-stepper { padding: 2px; }
+.cf-cart-line-bottom .cf-stepper button { width: 28px; height: 28px; }
+.cf-line-price { font-family: var(--cf-font-display); font-weight: 700; color: var(--cf-coffee); font-size: 1.08rem; }
+
+.cf-cart-empty h6 { font-family: var(--cf-font-display); font-size: 1.4rem; color: var(--cf-coffee); margin-bottom: 6px; }
+.cf-cart-empty .cf-cat-icon { width: 84px; height: 84px; border-radius: 50%; font-size: 2rem; }
+
+.cf-cart-summary li { display: flex; justify-content: space-between; color: var(--cf-muted); margin-bottom: 6px; font-size: .94rem; }
+.cf-cart-summary { list-style: none; padding: 0; margin: 0 0 14px; }
+.cf-cart-summary .cf-sum-total { color: var(--cf-ink); font-weight: 700; padding-top: 8px; border-top: 1px dashed var(--cf-pink-200); margin-top: 8px; }
+.cf-cart-summary .cf-sum-total strong { font-family: var(--cf-font-display); font-size: 1.45rem; color: var(--cf-coffee); }
+.cf-free-note { font-size: .8rem; color: var(--cf-rose-deep); background: var(--cf-pink-100); border-radius: 12px; padding: 8px 12px; margin-bottom: 14px; display: flex; gap: 8px; align-items: center; }
+
+/* ---------- Responsive tweaks ---------- */
+@media (max-width: 991.98px) {
+  .cf-page-header { padding: 130px 0 60px; }
+  .cf-deco-2, .cf-deco-4 { display: none; }
+  .cf-deco-1 { top: 22%; left: 4%; }
+  .cf-deco-3 { top: 20%; right: 4%; }
+  .cf-promo { padding: 40px 30px; text-align: center; }
+  .cf-promo-text { margin-left: auto; margin-right: auto; }
+  .cf-promo-photos { margin-top: 20px; }
+}
+@media (max-width: 767.98px) {
+  .cf-toolbar { grid-template-columns: 1fr; }
+  .cf-modal-img { min-height: 200px; height: 200px; }
+  .cf-modal-body { padding: 26px 22px 22px; }
+}
+@media (max-width: 575.98px) {
+  .cf-deco { display: none; }
+  .cf-opt span { min-width: 0; flex: 1; }
+  .cf-opt { flex: 1 1 30%; display: flex; }
+  .cf-promo-photo { width: 140px; }
+  .cf-promo { border-radius: 28px; padding: 34px 20px; }
+  .cf-modal-foot .btn { width: 100%; margin-left: 0; }
+}
+  </style>
+</head>
+<body>
+
+  <!-- ============ NAVBAR (shared with Homepage) ============ -->
+  <nav id="mainNav" class="navbar navbar-expand-lg cf-navbar cf-navbar-solid fixed-top">
+    <div class="container">
+      <a class="navbar-brand cf-logo" href="index.html">
+        <span class="cf-logo-mark"><i class="bi bi-cup-hot-fill"></i></span>
+        Cafe<span>Flow</span>
+      </a>
+
+      <div class="d-flex align-items-center gap-2 order-lg-3">
+        <button class="btn cf-cart-btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#cartDrawer" aria-controls="cartDrawer" aria-label="Open cart">
+          <i class="bi bi-bag-heart"></i>
+          <span class="d-none d-sm-inline">Cart</span>
+          <span class="cf-cart-count" id="cartCount">0</span>
+        </button>
+        <a href="#menuGrid" class="btn cf-btn-primary d-none d-md-inline-flex">Order Now</a>
+        <button class="navbar-toggler cf-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navLinks" aria-controls="navLinks" aria-expanded="false" aria-label="Toggle navigation">
+          <i class="bi bi-list"></i>
+        </button>
+      </div>
+
+      <div class="collapse navbar-collapse order-lg-2" id="navLinks">
+        <ul class="navbar-nav mx-auto cf-nav-links">
+          <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link active" aria-current="page" href="products.html">Menu</a></li>
+          <li class="nav-item"><a class="nav-link" href="index.html#about">About</a></li>
+          <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ============ PAGE HEADER ============ -->
+  <header class="cf-page-header">
+    <div class="cf-blob cf-blob-1"></div>
+    <div class="cf-blob cf-blob-2"></div>
+    <span class="cf-deco cf-deco-1" aria-hidden="true"><i class="bi bi-cup-hot"></i></span>
+    <span class="cf-deco cf-deco-2" aria-hidden="true"><i class="bi bi-flower1"></i></span>
+    <span class="cf-deco cf-deco-3" aria-hidden="true"><i class="bi bi-cake2"></i></span>
+    <span class="cf-deco cf-deco-4" aria-hidden="true"><i class="bi bi-heart"></i></span>
+
+    <div class="container position-relative">
+      <nav aria-label="Breadcrumb">
+        <div class="cf-breadcrumb">
+          <a href="index.html"><i class="bi bi-house-heart"></i> Home</a>
+          <i class="bi bi-chevron-right"></i>
+          <span aria-current="page">Our Menu</span>
+        </div>
+      </nav>
+      <h1 class="cf-page-title">A Little Something <em>Delicious</em></h1>
+      <p class="cf-page-sub">
+        Explore our handcrafted coffees, delightful desserts, refreshing drinks, and freshly prepared treats.
+      </p>
+    </div>
+  </header>
+
+  <!-- ============ MENU: CATEGORIES, TOOLBAR, GRID ============ -->
+  <main class="cf-menu-section">
+    <div class="container">
+
+      <!-- Categories (rendered by JS) -->
+      <div class="cf-cat-scroll" id="categoryBar" role="tablist" aria-label="Product categories"></div>
+
+      <!-- Search & filter toolbar -->
+      <div class="cf-toolbar">
+        <div class="cf-search">
+          <i class="bi bi-search"></i>
+          <input type="search" id="searchInput" placeholder="Search for your favorite treat..." aria-label="Search products" autocomplete="off" />
+          <button type="button" class="cf-search-clear" id="searchClear" aria-label="Clear search"><i class="bi bi-x-lg"></i></button>
+        </div>
+
+        <select class="form-select cf-select" id="sortSelect" aria-label="Sort products">
+          <option value="recommended">Recommended</option>
+          <option value="price-asc">Price: Low to High</option>
+          <option value="price-desc">Price: High to Low</option>
+          <option value="name-asc">Name: A to Z</option>
+          <option value="popular">Most Popular</option>
+        </select>
+
+        <div class="cf-chips" role="group" aria-label="Additional filters">
+          <label class="cf-chip">
+            <input type="checkbox" value="vegetarian" />
+            <span><i class="bi bi-flower2"></i> Vegetarian</span>
+          </label>
+          <label class="cf-chip">
+            <input type="checkbox" value="bestseller" />
+            <span><i class="bi bi-award"></i> Best Sellers</span>
+          </label>
+          <label class="cf-chip">
+            <input type="checkbox" value="new" />
+            <span><i class="bi bi-stars"></i> New Arrivals</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="cf-results-bar">
+        <span id="resultCount" aria-live="polite">Showing <strong>0</strong> delicious treats</span>
+        <button type="button" class="cf-reset-link" id="resetFilters"><i class="bi bi-arrow-counterclockwise"></i> Reset filters</button>
+      </div>
+
+      <!-- Product grid (rendered by JS) -->
+      <div class="row g-4" id="menuGrid"></div>
+
+      <!-- Empty state -->
+      <div class="cf-empty-state d-none" id="emptyState">
+        <span class="cf-cat-icon"><i class="bi bi-search-heart"></i></span>
+        <h3>No treats found</h3>
+        <p>Try another search or clear the filters to see the full menu.</p>
+        <button type="button" class="btn cf-btn-outline" id="emptyReset">Show all products</button>
+      </div>
+
+      <!-- ============ PROMO BANNER ============ -->
+      <section class="cf-promo mt-5" aria-labelledby="promoTitle">
+        <div class="row align-items-center g-4">
+          <div class="col-lg-7">
+            <span class="cf-offer-pill"><i class="bi bi-heart"></i> Perfect pairing</span>
+            <h2 class="cf-promo-title" id="promoTitle">Your Coffee Deserves Something Sweet!</h2>
+            <p class="cf-promo-text">Pair any handcrafted coffee with your favorite slice of cake.</p>
+            <button type="button" class="btn cf-btn-dark cf-btn-lg" id="exploreCombos">
+              Explore Combos <i class="bi bi-arrow-right"></i>
+            </button>
+          </div>
+          <div class="col-lg-5">
+            <div class="cf-promo-photos position-relative">
+              <div class="cf-promo-photo">
+                <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=500&q=80" alt="Latte with latte art" data-fallback="coffee" loading="lazy" />
+              </div>
+              <span class="cf-promo-plus" aria-hidden="true"><i class="bi bi-plus-lg"></i></span>
+              <div class="cf-promo-photo">
+                <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=500&q=80" alt="Slice of layered cake" data-fallback="cake" loading="lazy" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- ============ FOOTER (shared with Homepage) ============ -->
+  <footer id="contact" class="cf-footer">
+    <div class="container">
+      <div class="cf-newsletter">
+        <div>
+          <h3>Get sweet news first</h3>
+          <p>New flavors, seasonal menus and members-only offers.</p>
+        </div>
+        <form class="cf-newsletter-form" id="newsletterForm">
+          <input type="email" placeholder="Your email address" aria-label="Email address" required />
+          <button class="btn cf-btn-primary" type="submit">Subscribe</button>
+        </form>
+      </div>
+
+      <div class="row g-5 cf-footer-main">
+        <div class="col-lg-4">
+          <a class="cf-logo mb-3 d-inline-flex" href="index.html">
+            <span class="cf-logo-mark"><i class="bi bi-cup-hot-fill"></i></span>
+            Cafe<span>Flow</span>
+          </a>
+          <p class="cf-footer-text">A boutique café for handcrafted coffee, pretty desserts and slow, happy moments.</p>
+          <div class="cf-socials">
+            <a href="#" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+            <a href="#" aria-label="TikTok"><i class="bi bi-tiktok"></i></a>
+            <a href="#" aria-label="Pinterest"><i class="bi bi-pinterest"></i></a>
+            <a href="#" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+          </div>
+        </div>
+
+        <div class="col-6 col-lg-2">
+          <h5>Explore</h5>
+          <ul class="cf-footer-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="products.html">Menu</a></li>
+            <li><a href="index.html#about">About</a></li>
+            <li><a href="index.html#order">Order</a></li>
+          </ul>
+        </div>
+
+        <div class="col-6 col-lg-3">
+          <h5>Visit us</h5>
+          <ul class="cf-contact-list">
+            <li><i class="bi bi-geo-alt"></i> 24 Blossom Street, Rose District</li>
+            <li><i class="bi bi-telephone"></i> <a href="tel:+15550142233">+1 (555) 014-2233</a></li>
+            <li><i class="bi bi-envelope"></i> <a href="mailto:hello@cafeflow.com">hello@cafeflow.com</a></li>
+          </ul>
+        </div>
+
+        <div class="col-lg-3">
+          <h5>Opening hours</h5>
+          <ul class="cf-hours">
+            <li><span>Mon – Fri</span><span>07:30 – 21:00</span></li>
+            <li><span>Saturday</span><span>08:30 – 22:00</span></li>
+            <li><span>Sunday</span><span>09:00 – 20:00</span></li>
+          </ul>
+          <span class="cf-open-now" id="openStatus"><span class="cf-dot"></span> Open now</span>
+        </div>
+      </div>
+
+      <div class="cf-footer-bottom">
+        <span>© <span id="year"></span> CafeFlow. All rights reserved.</span>
+        <span>Made with <i class="bi bi-heart-fill"></i> and good coffee.</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============ CUSTOMIZE MODAL ============ -->
+  <div class="modal fade cf-modal" id="customizeModal" tabindex="-1" aria-labelledby="customizeTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="row g-0">
+          <div class="col-md-5">
+            <div class="cf-modal-img" id="customizeImage"></div>
+          </div>
+          <div class="col-md-7">
+            <button type="button" class="cf-modal-close" data-bs-dismiss="modal" aria-label="Close"><i class="bi bi-x-lg"></i></button>
+            <form class="cf-modal-body" id="customizeForm">
+              <span class="cf-cat-label" id="customizeCategory">Hot Coffee</span>
+              <h2 class="cf-modal-title" id="customizeTitle">Vanilla Latte</h2>
+              <p class="cf-modal-desc" id="customizeDesc"></p>
+              <div id="customizeOptions"></div>
+
+              <div class="cf-modal-foot">
+                <div class="cf-stepper" aria-label="Quantity">
+                  <button type="button" id="modalQtyDec" aria-label="Decrease quantity"><i class="bi bi-dash"></i></button>
+                  <span id="modalQty">1</span>
+                  <button type="button" id="modalQtyInc" aria-label="Increase quantity"><i class="bi bi-plus"></i></button>
+                </div>
+                <div class="cf-modal-total">
+                  <small>Estimated total</small>
+                  <strong id="modalTotal">₺0.00</strong>
+                </div>
+                <button type="submit" class="btn cf-btn-primary cf-btn-lg">
+                  <i class="bi bi-bag-plus"></i> Add to Cart
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ CART DRAWER ============ -->
+  <div class="offcanvas offcanvas-end cf-cart-drawer" tabindex="-1" id="cartDrawer" aria-labelledby="cartTitle">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title" id="cartTitle"><i class="bi bi-bag-heart"></i> Your Sweet Cart <small id="cartDrawerCount"></small></h5>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body d-flex flex-column">
+      <div id="cartEmpty" class="cf-cart-empty">
+        <span class="cf-cat-icon"><i class="bi bi-bag-heart"></i></span>
+        <h6>Your cart is feeling light</h6>
+        <p>Add a latte or a little slice of happiness.</p>
+        <button type="button" class="btn cf-btn-outline" data-bs-dismiss="offcanvas">Browse the menu</button>
+      </div>
+
+      <ul id="cartItems" class="cf-cart-items"></ul>
+
+      <div id="cartFooter" class="cf-cart-footer d-none">
+        <ul class="cf-cart-summary">
+          <li><span>Items</span><span id="cartItemCount">0</span></li>
+          <li class="cf-sum-total"><span>Subtotal</span><strong id="cartTotal">₺0.00</strong></li>
+        </ul>
+        <div class="d-grid gap-2">
+          <a href="cart.html" class="btn cf-btn-primary cf-btn-lg">View Cart &amp; Checkout <i class="bi bi-arrow-right"></i></a>
+          <button type="button" class="btn cf-btn-outline" data-bs-dismiss="offcanvas">Continue Shopping</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="cf-toast" id="cfToast" role="status" aria-live="polite">
+    <i class="bi bi-check-circle-fill"></i> <span id="cfToastText">Added to cart</span>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+/* =========================================================
+   CafeFlow — Products / Menu Page
+   Sections:
+   1. Data (categories, products, customization options)
+   2. Storage helpers (cart + favorites in localStorage)
+   3. Cart module (shared data structure for future pages)
+   4. UI helpers (money, images, toast)
+   5. Menu rendering, filtering, sorting
+   6. Customization modal
+   7. Cart drawer rendering
+   8. Page bootstrap (events, footer, etc.)
+   ========================================================= */
+(() => {
+  "use strict";
+
+  /* ---------- 1. DATA ---------- */
+  const IMG = (id, w = 700) => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&q=80`;
+
+  const CATEGORIES = [
+    { id: "all",       label: "All Products",     icon: "bi-grid" },
+    { id: "hot",       label: "Hot Coffees",      icon: "bi-cup-hot" },
+    { id: "iced",      label: "Iced Coffees",     icon: "bi-cup-straw" },
+    { id: "signature", label: "Signature Drinks", icon: "bi-stars" },
+    { id: "cakes",     label: "Cakes & Desserts", icon: "bi-cake2" },
+    { id: "bakery",    label: "Bakery",           icon: "bi-basket" },
+    { id: "snacks",    label: "Snacks",           icon: "bi-egg-fried" },
+  ];
+
+  const BADGES = {
+    "Best Seller":   "cf-tag-best",
+    "New":           "cf-tag-new",
+    "Popular":       "cf-tag-popular",
+    "Chef's Choice": "cf-tag-chef",
+  };
+
+  // Image fallback icon per category
+  const FALLBACK_ICON = {
+    hot: "bi-cup-hot", iced: "bi-cup-straw", signature: "bi-cup-straw",
+    cakes: "bi-cake2", bakery: "bi-basket", snacks: "bi-egg-fried",
+    coffee: "bi-cup-hot", cake: "bi-cake2",
+  };
+
+  /**
+   * Central product catalogue. `popularity` drives "Most Popular" sorting,
+   * `customizable` opens the options modal before adding to cart.
+   */
+  const PRODUCTS = [
+    { id: 1,  name: "Classic Cappuccino",     category: "hot",       price: 145, image: IMG("1572442388796-11668a67e53d"), description: "Rich double espresso under a deep layer of velvety milk foam.", badge: null,            vegetarian: true,  popularity: 88, customizable: true },
+    { id: 2,  name: "Vanilla Latte",          category: "hot",       price: 160, image: IMG("1509042239860-f550ce710b93"), description: "Smooth espresso and steamed milk with Madagascar vanilla.",       badge: "Best Seller",   vegetarian: true,  popularity: 95, customizable: true },
+    { id: 3,  name: "Caramel Macchiato",      category: "hot",       price: 170, image: IMG("1485808191679-5f86510681a2"), description: "Vanilla milk marked with espresso and a buttery caramel drizzle.", badge: "Popular",      vegetarian: true,  popularity: 90, customizable: true },
+    { id: 4,  name: "Iced Spanish Latte",     category: "iced",      price: 175, image: IMG("1461023058943-07fcbe16d735"), description: "Espresso over ice with creamy condensed milk sweetness.",           badge: "Best Seller",  vegetarian: true,  popularity: 96, customizable: true },
+    { id: 5,  name: "Iced Mocha",             category: "iced",      price: 180, image: IMG("1517701604599-bb29b565090c"), description: "Double espresso, Belgian chocolate and cold milk over ice.",       badge: null,            vegetarian: true,  popularity: 82, customizable: true },
+    { id: 6,  name: "Cold Brew",              category: "iced",      price: 155, image: IMG("1534778101976-62847782c213"), description: "Slow-steeped for 18 hours. Smooth, bold and naturally sweet.",     badge: null,            vegetarian: true,  popularity: 74, customizable: false },
+    { id: 7,  name: "Strawberry Cloud Latte", category: "signature", price: 205, image: IMG("1572490122747-3968b75cc699"), description: "Fresh strawberry milk, espresso and a cloud of pink cold foam.",   badge: "Best Seller",  vegetarian: true,  popularity: 99, customizable: true },
+    { id: 8,  name: "Rose Matcha",            category: "signature", price: 210, image: IMG("1515823064-d6e0c04616a7"),    description: "Ceremonial matcha with a delicate rose syrup and oat milk.",       badge: "New",           vegetarian: true,  popularity: 85, customizable: true },
+    { id: 9,  name: "Pink Berry Frappe",      category: "signature", price: 215, image: IMG("1553530666-ba11a7da3888"),    description: "Blended raspberry, strawberry and vanilla cream with whipped top.", badge: "Popular",     vegetarian: true,  popularity: 91, customizable: false },
+    { id: 10, name: "Pink Velvet Cake",       category: "cakes",     price: 225, image: IMG("1578985545062-69928b1d9587"), description: "Rose-tinted sponge layered with vanilla cream cheese frosting.",   badge: "Chef's Choice", vegetarian: true,  popularity: 93, customizable: false },
+    { id: 11, name: "Lotus Cheesecake",       category: "cakes",     price: 245, image: IMG("1533134242443-d4fd215305ad"), description: "Baked cheesecake on a Biscoff crumb with caramel drizzle.",       badge: "Best Seller",  vegetarian: true,  popularity: 97, customizable: false },
+    { id: 12, name: "Strawberry Shortcake",   category: "cakes",     price: 230, image: IMG("1565958011703-44f9829ba187"), description: "Light chiffon, fresh strawberries and whipped mascarpone.",       badge: "New",           vegetarian: true,  popularity: 80, customizable: false },
+    { id: 13, name: "Raspberry Macarons",     category: "cakes",     price: 180, image: IMG("1569864358642-9d1684040f43"), description: "Box of four almond macarons with tangy raspberry ganache.",       badge: null,            vegetarian: true,  popularity: 76, customizable: false },
+    { id: 14, name: "Butter Croissant",       category: "bakery",    price: 95,  image: IMG("1555507036-ab1f4038808a"),    description: "Flaky, golden and laminated with French butter every morning.",  badge: "Popular",       vegetarian: true,  popularity: 89, customizable: false },
+    { id: 15, name: "Almond Croissant",       category: "bakery",    price: 125, image: IMG("1623334044303-241021148842"), description: "Twice-baked with almond frangipane and toasted almond flakes.",  badge: null,            vegetarian: true,  popularity: 78, customizable: false },
+    { id: 16, name: "Cinnamon Roll",          category: "bakery",    price: 115, image: IMG("1509365465985-25d11c17e812"), description: "Soft brioche swirl with cinnamon sugar and cream cheese glaze.",  badge: "New",           vegetarian: true,  popularity: 72, customizable: false },
+    { id: 17, name: "Avocado Toast",          category: "snacks",    price: 235, image: IMG("1541519227354-08fa5d50c44d"), description: "Sourdough, smashed avocado, cherry tomatoes and chili flakes.",   badge: "Chef's Choice", vegetarian: true,  popularity: 84, customizable: false },
+    { id: 18, name: "Grilled Cheese Sandwich",category: "snacks",    price: 210, image: IMG("1528735602780-2552fd46c7af"), description: "Cheddar and mozzarella melted on buttery toasted brioche.",       badge: null,            vegetarian: true,  popularity: 70, customizable: false },
+    { id: 19, name: "Turkey & Brie Panini",   category: "snacks",    price: 255, image: IMG("1528736235302-52922df5c122"), description: "Smoked turkey, creamy brie and fig jam, pressed until golden.",   badge: null,            vegetarian: false, popularity: 77, customizable: false },
+    { id: 20, name: "Chicken Caesar Wrap",    category: "snacks",    price: 245, image: IMG("1626700051175-6818013e1d4f"), description: "Grilled chicken, crisp romaine, parmesan and house Caesar dressing.", badge: null,       vegetarian: false, popularity: 73, customizable: false },
+  ];
+
+  /** Option groups for customizable drinks. `price` is added to the base price. */
+  const CUSTOM_OPTIONS = [
+    { key: "size", label: "Size", choices: [
+      { value: "Small",  price: 0 },
+      { value: "Medium", price: 15 },
+      { value: "Large",  price: 30 },
+    ], default: "Medium" },
+    { key: "milk", label: "Milk", choices: [
+      { value: "Regular", price: 0 },
+      { value: "Oat",     price: 15 },
+      { value: "Almond",  price: 15 },
+    ], default: "Regular" },
+    { key: "extraShot", label: "Extra Espresso Shot", choices: [
+      { value: "No",  price: 0 },
+      { value: "Yes", price: 20 },
+    ], default: "No" },
+    { key: "syrup", label: "Additional Syrup", choices: [
+      { value: "None",    price: 0 },
+      { value: "Vanilla", price: 10 },
+      { value: "Caramel", price: 10 },
+    ], default: "None" },
+  ];
+
+  /* ---------- 2. STORAGE HELPERS ---------- */
+  const STORAGE_KEYS = { cart: "cafeflow_cart", favorites: "cafeflow_favorites" };
+
+  const storage = {
+    read(key, fallback) {
+      try {
+        const raw = localStorage.getItem(key);
+        return raw ? JSON.parse(raw) : fallback;
+      } catch { return fallback; }
+    },
+    write(key, value) {
+      try { localStorage.setItem(key, JSON.stringify(value)); } catch { /* storage unavailable */ }
+    },
+  };
+
+  /* ---------- 3. CART MODULE ----------
+     Cart line structure (reusable by Product Details & Cart pages):
+     {
+       lineId:   "7|size:Large|milk:Oat|extraShot:No|syrup:None",
+       productId: 7,
+       name:     "Strawberry Cloud Latte",
+       image:    "https://...",
+       unitPrice: 250,          // base price + option extras
+       quantity:  2,
+       options:  { size: "Large", milk: "Oat", extraShot: "No", syrup: "None" } | null
+     }
+  */
+  const Cart = {
+    items: storage.read(STORAGE_KEYS.cart, []),
+
+    save() {
+      storage.write(STORAGE_KEYS.cart, this.items);
+      document.dispatchEvent(new CustomEvent("cart:changed"));
+    },
+    buildLineId(productId, options) {
+      if (!options) return String(productId);
+      return [productId, ...Object.entries(options).map(([k, v]) => `${k}:${v}`)].join("|");
+    },
+    add(product, { options = null, unitPrice = product.price, quantity = 1 } = {}) {
+      const lineId = this.buildLineId(product.id, options);
+      const existing = this.items.find((l) => l.lineId === lineId);
+      if (existing) existing.quantity += quantity;
+      else this.items.push({ lineId, productId: product.id, name: product.name, image: product.image, unitPrice, quantity, options });
+      this.save();
+    },
+    setQuantity(lineId, quantity) {
+      const line = this.items.find((l) => l.lineId === lineId);
+      if (!line) return;
+      if (quantity <= 0) this.items = this.items.filter((l) => l.lineId !== lineId);
+      else line.quantity = quantity;
+      this.save();
+    },
+    remove(lineId) {
+      this.items = this.items.filter((l) => l.lineId !== lineId);
+      this.save();
+    },
+    count() { return this.items.reduce((sum, l) => sum + l.quantity, 0); },
+    subtotal() { return this.items.reduce((sum, l) => sum + l.unitPrice * l.quantity, 0); },
+  };
+
+  const Favorites = {
+    ids: new Set(storage.read(STORAGE_KEYS.favorites, [])),
+    toggle(id) {
+      this.ids.has(id) ? this.ids.delete(id) : this.ids.add(id);
+      storage.write(STORAGE_KEYS.favorites, [...this.ids]);
+      return this.ids.has(id);
+    },
+    has(id) { return this.ids.has(id); },
+  };
+
+  /* ---------- 4. UI HELPERS ---------- */
+  const $ = (sel, root = document) => root.querySelector(sel);
+  const formatMoney = (n) => `₺${n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  const detailUrl = (id) => `product-detail.html?id=${id}`;
+  const categoryLabel = (id) => (CATEGORIES.find((c) => c.id === id) || {}).label || "";
+
+  /** Replace a broken image with a soft pastel placeholder. */
+  function attachImageFallback(img) {
+    const swap = () => {
+      const div = document.createElement("div");
+      div.className = "cf-img-fallback";
+      div.setAttribute("role", "img");
+      div.setAttribute("aria-label", img.alt);
+      div.innerHTML = `<i class="bi ${FALLBACK_ICON[img.dataset.fallback] || "bi-heart"}"></i>`;
+      img.replaceWith(div);
+    };
+    if (img.complete && img.naturalWidth === 0 && img.getAttribute("src")) swap();
+    else img.addEventListener("error", swap, { once: true });
+  }
+  const applyFallbacks = (root = document) => root.querySelectorAll("img[data-fallback]").forEach(attachImageFallback);
+
+  const toastEl = $("#cfToast");
+  const toastText = $("#cfToastText");
+  let toastTimer;
+  function showToast(message) {
+    toastText.textContent = message;
+    toastEl.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toastEl.classList.remove("show"), 2400);
+  }
+
+  /* ---------- 5. MENU RENDERING, FILTERING, SORTING ---------- */
+  const state = {
+    category: "all",
+    search: "",
+    sort: "recommended",
+    filters: new Set(), // vegetarian | bestseller | new
+  };
+
+  const categoryBar = $("#categoryBar");
+  const grid = $("#menuGrid");
+  const emptyState = $("#emptyState");
+  const resultCount = $("#resultCount");
+  const searchInput = $("#searchInput");
+  const searchClear = $("#searchClear");
+  const sortSelect = $("#sortSelect");
+  const resetBtn = $("#resetFilters");
+  const chipInputs = document.querySelectorAll(".cf-chip input");
+
+  function renderCategories() {
+    categoryBar.innerHTML = CATEGORIES.map((cat) => {
+      const count = cat.id === "all" ? PRODUCTS.length : PRODUCTS.filter((p) => p.category === cat.id).length;
+      const active = cat.id === state.category;
+      return `
+        <button type="button" class="cf-pill${active ? " active" : ""}" role="tab"
+                aria-selected="${active}" data-category="${cat.id}">
+          <i class="bi ${cat.icon}"></i>${cat.label}
+          <span class="cf-pill-count">${count}</span>
+        </button>`;
+    }).join("");
+  }
+
+  function getVisibleProducts() {
+    const term = state.search.trim().toLowerCase();
+    let list = PRODUCTS.filter((p) => {
+      if (state.category !== "all" && p.category !== state.category) return false;
+      if (term && !`${p.name} ${p.description} ${categoryLabel(p.category)}`.toLowerCase().includes(term)) return false;
+      if (state.filters.has("vegetarian") && !p.vegetarian) return false;
+      if (state.filters.has("bestseller") && p.badge !== "Best Seller") return false;
+      if (state.filters.has("new") && p.badge !== "New") return false;
+      return true;
+    });
+
+    const sorters = {
+      "price-asc":  (a, b) => a.price - b.price,
+      "price-desc": (a, b) => b.price - a.price,
+      "name-asc":   (a, b) => a.name.localeCompare(b.name),
+      "popular":    (a, b) => b.popularity - a.popularity,
+    };
+    if (sorters[state.sort]) list = [...list].sort(sorters[state.sort]);
+    return list;
+  }
+
+  function productCardTemplate(p, index) {
+    const liked = Favorites.has(p.id);
+    const badge = p.badge ? `<span class="cf-tag ${BADGES[p.badge]}">${p.badge}</span>` : "";
+    const fromLabel = p.customizable ? "<small>from</small>" : "";
+    const btnLabel = p.customizable
+      ? `<i class="bi bi-sliders"></i> Customize`
+      : `<i class="bi bi-bag-plus"></i> Add`;
+
+    return `
+      <div class="col-12 col-sm-6 col-lg-4 col-xl-3 cf-grid-item" style="animation-delay:${Math.min(index, 12) * 40}ms">
+        <article class="cf-product-card">
+          <div class="cf-product-img">
+            <a href="${detailUrl(p.id)}" class="cf-product-img-link" aria-label="View ${p.name} details">
+              <img src="${p.image}" alt="${p.name}" loading="lazy" data-fallback="${p.category}" />
+            </a>
+            ${badge}
+            <button type="button" class="cf-fav${liked ? " liked" : ""}" data-fav="${p.id}"
+                    aria-pressed="${liked}" aria-label="${liked ? "Remove from" : "Add to"} favorites">
+              <i class="bi ${liked ? "bi-heart-fill" : "bi-heart"}"></i>
+            </button>
+          </div>
+          <div class="cf-product-body">
+            <div class="cf-product-meta">
+              <span class="cf-cat-label">${categoryLabel(p.category)}</span>
+              ${p.vegetarian ? `<span class="cf-veg" title="Vegetarian"><i class="bi bi-flower2"></i> Veg</span>` : ""}
+            </div>
+            <h3><a href="${detailUrl(p.id)}">${p.name}</a></h3>
+            <p>${p.description}</p>
+            <div class="cf-product-foot">
+              <span class="cf-price">${fromLabel}${formatMoney(p.price)}</span>
+              <button type="button" class="btn cf-add-btn" data-add="${p.id}">${btnLabel}</button>
+            </div>
+          </div>
+        </article>
+      </div>`;
+  }
+
+  function renderProducts() {
+    const list = getVisibleProducts();
+    grid.innerHTML = list.map(productCardTemplate).join("");
+    applyFallbacks(grid);
+
+    emptyState.classList.toggle("d-none", list.length > 0);
+    resultCount.innerHTML = list.length === 1
+      ? `Showing <strong>1</strong> delicious treat`
+      : `Showing <strong>${list.length}</strong> delicious treats`;
+
+    const isFiltered = state.category !== "all" || state.search || state.filters.size || state.sort !== "recommended";
+    resetBtn.classList.toggle("show", Boolean(isFiltered));
+  }
+
+  function setCategory(id) {
+    state.category = id;
+    renderCategories();
+    renderProducts();
+    const activePill = categoryBar.querySelector(".cf-pill.active");
+    if (activePill) activePill.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+  }
+
+  function resetAll() {
+    state.category = "all";
+    state.search = "";
+    state.sort = "recommended";
+    state.filters.clear();
+    searchInput.value = "";
+    searchClear.classList.remove("show");
+    sortSelect.value = "recommended";
+    chipInputs.forEach((c) => (c.checked = false));
+    renderCategories();
+    renderProducts();
+  }
+
+  /* ---------- 6. CUSTOMIZATION MODAL ---------- */
+  const modalEl = $("#customizeModal");
+  const modal = new bootstrap.Modal(modalEl);
+  const customizeForm = $("#customizeForm");
+  const modalOptions = $("#customizeOptions");
+  const modalTotal = $("#modalTotal");
+  const modalQtyEl = $("#modalQty");
+  const modalQtyDec = $("#modalQtyDec");
+  let modalProduct = null;
+  let modalQty = 1;
+
+  function readSelectedOptions() {
+    const selected = {};
+    let extra = 0;
+    CUSTOM_OPTIONS.forEach((group) => {
+      const input = customizeForm.querySelector(`input[name="${group.key}"]:checked`);
+      const value = input ? input.value : group.default;
+      selected[group.key] = value;
+      extra += group.choices.find((c) => c.value === value).price;
+    });
+    return { options: selected, unitPrice: modalProduct.price + extra };
+  }
+
+  function updateModalTotal() {
+    const { unitPrice } = readSelectedOptions();
+    modalTotal.textContent = formatMoney(unitPrice * modalQty);
+    modalQtyEl.textContent = modalQty;
+    modalQtyDec.disabled = modalQty <= 1;
+  }
+
+  function openCustomizer(product) {
+    modalProduct = product;
+    modalQty = 1;
+
+    $("#customizeTitle").textContent = product.name;
+    $("#customizeDesc").textContent = product.description;
+    $("#customizeCategory").textContent = categoryLabel(product.category);
+    $("#customizeImage").innerHTML = `<img src="${product.image}" alt="${product.name}" data-fallback="${product.category}" />`;
+    applyFallbacks($("#customizeImage"));
+
+    modalOptions.innerHTML = CUSTOM_OPTIONS.map((group) => `
+      <fieldset class="cf-opt-group">
+        <legend class="cf-opt-label">${group.label}</legend>
+        <div class="cf-opt-choices">
+          ${group.choices.map((c) => `
+            <label class="cf-opt">
+              <input type="radio" name="${group.key}" value="${c.value}" ${c.value === group.default ? "checked" : ""} />
+              <span>${c.value}<small>${c.price ? `+${formatMoney(c.price)}` : "Included"}</small></span>
+            </label>`).join("")}
+        </div>
+      </fieldset>`).join("");
+
+    updateModalTotal();
+    modal.show();
+  }
+
+  /* ---------- 7. CART DRAWER ---------- */
+  const cartCountEl = $("#cartCount");
+  const cartItemsEl = $("#cartItems");
+  const cartEmptyEl = $("#cartEmpty");
+  const cartFooterEl = $("#cartFooter");
+
+  const describeOptions = (options) => {
+    if (!options) return "";
+    const parts = [options.size, options.milk !== "Regular" ? `${options.milk} milk` : "Regular milk"];
+    if (options.extraShot === "Yes") parts.push("Extra shot");
+    if (options.syrup && options.syrup !== "None") parts.push(`${options.syrup} syrup`);
+    return parts.join(" · ");
+  };
+
+  function renderCart() {
+    const count = Cart.count();
+    cartCountEl.textContent = count;
+    $("#cartDrawerCount").textContent = count ? `(${count})` : "";
+    $("#cartItemCount").textContent = count;
+    $("#cartTotal").textContent = formatMoney(Cart.subtotal());
+
+    const empty = Cart.items.length === 0;
+    cartEmptyEl.classList.toggle("d-none", !empty);
+    cartFooterEl.classList.toggle("d-none", empty);
+
+    cartItemsEl.innerHTML = Cart.items.map((line) => {
+      const product = PRODUCTS.find((p) => p.id === line.productId);
+      const fallback = product ? product.category : "coffee";
+      return `
+        <li class="cf-cart-line" data-line="${line.lineId}">
+          <a href="${detailUrl(line.productId)}" class="cf-cart-thumb">
+            <img src="${line.image}" alt="${line.name}" data-fallback="${fallback}" />
+          </a>
+          <div>
+            <div class="cf-cart-line-top">
+              <h6>${line.name}</h6>
+              <button type="button" class="cf-cart-remove" data-action="remove" aria-label="Remove ${line.name}">
+                <i class="bi bi-trash3"></i>
+              </button>
+            </div>
+            <div class="cf-cart-opts">${describeOptions(line.options) || `${formatMoney(line.unitPrice)} each`}</div>
+            <div class="cf-cart-line-bottom">
+              <div class="cf-stepper">
+                <button type="button" data-action="dec" aria-label="Decrease ${line.name}"><i class="bi bi-dash"></i></button>
+                <span>${line.quantity}</span>
+                <button type="button" data-action="inc" aria-label="Increase ${line.name}"><i class="bi bi-plus"></i></button>
+              </div>
+              <span class="cf-line-price">${formatMoney(line.unitPrice * line.quantity)}</span>
+            </div>
+          </div>
+        </li>`;
+    }).join("");
+    applyFallbacks(cartItemsEl);
+  }
+
+  function bumpCartCounter() {
+    cartCountEl.classList.add("bump");
+    setTimeout(() => cartCountEl.classList.remove("bump"), 300);
+  }
+
+  function flashButton(btn) {
+    if (!btn) return;
+    const original = btn.innerHTML;
+    btn.classList.add("added");
+    btn.innerHTML = '<i class="bi bi-check-lg"></i> Added';
+    btn.disabled = true;
+    setTimeout(() => {
+      btn.classList.remove("added");
+      btn.innerHTML = original;
+      btn.disabled = false;
+    }, 1100);
+  }
+
+  /* ---------- 8. EVENTS & PAGE BOOTSTRAP ---------- */
+
+  // Navbar shadow on scroll (same behaviour as Homepage)
+  const nav = $("#mainNav");
+  const onScroll = () => nav.classList.toggle("scrolled", window.scrollY > 30);
+  onScroll();
+  window.addEventListener("scroll", onScroll, { passive: true });
+
+  // Close mobile menu after clicking a link
+  const navCollapse = $("#navLinks");
+  navCollapse.querySelectorAll(".nav-link").forEach((link) =>
+    link.addEventListener("click", () => {
+      if (navCollapse.classList.contains("show")) bootstrap.Collapse.getOrCreateInstance(navCollapse).hide();
+    })
+  );
+
+  // Categories
+  categoryBar.addEventListener("click", (e) => {
+    const pill = e.target.closest("[data-category]");
+    if (pill) setCategory(pill.dataset.category);
+  });
+
+  // Search (real time)
+  searchInput.addEventListener("input", () => {
+    state.search = searchInput.value;
+    searchClear.classList.toggle("show", searchInput.value.length > 0);
+    renderProducts();
+  });
+  searchClear.addEventListener("click", () => {
+    searchInput.value = "";
+    state.search = "";
+    searchClear.classList.remove("show");
+    searchInput.focus();
+    renderProducts();
+  });
+
+  // Sorting
+  sortSelect.addEventListener("change", () => {
+    state.sort = sortSelect.value;
+    renderProducts();
+  });
+
+  // Extra filters
+  chipInputs.forEach((input) =>
+    input.addEventListener("change", () => {
+      input.checked ? state.filters.add(input.value) : state.filters.delete(input.value);
+      renderProducts();
+    })
+  );
+
+  // Reset
+  resetBtn.addEventListener("click", resetAll);
+  $("#emptyReset").addEventListener("click", resetAll);
+
+  // Product grid: favorites + add to cart (event delegation)
+  grid.addEventListener("click", (e) => {
+    const favBtn = e.target.closest("[data-fav]");
+    if (favBtn) {
+      const id = Number(favBtn.dataset.fav);
+      const liked = Favorites.toggle(id);
+      favBtn.classList.toggle("liked", liked);
+      favBtn.setAttribute("aria-pressed", liked);
+      favBtn.setAttribute("aria-label", `${liked ? "Remove from" : "Add to"} favorites`);
+      favBtn.querySelector("i").className = `bi ${liked ? "bi-heart-fill" : "bi-heart"}`;
+      favBtn.classList.remove("pop");
+      void favBtn.offsetWidth;
+      favBtn.classList.add("pop");
+      const product = PRODUCTS.find((p) => p.id === id);
+      showToast(liked ? `${product.name} saved to favorites` : `${product.name} removed from favorites`);
+      return;
+    }
+
+    const addBtn = e.target.closest("[data-add]");
+    if (addBtn) {
+      const product = PRODUCTS.find((p) => p.id === Number(addBtn.dataset.add));
+      if (product.customizable) {
+        openCustomizer(product);
+      } else {
+        Cart.add(product);
+        flashButton(addBtn);
+        bumpCartCounter();
+        showToast(`${product.name} added to your cart`);
+      }
+    }
+  });
+
+  // Customization modal
+  customizeForm.addEventListener("change", updateModalTotal);
+  $("#modalQtyInc").addEventListener("click", () => { modalQty = Math.min(modalQty + 1, 20); updateModalTotal(); });
+  modalQtyDec.addEventListener("click", () => { modalQty = Math.max(modalQty - 1, 1); updateModalTotal(); });
+  customizeForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const { options, unitPrice } = readSelectedOptions();
+    Cart.add(modalProduct, { options, unitPrice, quantity: modalQty });
+    modal.hide();
+    bumpCartCounter();
+    showToast(`${modalQty > 1 ? modalQty + " × " : ""}${modalProduct.name} added to your cart`);
+  });
+
+  // Cart drawer: quantity + remove (event delegation)
+  cartItemsEl.addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-action]");
+    if (!btn) return;
+    const lineId = btn.closest("[data-line]").dataset.line;
+    const line = Cart.items.find((l) => l.lineId === lineId);
+    if (!line) return;
+    if (btn.dataset.action === "inc") Cart.setQuantity(lineId, line.quantity + 1);
+    if (btn.dataset.action === "dec") Cart.setQuantity(lineId, line.quantity - 1);
+    if (btn.dataset.action === "remove") {
+      Cart.remove(lineId);
+      showToast(`${line.name} removed from your cart`);
+    }
+  });
+
+  document.addEventListener("cart:changed", renderCart);
+
+  // Keep cart in sync if it changes in another tab (e.g. Homepage or Product Details)
+  window.addEventListener("storage", (e) => {
+    if (e.key === STORAGE_KEYS.cart) {
+      Cart.items = storage.read(STORAGE_KEYS.cart, []);
+      renderCart();
+    }
+  });
+
+  // Promo CTA: show desserts to pair with coffee
+  $("#exploreCombos").addEventListener("click", () => {
+    resetAll();
+    setCategory("cakes");
+    $("#categoryBar").scrollIntoView({ behavior: "smooth", block: "start" });
+    showToast("Pick a slice to pair with your coffee");
+  });
+
+  // Newsletter
+  $("#newsletterForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    e.target.reset();
+    showToast("Thanks! You're on the sweet list.");
+  });
+
+  // Open / closed status
+  const now = new Date();
+  const hours = { 0: [9 * 60, 20 * 60], 6: [8 * 60 + 30, 22 * 60] };
+  const [open, close] = hours[now.getDay()] || [7 * 60 + 30, 21 * 60];
+  const mins = now.getHours() * 60 + now.getMinutes();
+  if (mins < open || mins >= close) {
+    const status = $("#openStatus");
+    status.classList.add("closed");
+    status.innerHTML = '<span class="cf-dot"></span> Closed now';
+  }
+  $("#year").textContent = now.getFullYear();
+
+  // Optional deep link: products.html?category=cakes
+  const urlCategory = new URLSearchParams(location.search).get("category");
+  if (urlCategory && CATEGORIES.some((c) => c.id === urlCategory)) state.category = urlCategory;
+
+  // Initial render
+  renderCategories();
+  renderProducts();
+  renderCart();
+  applyFallbacks(document);
+})();
+  </script>
+</body>
+</html>
