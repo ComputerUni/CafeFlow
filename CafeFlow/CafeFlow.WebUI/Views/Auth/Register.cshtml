@@ -1,479 +1,569 @@
-﻿@{
+﻿@model CafeFlow.DTO.Auth.RegisterDto
+@{
     Layout = null;
 }
-
 
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Kayıt Ol — CafeFlow</title>
-  <meta name="description" content="CafeFlow ailesine katılın, ilk siparişinize özel tatlı indirimleri kazanın." />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kayıt Ol — CafeFlow</title>
+    <meta name="description" content="CafeFlow ailesine katılın, ilk siparişinize özel tatlı indirimleri kazanın." />
 
-  <!-- Bootstrap 5 & Icons -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
-  <!-- Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <!-- Bootstrap 5 & Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
-  <style>
-    :root {
-      --cf-pink-50:  #fff6f8;
-      --cf-pink-100: #fde8ee;
-      --cf-pink-200: #f9d3de;
-      --cf-pink-300: #f4b8c9;
-      --cf-rose:     #e88ea6;
-      --cf-rose-deep:#d46f8c;
-      --cf-peach:    #ffe4d6;
-      --cf-cream:    #fdf8f2;
-      --cf-offwhite: #fffcfa;
-      --cf-coffee:   #6b4a3a;
-      --cf-coffee-2: #9a7462;
-      --cf-ink:      #3d2a24;
-      --cf-muted:    #8a7470;
+    <style>
+            :root {
+                --cf-pink-50: #fff6f8;
+                --cf-pink-100: #fde8ee;
+                --cf-pink-200: #f9d3de;
+                --cf-pink-300: #f4b8c9;
+                --cf-rose: #e88ea6;
+                --cf-rose-deep: #d46f8c;
+                --cf-peach: #ffe4d6;
+                --cf-cream: #fdf8f2;
+                --cf-offwhite: #fffcfa;
+                --cf-coffee: #6b4a3a;
+                --cf-coffee-2: #9a7462;
+                --cf-ink: #3d2a24;
+                --cf-muted: #8a7470;
+                --cf-radius: 20px;
+                --cf-radius-lg: 32px;
+                --cf-shadow: 0 14px 40px rgba(212, 111, 140, 0.12);
+                --cf-shadow-lg: 0 24px 60px rgba(150, 80, 100, 0.16);
+                --cf-font-display: "Playfair Display", Georgia, serif;
+                --cf-font-body: "DM Sans", system-ui, -apple-system, sans-serif;
+                --cf-ease: cubic-bezier(.2, .8, .2, 1);
+            }
 
-      --cf-radius:    20px;
-      --cf-radius-lg: 32px;
-      --cf-shadow:    0 14px 40px rgba(212, 111, 140, 0.12);
-      --cf-shadow-lg: 0 24px 60px rgba(150, 80, 100, 0.16);
+            body {
+                font-family: var(--cf-font-body);
+                color: var(--cf-ink);
+                background: var(--cf-offwhite);
+                min-height: 100vh;
+                display: flex;
+                flex-direction: column;
+                position: relative;
+                overflow-x: hidden;
+            }
 
-      --cf-font-display: "Playfair Display", Georgia, serif;
-      --cf-font-body: "DM Sans", system-ui, -apple-system, sans-serif;
-      --cf-ease: cubic-bezier(.2, .8, .2, 1);
-    }
+            /* Ambient Blobs */
+            .cf-blob {
+                position: absolute;
+                border-radius: 50%;
+                filter: blur(70px);
+                opacity: .5;
+                pointer-events: none;
+                z-index: 0;
+            }
 
-    body {
-      font-family: var(--cf-font-body);
-      color: var(--cf-ink);
-      background: var(--cf-offwhite);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      position: relative;
-      overflow-x: hidden;
-    }
+            .cf-blob-1 {
+                width: 440px;
+                height: 440px;
+                background: var(--cf-peach);
+                top: -120px;
+                left: -100px;
+            }
 
-    /* Ambient Blobs */
-    .cf-blob {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(70px);
-      opacity: .5;
-      pointer-events: none;
-      z-index: 0;
-    }
-    .cf-blob-1 { width: 440px; height: 440px; background: var(--cf-peach); top: -120px; left: -100px; }
-    .cf-blob-2 { width: 380px; height: 380px; background: var(--cf-pink-200); bottom: -80px; right: -80px; }
+            .cf-blob-2 {
+                width: 380px;
+                height: 380px;
+                background: var(--cf-pink-200);
+                bottom: -80px;
+                right: -80px;
+            }
 
-    /* Logo */
-    .cf-logo {
-      font-family: var(--cf-font-display);
-      font-weight: 700;
-      font-size: 1.6rem;
-      color: var(--cf-coffee);
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      text-decoration: none;
-    }
-    .cf-logo span:not(.cf-logo-mark) { color: var(--cf-rose-deep); }
-    .cf-logo-mark {
-      width: 42px; height: 42px;
-      border-radius: 14px;
-      display: grid;
-      place-items: center;
-      background: linear-gradient(135deg, var(--cf-pink-200), var(--cf-peach));
-      color: var(--cf-rose-deep);
-      font-size: 1.15rem;
-    }
+            /* Logo */
+            .cf-logo {
+                font-family: var(--cf-font-display);
+                font-weight: 700;
+                font-size: 1.6rem;
+                color: var(--cf-coffee);
+                display: inline-flex;
+                align-items: center;
+                gap: 10px;
+                text-decoration: none;
+            }
 
-    /* Auth Wrapper */
-    .cf-auth-wrap {
-      flex: 1;
-      display: grid;
-      place-items: center;
-      padding: 40px 16px;
-      position: relative;
-      z-index: 1;
-    }
+                .cf-logo span:not(.cf-logo-mark) {
+                    color: var(--cf-rose-deep);
+                }
 
-    .cf-auth-card {
-      background: #fff;
-      border: 1px solid var(--cf-pink-100);
-      border-radius: var(--cf-radius-lg);
-      box-shadow: var(--cf-shadow-lg);
-      overflow: hidden;
-      width: 100%;
-      max-width: 980px;
-      display: grid;
-      grid-template-columns: 1fr 1.15fr;
-    }
+            .cf-logo-mark {
+                width: 42px;
+                height: 42px;
+                border-radius: 14px;
+                display: grid;
+                place-items: center;
+                background: linear-gradient(135deg, var(--cf-pink-200), var(--cf-peach));
+                color: var(--cf-rose-deep);
+                font-size: 1.15rem;
+            }
 
-    /* Left Promo Area */
-    .cf-auth-visual {
-      background: linear-gradient(150deg, var(--cf-peach) 0%, var(--cf-pink-100) 100%);
-      padding: 48px 40px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      position: relative;
-      overflow: hidden;
-    }
-    .cf-auth-visual::before {
-      content: "";
-      position: absolute;
-      width: 320px; height: 320px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, .3);
-      bottom: -90px; left: -90px;
-    }
-    .cf-visual-features {
-      position: relative;
-      z-index: 1;
-      margin: auto 0;
-    }
-    .cf-visual-features h2 {
-      font-family: var(--cf-font-display);
-      font-size: 2.1rem;
-      font-weight: 600;
-      color: var(--cf-coffee);
-      line-height: 1.25;
-      margin-bottom: 20px;
-    }
-    .cf-visual-features h2 em {
-      font-style: italic;
-      color: var(--cf-rose-deep);
-    }
+            /* Auth Wrapper */
+            .cf-auth-wrap {
+                flex: 1;
+                display: grid;
+                place-items: center;
+                padding: 40px 16px;
+                position: relative;
+                z-index: 1;
+            }
 
-    .cf-benefit {
-      display: flex;
-      align-items: flex-start;
-      gap: 14px;
-      margin-bottom: 16px;
-    }
-    .cf-benefit-icon {
-      width: 36px; height: 36px;
-      border-radius: 12px;
-      background: #fff;
-      color: var(--cf-rose-deep);
-      display: grid;
-      place-items: center;
-      font-size: 1.05rem;
-      flex-shrink: 0;
-      box-shadow: var(--cf-shadow);
-    }
-    .cf-benefit p {
-      margin: 0;
-      font-size: .92rem;
-      color: var(--cf-coffee-2);
-      line-height: 1.45;
-    }
-    .cf-benefit strong {
-      display: block;
-      color: var(--cf-ink);
-      font-size: .98rem;
-    }
+            .cf-auth-card {
+                background: #fff;
+                border: 1px solid var(--cf-pink-100);
+                border-radius: var(--cf-radius-lg);
+                box-shadow: var(--cf-shadow-lg);
+                overflow: hidden;
+                width: 100%;
+                max-width: 980px;
+                display: grid;
+                grid-template-columns: 1fr 1.15fr;
+            }
 
-    /* Form Right */
-    .cf-auth-body {
-      padding: 48px 46px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-    }
-    .cf-auth-head {
-      margin-bottom: 24px;
-    }
-    .cf-auth-title {
-      font-family: var(--cf-font-display);
-      font-weight: 600;
-      font-size: 1.95rem;
-      color: var(--cf-coffee);
-      margin-bottom: 6px;
-    }
-    .cf-auth-sub {
-      color: var(--cf-muted);
-      font-size: .94rem;
-    }
+            /* Left Promo Area */
+            .cf-auth-visual {
+                background: linear-gradient(150deg, var(--cf-peach) 0%, var(--cf-pink-100) 100%);
+                padding: 48px 40px;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                position: relative;
+                overflow: hidden;
+            }
 
-    /* Input Elements */
-    .cf-label {
-      font-size: .84rem;
-      font-weight: 600;
-      color: var(--cf-coffee);
-      margin-bottom: 6px;
-      display: block;
-    }
-    .cf-input-wrap {
-      position: relative;
-      margin-bottom: 16px;
-    }
-    .cf-input-icon {
-      position: absolute;
-      left: 16px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: var(--cf-rose);
-      font-size: 1.05rem;
-      pointer-events: none;
-    }
-    .cf-input {
-      width: 100%;
-      height: 46px;
-      border-radius: 14px;
-      border: 1.5px solid var(--cf-pink-100);
-      background: var(--cf-pink-50);
-      color: var(--cf-ink);
-      padding: 0 42px 0 44px;
-      font-size: .94rem;
-      outline: none;
-      transition: all .25s var(--cf-ease);
-    }
-    .cf-input::placeholder { color: #bcaaa6; }
-    .cf-input:focus {
-      background: #fff;
-      border-color: var(--cf-pink-300);
-      box-shadow: 0 0 0 4px rgba(244, 184, 201, .25);
-    }
-    .cf-pwd-toggle {
-      position: absolute;
-      right: 14px;
-      top: 50%;
-      transform: translateY(-50%);
-      border: none;
-      background: none;
-      color: var(--cf-muted);
-      cursor: pointer;
-      padding: 4px;
-      font-size: 1.05rem;
-    }
+                .cf-auth-visual::before {
+                    content: "";
+                    position: absolute;
+                    width: 320px;
+                    height: 320px;
+                    border-radius: 50%;
+                    background: rgba(255, 255, 255, .3);
+                    bottom: -90px;
+                    left: -90px;
+                }
 
-    /* Agreements */
-    .cf-check-wrap {
-      margin-bottom: 22px;
-      font-size: .84rem;
-      line-height: 1.45;
-    }
-    .cf-check-label {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      color: var(--cf-coffee-2);
-      cursor: pointer;
-      user-select: none;
-    }
-    .cf-check-label input {
-      accent-color: var(--cf-rose-deep);
-      width: 17px;
-      height: 17px;
-      margin-top: 2px;
-      cursor: pointer;
-      flex-shrink: 0;
-    }
+            .cf-visual-features {
+                position: relative;
+                z-index: 1;
+                margin: auto 0;
+            }
 
-    .cf-link {
-      color: var(--cf-rose-deep);
-      text-decoration: none;
-      font-weight: 600;
-    }
-    .cf-link:hover { color: var(--cf-coffee); }
+                .cf-visual-features h2 {
+                    font-family: var(--cf-font-display);
+                    font-size: 2.1rem;
+                    font-weight: 600;
+                    color: var(--cf-coffee);
+                    line-height: 1.25;
+                    margin-bottom: 20px;
+                }
 
-    /* Button */
-    .cf-btn-primary {
-      background: linear-gradient(135deg, var(--cf-rose), var(--cf-rose-deep));
-      color: #fff;
-      border: none;
-      border-radius: 999px;
-      height: 48px;
-      font-weight: 600;
-      font-size: 1rem;
-      box-shadow: 0 10px 24px rgba(212, 111, 140, .28);
-      transition: all .3s var(--cf-ease);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      width: 100%;
-    }
-    .cf-btn-primary:hover {
-      color: #fff;
-      transform: translateY(-2px);
-      box-shadow: 0 14px 28px rgba(212, 111, 140, .36);
-    }
+                    .cf-visual-features h2 em {
+                        font-style: italic;
+                        color: var(--cf-rose-deep);
+                    }
 
-    .cf-auth-foot {
-      text-align: center;
-      margin-top: 22px;
-      font-size: .9rem;
-      color: var(--cf-muted);
-    }
+            .cf-benefit {
+                display: flex;
+                align-items: flex-start;
+                gap: 14px;
+                margin-bottom: 16px;
+            }
 
-    @@media (max-width: 991.98px) {
-      .cf-auth-card { grid-template-columns: 1fr; max-width: 480px; }
-      .cf-auth-visual { display: none; }
-      .cf-auth-body { padding: 40px 26px; }
-    }
-  </style>
+            .cf-benefit-icon {
+                width: 36px;
+                height: 36px;
+                border-radius: 12px;
+                background: #fff;
+                color: var(--cf-rose-deep);
+                display: grid;
+                place-items: center;
+                font-size: 1.05rem;
+                flex-shrink: 0;
+                box-shadow: var(--cf-shadow);
+            }
+
+            .cf-benefit p {
+                margin: 0;
+                font-size: .92rem;
+                color: var(--cf-coffee-2);
+                line-height: 1.45;
+            }
+
+            .cf-benefit strong {
+                display: block;
+                color: var(--cf-ink);
+                font-size: .98rem;
+            }
+
+            /* Form Right */
+            .cf-auth-body {
+                padding: 48px 46px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+            }
+
+            .cf-auth-head {
+                margin-bottom: 24px;
+            }
+
+            .cf-auth-title {
+                font-family: var(--cf-font-display);
+                font-weight: 600;
+                font-size: 1.95rem;
+                color: var(--cf-coffee);
+                margin-bottom: 6px;
+            }
+
+            .cf-auth-sub {
+                color: var(--cf-muted);
+                font-size: .94rem;
+            }
+
+            /* Input Elements */
+            .cf-label {
+                font-size: .84rem;
+                font-weight: 600;
+                color: var(--cf-coffee);
+                margin-bottom: 6px;
+                display: block;
+            }
+
+            .cf-input-wrap {
+                position: relative;
+                margin-bottom: 16px;
+            }
+
+            .cf-input-icon {
+                position: absolute;
+                left: 16px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: var(--cf-rose);
+                font-size: 1.05rem;
+                pointer-events: none;
+            }
+
+            .cf-input {
+                width: 100%;
+                height: 46px;
+                border-radius: 14px;
+                border: 1.5px solid var(--cf-pink-100);
+                background: var(--cf-pink-50);
+                color: var(--cf-ink);
+                padding: 0 42px 0 44px;
+                font-size: .94rem;
+                outline: none;
+                transition: all .25s var(--cf-ease);
+            }
+
+                .cf-input::placeholder {
+                    color: #bcaaa6;
+                }
+
+                .cf-input:focus {
+                    background: #fff;
+                    border-color: var(--cf-pink-300);
+                    box-shadow: 0 0 0 4px rgba(244, 184, 201, .25);
+                }
+
+            .cf-pwd-toggle {
+                position: absolute;
+                right: 14px;
+                top: 50%;
+                transform: translateY(-50%);
+                border: none;
+                background: none;
+                color: var(--cf-muted);
+                cursor: pointer;
+                padding: 4px;
+                font-size: 1.05rem;
+            }
+
+            /* Validation Summary Alert */
+            .alert-cf-danger {
+                background-color: var(--cf-pink-100);
+                border: 1px solid var(--cf-rose);
+                color: var(--cf-coffee);
+                border-radius: 14px;
+                font-size: 0.88rem;
+                padding: 12px 16px;
+                margin-bottom: 18px;
+            }
+
+                .alert-cf-danger ul {
+                    margin: 0;
+                    padding-left: 18px;
+                }
+
+            /* Agreements */
+            .cf-check-wrap {
+                margin-bottom: 22px;
+                font-size: .84rem;
+                line-height: 1.45;
+            }
+
+            .cf-check-label {
+                display: flex;
+                align-items: flex-start;
+                gap: 10px;
+                color: var(--cf-coffee-2);
+                cursor: pointer;
+                user-select: none;
+            }
+
+                .cf-check-label input {
+                    accent-color: var(--cf-rose-deep);
+                    width: 17px;
+                    height: 17px;
+                    margin-top: 2px;
+                    cursor: pointer;
+                    flex-shrink: 0;
+                }
+
+            .cf-link {
+                color: var(--cf-rose-deep);
+                text-decoration: none;
+                font-weight: 600;
+            }
+
+                .cf-link:hover {
+                    color: var(--cf-coffee);
+                }
+
+            /* Button */
+            .cf-btn-primary {
+                background: linear-gradient(135deg, var(--cf-rose), var(--cf-rose-deep));
+                color: #fff;
+                border: none;
+                border-radius: 999px;
+                height: 48px;
+                font-weight: 600;
+                font-size: 1rem;
+                box-shadow: 0 10px 24px rgba(212, 111, 140, .28);
+                transition: all .3s var(--cf-ease);
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                width: 100%;
+            }
+
+                .cf-btn-primary:hover {
+                    color: #fff;
+                    transform: translateY(-2px);
+                    box-shadow: 0 14px 28px rgba(212, 111, 140, .36);
+                }
+
+            .cf-auth-foot {
+                text-align: center;
+                margin-top: 22px;
+                font-size: .9rem;
+                color: var(--cf-muted);
+            }
+
+            @@media (max-width: 991.98px) {
+                .cf-auth-card {
+                    grid-template-columns: 1fr;
+                    max-width: 480px;
+                }
+
+                .cf-auth-visual {
+                    display: none;
+                }
+
+                .cf-auth-body {
+                    padding: 40px 26px;
+                }
+            }
+    </style>
 </head>
 <body>
 
-  <div class="cf-blob cf-blob-1"></div>
-  <div class="cf-blob cf-blob-2"></div>
+    <div class="cf-blob cf-blob-1"></div>
+    <div class="cf-blob cf-blob-2"></div>
 
-  <main class="cf-auth-wrap">
-    <div class="cf-auth-card">
-      
-      <!-- Visual Side -->
-      <div class="cf-auth-visual">
-        <a href="index.html" class="cf-logo">
-          <span class="cf-logo-mark"><i class="bi bi-cup-hot-fill"></i></span>
-          Cafe<span>Flow</span>
-        </a>
+    <main class="cf-auth-wrap">
+        <div class="cf-auth-card">
 
-        <div class="cf-visual-features">
-          <h2>Tatlı anlara<br /><em>ortak olun</em>.</h2>
-          
-          <div class="cf-benefit">
-            <span class="cf-benefit-icon"><i class="bi bi-gift"></i></span>
-            <div>
-              <strong>İlk Siparişe Özel İndirim</strong>
-              <p>Kaydolun, hoş geldin ikramımız olan %10 indirimi kazanın.</p>
+            <!-- Visual Side -->
+            <div class="cf-auth-visual">
+                <a asp-controller="Home" asp-action="Index" class="cf-logo">
+                    <span class="cf-logo-mark"><i class="bi bi-cup-hot-fill"></i></span>
+                    Cafe<span>Flow</span>
+                </a>
+
+                <div class="cf-visual-features">
+                    <h2>Tatlı anlara<br /><em>ortak olun</em>.</h2>
+
+                    <div class="cf-benefit">
+                        <span class="cf-benefit-icon"><i class="bi bi-gift"></i></span>
+                        <div>
+                            <strong>İlk Siparişe Özel İndirim</strong>
+                            <p>Kaydolun, hoş geldin ikramımız olan %10 indirimi kazanın.</p>
+                        </div>
+                    </div>
+
+                    <div class="cf-benefit">
+                        <span class="cf-benefit-icon"><i class="bi bi-clock-history"></i></span>
+                        <div>
+                            <strong>Hızlı Tekrar Sipariş</strong>
+                            <p>Her defasında kart ve adres girmeden tek tıkla sipariş verin.</p>
+                        </div>
+                    </div>
+
+                    <div class="cf-benefit">
+                        <span class="cf-benefit-icon"><i class="bi bi-stars"></i></span>
+                        <div>
+                            <strong>Özel İkram Günleri</strong>
+                            <p>Mevsimsel tatlılar ve baristanın özel reçetelerine öncelikli erişim.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="small" style="color:var(--cf-coffee-2)!important">
+                    © CafeFlow · Butik Kahve & Tatlı Deneyimi
+                </div>
             </div>
-          </div>
 
-          <div class="cf-benefit">
-            <span class="cf-benefit-icon"><i class="bi bi-clock-history"></i></span>
-            <div>
-              <strong>Hızlı Tekrar Sipariş</strong>
-              <p>Her defasında kart ve adres girmeden tek tıkla sipariş verin.</p>
-            </div>
-          </div>
+            <!-- Register Form -->
+            <div class="cf-auth-body">
+                <div class="d-lg-none mb-4 text-center">
+                    <a asp-controller="Home" asp-action="Index" class="cf-logo">
+                        <span class="cf-logo-mark"><i class="bi bi-cup-hot-fill"></i></span>
+                        Cafe<span>Flow</span>
+                    </a>
+                </div>
 
-          <div class="cf-benefit">
-            <span class="cf-benefit-icon"><i class="bi bi-stars"></i></span>
-            <div>
-              <strong>Özel İkram Günleri</strong>
-              <p>Mevsimsel tatlılar ve baristanın özel reçetelerine öncelikli erişim.</p>
+                <div class="cf-auth-head">
+                    <h1 class="cf-auth-title">Kayıt Ol</h1>
+                    <p class="cf-auth-sub">Birkaç saniye içinde hesabınızı oluşturun.</p>
+                </div>
+
+                <!-- Validation Errors -->
+                <div asp-validation-summary="ModelOnly" class="alert-cf-danger" style="display:none;"></div>
+                @if (!ViewData.ModelState.IsValid && ViewData.ModelState.ErrorCount > 0)
+                {
+                    <div class="alert-cf-danger">
+                        <div asp-validation-summary="All"></div>
+                    </div>
+                }
+
+                <form asp-controller="Auth" asp-action="Register" method="post" id="registerForm">
+                    <div class="row g-2">
+                        <div class="col-sm-6">
+                            <label class="cf-label" for="regFirstName">Adınız</label>
+                            <div class="cf-input-wrap">
+                                <i class="bi bi-person cf-input-icon"></i>
+                                <input type="text" asp-for="FirstName" id="regFirstName" class="cf-input" placeholder="Elif" required autocomplete="given-name" />
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="cf-label" for="regLastName">Soyadınız</label>
+                            <div class="cf-input-wrap">
+                                <i class="bi bi-person cf-input-icon"></i>
+                                <input type="text" asp-for="LastName" id="regLastName" class="cf-input" placeholder="Yılmaz" required autocomplete="family-name" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="cf-label" for="regUsername">Kullanıcı Adı</label>
+                        <div class="cf-input-wrap">
+                            <i class="bi bi-at cf-input-icon"></i>
+                            <input type="text" asp-for="Username" id="regUsername" class="cf-input" placeholder="elifyilmaz" required autocomplete="username" />
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="cf-label" for="regEmail">E-posta Adresi</label>
+                        <div class="cf-input-wrap">
+                            <i class="bi bi-envelope cf-input-icon"></i>
+                            <input type="email" asp-for="Email" id="regEmail" class="cf-input" placeholder="elif@example.com" required autocomplete="email" />
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="cf-label" for="regPhone">Telefon Numarası</label>
+                        <div class="cf-input-wrap">
+                            <i class="bi bi-telephone cf-input-icon"></i>
+                            <input type="tel" asp-for="PhoneNumber" id="regPhone" class="cf-input" placeholder="05xx xxx xx xx" autocomplete="tel" />
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="cf-label" for="regPassword">Şifre Belirleyin</label>
+                        <div class="cf-input-wrap">
+                            <i class="bi bi-shield-lock cf-input-icon"></i>
+                            <input type="password" asp-for="Password" id="regPassword" class="cf-input" placeholder="En az 6 karakter" required minlength="6" />
+                            <button type="button" class="cf-pwd-toggle" id="toggleRegPassword" aria-label="Şifreyi göster/gizle">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="cf-label" for="regConfirmPassword">Şifre Tekrar</label>
+                        <div class="cf-input-wrap">
+                            <i class="bi bi-shield-check cf-input-icon"></i>
+                            <input type="password" asp-for="ConfirmPassword" id="regConfirmPassword" class="cf-input" placeholder="Şifrenizi tekrar girin" required minlength="6" />
+                            <button type="button" class="cf-pwd-toggle" id="toggleRegConfirmPassword" aria-label="Şifreyi göster/gizle">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="cf-check-wrap">
+                        <label class="cf-check-label">
+                            <input type="checkbox" id="termsCheck" required />
+                            <span><a href="#" class="cf-link">Kullanım Koşulları</a> ve <a href="#" class="cf-link">Gizlilik Politikası</a>'nı okudum, kabul ediyorum.</span>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="cf-btn-primary">
+                        Hesabımı Oluştur <i class="bi bi-heart"></i>
+                    </button>
+                </form>
+
+                <div class="cf-auth-foot">
+                    Zaten üye misiniz? <a asp-controller="Auth" asp-action="Login" class="cf-link">Giriş Yapın</a>
+                </div>
             </div>
-          </div>
+
         </div>
+    </main>
 
-        <div class="small text-muted" style="color:var(--cf-coffee-2)!important">
-          © CafeFlow · Butik Kahve & Tatlı Deneyimi
-        </div>
-      </div>
+    <script>
+            // Şifre Göster / Gizle (Şifre)
+            const toggleReg = document.getElementById("toggleRegPassword");
+            const regPwd = document.getElementById("regPassword");
+            if (toggleReg && regPwd) {
+                toggleReg.addEventListener("click", () => {
+                    const isPwd = regPwd.type === "password";
+                    regPwd.type = isPwd ? "text" : "password";
+                    toggleReg.querySelector("i").className = `bi bi-${isPwd ? "eye-slash" : "eye"}`;
+                });
+            }
 
-      <!-- Register Form -->
-      <div class="cf-auth-body">
-        <div class="d-lg-none mb-4 text-center">
-          <a href="index.html" class="cf-logo">
-            <span class="cf-logo-mark"><i class="bi bi-cup-hot-fill"></i></span>
-            Cafe<span>Flow</span>
-          </a>
-        </div>
-
-        <div class="cf-auth-head">
-          <h1 class="cf-auth-title">Kayıt Ol</h1>
-          <p class="cf-auth-sub">Birkaç saniye içinde hesabınızı oluşturun.</p>
-        </div>
-
-        <form id="registerForm" novalidate>
-          <div class="row g-2">
-            <div class="col-sm-6">
-              <label class="cf-label" for="regName">Adınız</label>
-              <div class="cf-input-wrap">
-                <i class="bi bi-person cf-input-icon"></i>
-                <input type="text" id="regName" class="cf-input" placeholder="Elif" required autocomplete="given-name" />
-              </div>
-            </div>
-            <div class="col-sm-6">
-              <label class="cf-label" for="regSurname">Soyadınız</label>
-              <div class="cf-input-wrap">
-                <i class="bi bi-person cf-input-icon"></i>
-                <input type="text" id="regSurname" class="cf-input" placeholder="Yılmaz" required autocomplete="family-name" />
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <label class="cf-label" for="regEmail">E-posta Adresi</label>
-            <div class="cf-input-wrap">
-              <i class="bi bi-envelope cf-input-icon"></i>
-              <input type="email" id="regEmail" class="cf-input" placeholder="elif@example.com" required autocomplete="email" />
-            </div>
-          </div>
-
-          <div>
-            <label class="cf-label" for="regPhone">Telefon Numarası</label>
-            <div class="cf-input-wrap">
-              <i class="bi bi-telephone cf-input-icon"></i>
-              <input type="tel" id="regPhone" class="cf-input" placeholder="05xx xxx xx xx" autocomplete="tel" />
-            </div>
-          </div>
-
-          <div>
-            <label class="cf-label" for="regPassword">Şifre Belirleyin</label>
-            <div class="cf-input-wrap">
-              <i class="bi bi-shield-lock cf-input-icon"></i>
-              <input type="password" id="regPassword" class="cf-input" placeholder="En az 6 karakter" required minlength="6" />
-              <button type="button" class="cf-pwd-toggle" id="toggleRegPassword" aria-label="Şifreyi göster/gizle">
-                <i class="bi bi-eye"></i>
-              </button>
-            </div>
-          </div>
-
-          <div class="cf-check-wrap">
-            <label class="cf-check-label">
-              <input type="checkbox" id="termsCheck" required />
-              <span><a href="#" class="cf-link">Kullanım Koşulları</a> ve <a href="#" class="cf-link">Gizlilik Politikası</a>'nı okudum, kabul ediyorum.</span>
-            </label>
-          </div>
-
-          <button type="submit" class="cf-btn-primary">
-            Hesabımı Oluştur <i class="bi bi-heart"></i>
-          </button>
-        </form>
-
-        <div class="cf-auth-foot">
-          Zaten üye misiniz? <a href="login.html" class="cf-link">Giriş Yapın</a>
-        </div>
-      </div>
-
-    </div>
-  </main>
-
-  <script>
-    // Şifre Göster / Gizle
-    const toggleReg = document.getElementById("toggleRegPassword");
-    const regPwd = document.getElementById("regPassword");
-    toggleReg.addEventListener("click", () => {
-      const isPwd = regPwd.type === "password";
-      regPwd.type = isPwd ? "text" : "password";
-      toggleReg.querySelector("i").className = `bi bi-${isPwd ? "eye-slash" : "eye"}`;
-    });
-
-    // Form Kontrolü
-    document.getElementById("registerForm").addEventListener("submit", (e) => {
-      e.preventDefault();
-      const name = document.getElementById("regName").value.trim();
-      const email = document.getElementById("regEmail").value.trim();
-      const pwd = document.getElementById("regPassword").value.trim();
-      const terms = document.getElementById("termsCheck").checked;
-
-      if (!name || !email || !pwd) {
-        alert("Lütfen zorunlu alanları doldurun.");
-        return;
-      }
-      if (!terms) {
-        alert("Lütfen koşulları ve gizlilik politikasını onaylayın.");
-        return;
-      }
-      // Demo yönlendirmesi
-      window.location.href = "login.html";
-    });
-  </script>
+            // Şifre Göster / Gizle (Şifre Tekrar)
+            const toggleConfirm = document.getElementById("toggleRegConfirmPassword");
+            const regConfirmPwd = document.getElementById("regConfirmPassword");
+            if (toggleConfirm && regConfirmPwd) {
+                toggleConfirm.addEventListener("click", () => {
+                    const isPwd = regConfirmPwd.type === "password";
+                    regConfirmPwd.type = isPwd ? "text" : "password";
+                    toggleConfirm.querySelector("i").className = `bi bi-${isPwd ? "eye-slash" : "eye"}`;
+                });
+            }
+    </script>
 </body>
 </html>

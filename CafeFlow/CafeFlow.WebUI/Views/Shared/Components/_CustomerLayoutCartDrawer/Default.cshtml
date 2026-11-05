@@ -1,0 +1,21 @@
+﻿<div class="offcanvas offcanvas-end cf-cart-drawer" tabindex="-1" id="cartDrawer" aria-labelledby="cartTitle">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="cartTitle"><i class="bi bi-bag-heart"></i> Your order</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body d-flex flex-column">
+        <div id="cartEmpty" class="cf-cart-empty">
+            <span class="cf-cat-icon"><i class="bi bi-cup-hot"></i></span>
+            <p>Your cart is empty.<br />Let's find something sweet!</p>
+            <a href="#products" class="btn cf-btn-outline" data-bs-dismiss="offcanvas">Browse treats</a>
+        </div>
+        <ul id="cartItems" class="cf-cart-items"></ul>
+        <div id="cartFooter" class="cf-cart-footer d-none">
+            <div class="d-flex justify-content-between mb-3">
+                <span>Subtotal</span>
+                <strong id="cartTotal">$0.00</strong>
+            </div>
+            <button class="btn cf-btn-primary w-100 cf-btn-lg">Checkout</button>
+        </div>
+    </div>
+</div>

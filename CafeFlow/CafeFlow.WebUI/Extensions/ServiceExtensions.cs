@@ -6,6 +6,7 @@ using CafeFlow.Business.DesignPatterns.Observer;
 using CafeFlow.Business.DesignPatterns.State;
 using CafeFlow.Business.DesignPatterns.Strategy;
 using CafeFlow.DataAccess.Repositories.Categories;
+using CafeFlow.DataAccess.Repositories.Customers;
 using CafeFlow.DataAccess.Repositories.Notifications;
 using CafeFlow.DataAccess.Repositories.Orders;
 using CafeFlow.DataAccess.Repositories.OrderStatusHistoryRepositories;
@@ -29,6 +30,7 @@ namespace CafeFlow.WebUI.Extensions
             services.AddScoped<IOrderStatusHistoryRepository, OrderStatusHistoryRepository>();
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<INotificationRepository, NotificationRepository>();
+            services.AddScoped<ICustomerRepository, CustomerRepository>();
         }
 
         public static void AddDesignPatterns(this IServiceCollection services)
@@ -54,9 +56,6 @@ namespace CafeFlow.WebUI.Extensions
 
                 return availability;
             });
-
-            services.AddScoped<IOrderFactory, OnlineOrderFactory>();
-            services.AddScoped<IOrderShippingStrategy, OnlineShipping>();
         }
     }
 }

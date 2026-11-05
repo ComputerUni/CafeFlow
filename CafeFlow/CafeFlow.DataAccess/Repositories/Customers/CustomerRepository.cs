@@ -1,9 +1,7 @@
 ﻿using CafeFlow.DataAccess.Context;
 using CafeFlow.DataAccess.Repositories.GenericRepositories;
 using CafeFlow.Entity;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using Microsoft.EntityFrameworkCore;
 
 namespace CafeFlow.DataAccess.Repositories.Customers
 {
@@ -15,7 +13,7 @@ namespace CafeFlow.DataAccess.Repositories.Customers
 
         public async Task<Customer?> GetByAppUserIdAsync(int appUserId)
         {
-            return await _context.Customers.FirstOrDefault(x => x.AppUserId == appUserId);
+            return await _context.Customers.FirstOrDefaultAsync(x => x.AppUserId == appUserId);
         }
     }
 }

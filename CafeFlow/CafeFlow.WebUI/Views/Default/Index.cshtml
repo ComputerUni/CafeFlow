@@ -1,0 +1,30 @@
+﻿@{
+    Layout = "~/Views/Shared/_CustomerLayout.cshtml";
+}
+
+
+
+<!-- ============ 2. HERO ============ -->
+@await Component.InvokeAsync("_CustomerLayoutHero")
+
+<!-- ============ 3. CATEGORIES ============ -->
+@await Component.InvokeAsync("_CustomerLayoutCategories")
+
+<!-- ============ 4. POPULAR PRODUCTS ============ -->
+@await Component.InvokeAsync("_CustomerLayoutPopularProducts")
+
+<!-- ============ 5. ORDER THE WAY YOU WANT ============ -->
+@await Component.InvokeAsync("_CustomerLayoutOrderWayWant")
+
+<!-- ============ 6. ABOUT ============ -->
+@await Component.InvokeAsync("_CustomerLayoutAbout")
+
+<!-- ============ 7. SPECIAL OFFER ============ -->
+@await Component.InvokeAsync("_CustomerLayoutSpecialOffer")
+
+<!-- ============ 8. TESTIMONIALS ============ -->
+@await Component.InvokeAsync("_CustomerLayoutTestimonials")
+
+<!-- ============ 9. CONTACT / FOOTER ============ -->
+@await Component.InvokeAsync("_CustomerLayoutFooter")
+
