@@ -3,6 +3,7 @@ using CafeFlow.Business.Concrete;
 using CafeFlow.Business.DesignPatterns.ChainOfResponsibility;
 using CafeFlow.Business.DesignPatterns.FactoryMethod;
 using CafeFlow.Business.DesignPatterns.Observer;
+using CafeFlow.Business.DesignPatterns.State;
 using CafeFlow.Business.DesignPatterns.Strategy;
 using CafeFlow.DataAccess.Repositories.Categories;
 using CafeFlow.DataAccess.Repositories.Notifications;
@@ -35,19 +36,27 @@ namespace CafeFlow.WebUI.Extensions
             services.AddScoped<IOrderObserver, KitchenObserver>();
             services.AddScoped<IOrderObserver, CashierObserver>();
             services.AddScoped<IOrderObserver, NotificationObserver>();
+
             services.AddScoped<OrderObserverObject>();
 
             services.AddScoped<ProductAvailabilityHandler>();
             services.AddScoped<DeliveryInfoHandler>();
             services.AddScoped<MinimumAmountHandler>();
 
-            services.AddScoped<OnlineOrderFactory>();
-            services.AddScoped<TakeAwayOrderFactory>();
-            services.AddScoped<TableOrderFactory>();
+            services.AddScoped<OrderValidationHandler>(sp =>
+            {
+                var availability = sp.GetRequiredService<ProductAvailabilityHandler>();
+                var delivery = sp.GetRequiredService<DeliveryInfoHandler>();
+                var minimum = sp.GetRequiredService<MinimumAmountHandler>();
 
-            services.AddScoped<OnlineShipping>();
-            services.AddScoped<TakeAwayShipping>();
-            services.AddScoped<TableOrderShipping>();
+                availability.SetNextHandler(delivery);
+                delivery.SetNextHandler(minimum);
+
+                return availability;
+            });
+
+            services.AddScoped<IOrderFactory, OnlineOrderFactory>();
+            services.AddScoped<IOrderShippingStrategy, OnlineShipping>();
         }
     }
 }

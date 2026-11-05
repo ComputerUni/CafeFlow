@@ -1,15 +1,8 @@
-using CafeFlow.Business.Abstract;
-using CafeFlow.Business.Concrete;
-using CafeFlow.Business.DesignPatterns.ChainOfResponsibility;
-using CafeFlow.Business.DesignPatterns.FactoryMethod;
-using CafeFlow.Business.DesignPatterns.Observer;
-using CafeFlow.Business.DesignPatterns.Strategy;
 using CafeFlow.Business.Mappings;
 using CafeFlow.DataAccess.Context;
-using CafeFlow.DataAccess.Repositories.Categories;
-using CafeFlow.DataAccess.Repositories.Notifications;
 using CafeFlow.Entity;
 using CafeFlow.WebUI.Extensions;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -51,5 +44,11 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
 
+app.MapControllerRoute(
+    name: "areas",
+    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+
+
+await app.SeedRolesAndAdminAsync();
 
 app.Run();

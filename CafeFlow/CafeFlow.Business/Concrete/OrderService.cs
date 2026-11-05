@@ -5,6 +5,7 @@ using CafeFlow.Business.DesignPatterns.FactoryMethod;
 using CafeFlow.Business.DesignPatterns.Observer;
 using CafeFlow.Business.DesignPatterns.State;
 using CafeFlow.Business.DesignPatterns.Strategy;
+using CafeFlow.DataAccess.Repositories.Customers;
 using CafeFlow.DataAccess.Repositories.Orders;
 using CafeFlow.DataAccess.Repositories.OrderStatusHistoryRepositories;
 using CafeFlow.DTO.Order;
@@ -13,10 +14,41 @@ using CafeFlow.Entity.Enums;
 
 namespace CafeFlow.Business.Concrete
 {
-    public class OrderService(IOrderRepository _orderRepository, IMapper _mapper, IOrderFactory _orderFactory, IOrderShippingStrategy _orderShippingStrategy, OrderValidationHandler _orderValidatonHandler, OrderObserverObject _orderObserverObject, OrderStatusState _orderStatusState, IOrderStatusHistoryRepository _orderStatusHistoryRepository) : IOrderService
+    public class OrderService(IOrderRepository _orderRepository, IMapper _mapper, OrderValidationHandler _orderValidatonHandler, OrderObserverObject _orderObserverObject, IOrderStatusHistoryRepository _orderStatusHistoryRepository, ICustomerRepository _customerRepository) : IOrderService
     {
         public async Task CreateOrderAsync(CreateOrderDto createOrderDto)
         {
+            Customer customer;
+
+            if(createOrderDto.AppUserId.HasValue)
+            {
+                customer = await _customerRepository.GetByAppUserIdAsync(createOrderDto.AppUserId.Value);
+
+                if(customer is null)
+                {
+                    customer = new Customer
+                    {
+                        AppUserId = createOrderDto.AppUserId.Value,
+                        FullName = createOrderDto.CustomerName,
+                        Email = createOrderDto.Email,
+                        Phone = createOrderDto.PhoneNumber,
+                        Address = createOrderDto.Address
+                    };
+                    await _customerRepository.CreateAsync(customer);
+                }
+            }
+            else
+            {
+                customer = new Customer
+                {
+                    FullName = createOrderDto.CustomerName,
+                    Email = createOrderDto.Email,
+                    Phone = createOrderDto.PhoneNumber,
+                    Address = createOrderDto.Address
+                };
+                await _customerRepository.CreateAsync(customer);
+            }
+
             var validationRequest = new OrderValidationRequest
             {
                 ProductId = createOrderDto.OrderDetails.First().ProductId,
@@ -29,9 +61,25 @@ namespace CafeFlow.Business.Concrete
 
             await _orderValidatonHandler.Validate(validationRequest);
 
-            var order = await _orderFactory.CreateOrder(createOrderDto);
+            IOrderFactory orderFactory = createOrderDto.OrderType switch
+            {
+                OrderType.Online => new OnlineOrderFactory(),
+                OrderType.TakeAway => new TakeAwayOrderFactory(),
+                OrderType.Table => new TableOrderFactory(),
+            };
+
+
+            IOrderShippingStrategy shippingStrategy = createOrderDto.OrderType switch
+            {
+                OrderType.Online => new OnlineShipping(),
+                OrderType.TakeAway => new TakeAwayShipping(),
+                OrderType.Table => new TableOrderShipping(),
+            };
+
+            var order = await orderFactory.CreateOrder(createOrderDto);
             order.OrderCode = "CF" + "-" + DateTime.Now.Year + "-" + new Random().Next(10000000, 99999999);
             order.OrderStatus = OrderStatus.Received;
+            order.TotalAmount = createOrderDto.TotalAmount + shippingStrategy.CalculateOrderShipping(createOrderDto.TotalAmount);
 
             await _orderRepository.CreateAsync(order);
 

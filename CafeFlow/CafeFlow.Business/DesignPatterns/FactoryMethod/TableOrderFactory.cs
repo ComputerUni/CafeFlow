@@ -15,8 +15,6 @@ namespace CafeFlow.Business.DesignPatterns.FactoryMethod
             var order = new Order();
             order.TableId = createOrderDto.TableId;
             order.CustomerId = createOrderDto.CustomerId;
-            order.OrderCode = createOrderDto.OrderCode;
-            order.OrderStatus = createOrderDto.OrderStatus;
             order.OrderType = OrderType.Table;
             order.TotalAmount = createOrderDto.TotalAmount;
             order.Address = null;
