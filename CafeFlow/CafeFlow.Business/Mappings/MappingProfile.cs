@@ -3,6 +3,7 @@ using CafeFlow.DTO.Category;
 using CafeFlow.DTO.Customer;
 using CafeFlow.DTO.Order;
 using CafeFlow.DTO.OrderDetail;
+using CafeFlow.DTO.OrderStatusHistory;
 using CafeFlow.DTO.Product;
 using CafeFlow.DTO.Table;
 using CafeFlow.Entity;
@@ -36,6 +37,8 @@ namespace CafeFlow.Business.Mappings
             CreateMap<Table, TableListDto>();
             CreateMap<UpdateTableDto, Table>();
             CreateMap<CreateTableDto, Table>();
+
+            CreateMap<OrderStatusHistory, OrderStatusHistoryListDto>();
         }
     }
 }
