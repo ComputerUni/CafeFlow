@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CafeFlow.WebUI")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+40692e5233ad4deaff148cdbc2b20117517f6a8f")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6c6d1fe34a1fa1cf092a9bfbb341eca5cc96dcb3")]
 [assembly: System.Reflection.AssemblyProductAttribute("CafeFlow.WebUI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CafeFlow.WebUI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

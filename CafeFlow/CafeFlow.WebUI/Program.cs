@@ -1,6 +1,15 @@
+using CafeFlow.Business.Abstract;
+using CafeFlow.Business.Concrete;
+using CafeFlow.Business.DesignPatterns.ChainOfResponsibility;
+using CafeFlow.Business.DesignPatterns.FactoryMethod;
+using CafeFlow.Business.DesignPatterns.Observer;
+using CafeFlow.Business.DesignPatterns.Strategy;
 using CafeFlow.Business.Mappings;
 using CafeFlow.DataAccess.Context;
+using CafeFlow.DataAccess.Repositories.Categories;
+using CafeFlow.DataAccess.Repositories.Notifications;
 using CafeFlow.Entity;
+using CafeFlow.WebUI.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,6 +22,10 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddIdentity<AppUser, AppRole>().AddEntityFrameworkStores<AppDbContext>();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
+
+builder.Services.AddBusinessServices();
+builder.Services.AddRepositories();
+builder.Services.AddDesignPatterns();
 
 builder.Services.AddControllersWithViews();
 
