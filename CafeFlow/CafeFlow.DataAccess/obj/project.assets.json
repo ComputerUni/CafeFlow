@@ -1480,6 +1480,19 @@
           "buildTransitive/net8.0/_._": {}
         }
       },
+      "CafeFlow.DTO/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v10.0",
+        "dependencies": {
+          "CafeFlow.Entity": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/CafeFlow.DTO.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/CafeFlow.DTO.dll": {}
+        }
+      },
       "CafeFlow.Entity/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v10.0",
@@ -4163,6 +4176,11 @@
         "useSharedDesignerContext.txt"
       ]
     },
+    "CafeFlow.DTO/1.0.0": {
+      "type": "project",
+      "path": "../CafeFlow.DTO/CafeFlow.DTO.csproj",
+      "msbuildProject": "../CafeFlow.DTO/CafeFlow.DTO.csproj"
+    },
     "CafeFlow.Entity/1.0.0": {
       "type": "project",
       "path": "../CafeFlow.Entity/CafeFlow.Entity.csproj",
@@ -4171,6 +4189,7 @@
   },
   "projectFileDependencyGroups": {
     "net10.0": [
+      "CafeFlow.DTO >= 1.0.0",
       "CafeFlow.Entity >= 1.0.0",
       "Microsoft.EntityFrameworkCore >= 10.0.14",
       "Microsoft.EntityFrameworkCore.Design >= 10.0.14",
@@ -4213,6 +4232,9 @@
           "framework": "net10.0",
           "targetAlias": "net10.0",
           "projectReferences": {
+            "C:\\Users\\BURHAN\\Desktop\\CafeFlow\\CafeFlow\\CafeFlow.DTO\\CafeFlow.DTO.csproj": {
+              "projectPath": "C:\\Users\\BURHAN\\Desktop\\CafeFlow\\CafeFlow\\CafeFlow.DTO\\CafeFlow.DTO.csproj"
+            },
             "C:\\Users\\BURHAN\\Desktop\\CafeFlow\\CafeFlow\\CafeFlow.Entity\\CafeFlow.Entity.csproj": {
               "projectPath": "C:\\Users\\BURHAN\\Desktop\\CafeFlow\\CafeFlow\\CafeFlow.Entity\\CafeFlow.Entity.csproj"
             }

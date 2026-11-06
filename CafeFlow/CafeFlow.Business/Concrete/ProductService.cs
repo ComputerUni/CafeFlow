@@ -35,6 +35,12 @@ namespace CafeFlow.Business.Concrete
             return _mapper.Map<UpdateProductDto>(product);
         }
 
+        public async Task<List<ProductListDto>> GetFeaturedProductsAsync()
+        {
+            var products = await _productRepository.GetFeaturedProductsAsync();
+            return _mapper.Map<List<ProductListDto>>(products);
+        }
+
         public async Task UpdateAsync(UpdateProductDto dto)
         {
             var product = await _productRepository.GetByIdAsync(dto.Id);

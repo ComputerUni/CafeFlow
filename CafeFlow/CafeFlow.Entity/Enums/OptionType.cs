@@ -9,18 +9,15 @@ namespace CafeFlow.Entity.Enums
     public enum OptionType
     {
         [Display(Name = "Boyut")]
-        Size = 1,
+        Size = 0,
 
         [Display(Name = "Süt Çeşidi")]
-        MilkType = 2,
+        MilkType = 1,
 
         [Display(Name = "Ekstra")]
-        Extra = 3,
+        Extra = 2,
 
         [Display(Name = "Sıcaklık")]
-        Temperature = 4,
-
-
-
+        Temperature = 3,
     }
 }

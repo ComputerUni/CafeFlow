@@ -16,7 +16,6 @@ C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.WebUI\wwwroot\lib\bootstrap\d
 C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.WebUI\wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.rtl.min.css
 C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.WebUI\wwwroot\css\site.css
 C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.WebUI\wwwroot\lib\jquery\dist\jquery.slim.js
-C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.WebUI\wwwroot\ui\index.html
 C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.WebUI\wwwroot\lib\bootstrap\dist\js\bootstrap.bundle.min.js.map
 C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.WebUI\wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.css.map
 C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.WebUI\wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.css
@@ -130,6 +129,5 @@ wwwroot\lib\jquery\dist\jquery.slim.min.js
 wwwroot\lib\jquery\dist\jquery.slim.min.map
 wwwroot\ui\admin-categories.html
 wwwroot\ui\cart.html
-wwwroot\ui\index.html
 wwwroot\ui\product-detail.html
 wwwroot\ui\products.html

@@ -16,3 +16,5 @@ C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.DataAccess\obj\Debug\net10.0\
 C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.DataAccess\obj\Debug\net10.0\CafeFlow.DataAccess.pdb
 C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.DataAccess\obj\Debug\net10.0\CafeFlow.DataAccess.genruntimeconfig.cache
 C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.DataAccess\obj\Debug\net10.0\ref\CafeFlow.DataAccess.dll
+C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.DataAccess\bin\Debug\net10.0\CafeFlow.DTO.dll
+C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.DataAccess\bin\Debug\net10.0\CafeFlow.DTO.pdb

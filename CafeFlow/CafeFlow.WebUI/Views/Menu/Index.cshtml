@@ -1,0 +1,639 @@
+﻿@{
+    Layout = "~/Views/Shared/_CustomerLayout.cshtml";
+}
+
+@await Component.InvokeAsync("_MenuLayoutHead")
+
+<body>
+
+    @await Component.InvokeAsync("_MenuLayoutPageHeader")
+
+    @await Component.InvokeAsync("_MenuLayoutMenuSection")
+
+    @await Component.InvokeAsync("_MenuLayoutFooter")
+
+    @await Component.InvokeAsync("_MenuLayoutCustomizeModal")
+
+    @await Component.InvokeAsync("_MenuLayoutCartDrawer")
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+            /* =========================================================
+               CafeFlow — Products / Menu Page
+               Sections:
+               1. Data (categories, products, customization options)
+               2. Storage helpers (cart + favorites in localStorage)
+               3. Cart module (shared data structure for future pages)
+               4. UI helpers (money, images, toast)
+               5. Menu rendering, filtering, sorting
+               6. Customization modal
+               7. Cart drawer rendering
+               8. Page bootstrap (events, footer, etc.)
+               ========================================================= */
+            (() => {
+                "use strict";
+
+                /* ---------- 1. DATA ---------- */
+                const IMG = (id, w = 700) => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&q=80`;
+
+                const CATEGORIES = [
+                    { id: "all", label: "All Products", icon: "bi-grid" },
+                    { id: "hot", label: "Hot Coffees", icon: "bi-cup-hot" },
+                    { id: "iced", label: "Iced Coffees", icon: "bi-cup-straw" },
+                    { id: "signature", label: "Signature Drinks", icon: "bi-stars" },
+                    { id: "cakes", label: "Cakes & Desserts", icon: "bi-cake2" },
+                    { id: "bakery", label: "Bakery", icon: "bi-basket" },
+                    { id: "snacks", label: "Snacks", icon: "bi-egg-fried" },
+                ];
+
+                const BADGES = {
+                    "Best Seller": "cf-tag-best",
+                    "New": "cf-tag-new",
+                    "Popular": "cf-tag-popular",
+                    "Chef's Choice": "cf-tag-chef",
+                };
+
+                // Image fallback icon per category
+                const FALLBACK_ICON = {
+                    hot: "bi-cup-hot", iced: "bi-cup-straw", signature: "bi-cup-straw",
+                    cakes: "bi-cake2", bakery: "bi-basket", snacks: "bi-egg-fried",
+                    coffee: "bi-cup-hot", cake: "bi-cake2",
+                };
+
+                /**
+                 * Central product catalogue. `popularity` drives "Most Popular" sorting,
+                 * `customizable` opens the options modal before adding to cart.
+                 */
+                const PRODUCTS = [
+                    { id: 1, name: "Classic Cappuccino", category: "hot", price: 145, image: IMG("1572442388796-11668a67e53d"), description: "Rich double espresso under a deep layer of velvety milk foam.", badge: null, vegetarian: true, popularity: 88, customizable: true },
+                    { id: 2, name: "Vanilla Latte", category: "hot", price: 160, image: IMG("1509042239860-f550ce710b93"), description: "Smooth espresso and steamed milk with Madagascar vanilla.", badge: "Best Seller", vegetarian: true, popularity: 95, customizable: true },
+                    { id: 3, name: "Caramel Macchiato", category: "hot", price: 170, image: IMG("1485808191679-5f86510681a2"), description: "Vanilla milk marked with espresso and a buttery caramel drizzle.", badge: "Popular", vegetarian: true, popularity: 90, customizable: true },
+                    { id: 4, name: "Iced Spanish Latte", category: "iced", price: 175, image: IMG("1461023058943-07fcbe16d735"), description: "Espresso over ice with creamy condensed milk sweetness.", badge: "Best Seller", vegetarian: true, popularity: 96, customizable: true },
+                    { id: 5, name: "Iced Mocha", category: "iced", price: 180, image: IMG("1517701604599-bb29b565090c"), description: "Double espresso, Belgian chocolate and cold milk over ice.", badge: null, vegetarian: true, popularity: 82, customizable: true },
+                    { id: 6, name: "Cold Brew", category: "iced", price: 155, image: IMG("1534778101976-62847782c213"), description: "Slow-steeped for 18 hours. Smooth, bold and naturally sweet.", badge: null, vegetarian: true, popularity: 74, customizable: false },
+                    { id: 7, name: "Strawberry Cloud Latte", category: "signature", price: 205, image: IMG("1572490122747-3968b75cc699"), description: "Fresh strawberry milk, espresso and a cloud of pink cold foam.", badge: "Best Seller", vegetarian: true, popularity: 99, customizable: true },
+                    { id: 8, name: "Rose Matcha", category: "signature", price: 210, image: IMG("1515823064-d6e0c04616a7"), description: "Ceremonial matcha with a delicate rose syrup and oat milk.", badge: "New", vegetarian: true, popularity: 85, customizable: true },
+                    { id: 9, name: "Pink Berry Frappe", category: "signature", price: 215, image: IMG("1553530666-ba11a7da3888"), description: "Blended raspberry, strawberry and vanilla cream with whipped top.", badge: "Popular", vegetarian: true, popularity: 91, customizable: false },
+                    { id: 10, name: "Pink Velvet Cake", category: "cakes", price: 225, image: IMG("1578985545062-69928b1d9587"), description: "Rose-tinted sponge layered with vanilla cream cheese frosting.", badge: "Chef's Choice", vegetarian: true, popularity: 93, customizable: false },
+                    { id: 11, name: "Lotus Cheesecake", category: "cakes", price: 245, image: IMG("1533134242443-d4fd215305ad"), description: "Baked cheesecake on a Biscoff crumb with caramel drizzle.", badge: "Best Seller", vegetarian: true, popularity: 97, customizable: false },
+                    { id: 12, name: "Strawberry Shortcake", category: "cakes", price: 230, image: IMG("1565958011703-44f9829ba187"), description: "Light chiffon, fresh strawberries and whipped mascarpone.", badge: "New", vegetarian: true, popularity: 80, customizable: false },
+                    { id: 13, name: "Raspberry Macarons", category: "cakes", price: 180, image: IMG("1569864358642-9d1684040f43"), description: "Box of four almond macarons with tangy raspberry ganache.", badge: null, vegetarian: true, popularity: 76, customizable: false },
+                    { id: 14, name: "Butter Croissant", category: "bakery", price: 95, image: IMG("1555507036-ab1f4038808a"), description: "Flaky, golden and laminated with French butter every morning.", badge: "Popular", vegetarian: true, popularity: 89, customizable: false },
+                    { id: 15, name: "Almond Croissant", category: "bakery", price: 125, image: IMG("1623334044303-241021148842"), description: "Twice-baked with almond frangipane and toasted almond flakes.", badge: null, vegetarian: true, popularity: 78, customizable: false },
+                    { id: 16, name: "Cinnamon Roll", category: "bakery", price: 115, image: IMG("1509365465985-25d11c17e812"), description: "Soft brioche swirl with cinnamon sugar and cream cheese glaze.", badge: "New", vegetarian: true, popularity: 72, customizable: false },
+                    { id: 17, name: "Avocado Toast", category: "snacks", price: 235, image: IMG("1541519227354-08fa5d50c44d"), description: "Sourdough, smashed avocado, cherry tomatoes and chili flakes.", badge: "Chef's Choice", vegetarian: true, popularity: 84, customizable: false },
+                    { id: 18, name: "Grilled Cheese Sandwich", category: "snacks", price: 210, image: IMG("1528735602780-2552fd46c7af"), description: "Cheddar and mozzarella melted on buttery toasted brioche.", badge: null, vegetarian: true, popularity: 70, customizable: false },
+                    { id: 19, name: "Turkey & Brie Panini", category: "snacks", price: 255, image: IMG("1528736235302-52922df5c122"), description: "Smoked turkey, creamy brie and fig jam, pressed until golden.", badge: null, vegetarian: false, popularity: 77, customizable: false },
+                    { id: 20, name: "Chicken Caesar Wrap", category: "snacks", price: 245, image: IMG("1626700051175-6818013e1d4f"), description: "Grilled chicken, crisp romaine, parmesan and house Caesar dressing.", badge: null, vegetarian: false, popularity: 73, customizable: false },
+                ];
+
+                /** Option groups for customizable drinks. `price` is added to the base price. */
+                const CUSTOM_OPTIONS = [
+                    {
+                        key: "size", label: "Size", choices: [
+                            { value: "Small", price: 0 },
+                            { value: "Medium", price: 15 },
+                            { value: "Large", price: 30 },
+                        ], default: "Medium"
+                    },
+                    {
+                        key: "milk", label: "Milk", choices: [
+                            { value: "Regular", price: 0 },
+                            { value: "Oat", price: 15 },
+                            { value: "Almond", price: 15 },
+                        ], default: "Regular"
+                    },
+                    {
+                        key: "extraShot", label: "Extra Espresso Shot", choices: [
+                            { value: "No", price: 0 },
+                            { value: "Yes", price: 20 },
+                        ], default: "No"
+                    },
+                    {
+                        key: "syrup", label: "Additional Syrup", choices: [
+                            { value: "None", price: 0 },
+                            { value: "Vanilla", price: 10 },
+                            { value: "Caramel", price: 10 },
+                        ], default: "None"
+                    },
+                ];
+
+                /* ---------- 2. STORAGE HELPERS ---------- */
+                const STORAGE_KEYS = { cart: "cafeflow_cart", favorites: "cafeflow_favorites" };
+
+                const storage = {
+                    read(key, fallback) {
+                        try {
+                            const raw = localStorage.getItem(key);
+                            return raw ? JSON.parse(raw) : fallback;
+                        } catch { return fallback; }
+                    },
+                    write(key, value) {
+                        try { localStorage.setItem(key, JSON.stringify(value)); } catch { /* storage unavailable */ }
+                    },
+                };
+
+                /* ---------- 3. CART MODULE ----------
+                   Cart line structure (reusable by Product Details & Cart pages):
+                   {
+                     lineId:   "7|size:Large|milk:Oat|extraShot:No|syrup:None",
+                     productId: 7,
+                     name:     "Strawberry Cloud Latte",
+                     image:    "https://...",
+                     unitPrice: 250,          // base price + option extras
+                     quantity:  2,
+                     options:  { size: "Large", milk: "Oat", extraShot: "No", syrup: "None" } | null
+                   }
+                */
+                const Cart = {
+                    items: storage.read(STORAGE_KEYS.cart, []),
+
+                    save() {
+                        storage.write(STORAGE_KEYS.cart, this.items);
+                        document.dispatchEvent(new CustomEvent("cart:changed"));
+                    },
+                    buildLineId(productId, options) {
+                        if (!options) return String(productId);
+                        return [productId, ...Object.entries(options).map(([k, v]) => `${k}:${v}`)].join("|");
+                    },
+                    add(product, { options = null, unitPrice = product.price, quantity = 1 } = {}) {
+                        const lineId = this.buildLineId(product.id, options);
+                        const existing = this.items.find((l) => l.lineId === lineId);
+                        if (existing) existing.quantity += quantity;
+                        else this.items.push({ lineId, productId: product.id, name: product.name, image: product.image, unitPrice, quantity, options });
+                        this.save();
+                    },
+                    setQuantity(lineId, quantity) {
+                        const line = this.items.find((l) => l.lineId === lineId);
+                        if (!line) return;
+                        if (quantity <= 0) this.items = this.items.filter((l) => l.lineId !== lineId);
+                        else line.quantity = quantity;
+                        this.save();
+                    },
+                    remove(lineId) {
+                        this.items = this.items.filter((l) => l.lineId !== lineId);
+                        this.save();
+                    },
+                    count() { return this.items.reduce((sum, l) => sum + l.quantity, 0); },
+                    subtotal() { return this.items.reduce((sum, l) => sum + l.unitPrice * l.quantity, 0); },
+                };
+
+                const Favorites = {
+                    ids: new Set(storage.read(STORAGE_KEYS.favorites, [])),
+                    toggle(id) {
+                        this.ids.has(id) ? this.ids.delete(id) : this.ids.add(id);
+                        storage.write(STORAGE_KEYS.favorites, [...this.ids]);
+                        return this.ids.has(id);
+                    },
+                    has(id) { return this.ids.has(id); },
+                };
+
+                /* ---------- 4. UI HELPERS ---------- */
+                const $ = (sel, root = document) => root.querySelector(sel);
+                const formatMoney = (n) => `₺${n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                const detailUrl = (id) => `product-detail.html?id=${id}`;
+                const categoryLabel = (id) => (CATEGORIES.find((c) => c.id === id) || {}).label || "";
+
+                /** Replace a broken image with a soft pastel placeholder. */
+                function attachImageFallback(img) {
+                    const swap = () => {
+                        const div = document.createElement("div");
+                        div.className = "cf-img-fallback";
+                        div.setAttribute("role", "img");
+                        div.setAttribute("aria-label", img.alt);
+                        div.innerHTML = `<i class="bi ${FALLBACK_ICON[img.dataset.fallback] || "bi-heart"}"></i>`;
+                        img.replaceWith(div);
+                    };
+                    if (img.complete && img.naturalWidth === 0 && img.getAttribute("src")) swap();
+                    else img.addEventListener("error", swap, { once: true });
+                }
+                const applyFallbacks = (root = document) => root.querySelectorAll("img[data-fallback]").forEach(attachImageFallback);
+
+                const toastEl = $("#cfToast");
+                const toastText = $("#cfToastText");
+                let toastTimer;
+                function showToast(message) {
+                    toastText.textContent = message;
+                    toastEl.classList.add("show");
+                    clearTimeout(toastTimer);
+                    toastTimer = setTimeout(() => toastEl.classList.remove("show"), 2400);
+                }
+
+                /* ---------- 5. MENU RENDERING, FILTERING, SORTING ---------- */
+                const state = {
+                    category: "all",
+                    search: "",
+                    sort: "recommended",
+                    filters: new Set(), // vegetarian | bestseller | new
+                };
+
+                const categoryBar = $("#categoryBar");
+                const grid = $("#menuGrid");
+                const emptyState = $("#emptyState");
+                const resultCount = $("#resultCount");
+                const searchInput = $("#searchInput");
+                const searchClear = $("#searchClear");
+                const sortSelect = $("#sortSelect");
+                const resetBtn = $("#resetFilters");
+                const chipInputs = document.querySelectorAll(".cf-chip input");
+
+                function renderCategories() {
+                    categoryBar.innerHTML = CATEGORIES.map((cat) => {
+                        const count = cat.id === "all" ? PRODUCTS.length : PRODUCTS.filter((p) => p.category === cat.id).length;
+                        const active = cat.id === state.category;
+                        return `
+                                                                    <button type="button" class="cf-pill${active ? " active" : ""}" role="tab"
+                                                                            aria-selected="${active}" data-category="${cat.id}">
+                                                                      <i class="bi ${cat.icon}"></i>${cat.label}
+                                                                      <span class="cf-pill-count">${count}</span>
+                                                                    </button>`;
+                    }).join("");
+                }
+
+                function getVisibleProducts() {
+                    const term = state.search.trim().toLowerCase();
+                    let list = PRODUCTS.filter((p) => {
+                        if (state.category !== "all" && p.category !== state.category) return false;
+                        if (term && !`${p.name} ${p.description} ${categoryLabel(p.category)}`.toLowerCase().includes(term)) return false;
+                        if (state.filters.has("vegetarian") && !p.vegetarian) return false;
+                        if (state.filters.has("bestseller") && p.badge !== "Best Seller") return false;
+                        if (state.filters.has("new") && p.badge !== "New") return false;
+                        return true;
+                    });
+
+                    const sorters = {
+                        "price-asc": (a, b) => a.price - b.price,
+                        "price-desc": (a, b) => b.price - a.price,
+                        "name-asc": (a, b) => a.name.localeCompare(b.name),
+                        "popular": (a, b) => b.popularity - a.popularity,
+                    };
+                    if (sorters[state.sort]) list = [...list].sort(sorters[state.sort]);
+                    return list;
+                }
+
+                function productCardTemplate(p, index) {
+                    const liked = Favorites.has(p.id);
+                    const badge = p.badge ? `<span class="cf-tag ${BADGES[p.badge]}">${p.badge}</span>` : "";
+                    const fromLabel = p.customizable ? "<small>from</small>" : "";
+                    const btnLabel = p.customizable
+                        ? `<i class="bi bi-sliders"></i> Customize`
+                        : `<i class="bi bi-bag-plus"></i> Add`;
+
+                    return `
+                                                                  <div class="col-12 col-sm-6 col-lg-4 col-xl-3 cf-grid-item" style="animation-delay:${Math.min(index, 12) * 40}ms">
+                                                                    <article class="cf-product-card">
+                                                                      <div class="cf-product-img">
+                                                                        <a href="${detailUrl(p.id)}" class="cf-product-img-link" aria-label="View ${p.name} details">
+                                                                          <img src="${p.image}" alt="${p.name}" loading="lazy" data-fallback="${p.category}" />
+                                                                        </a>
+                                                                        ${badge}
+                                                                        <button type="button" class="cf-fav${liked ? " liked" : ""}" data-fav="${p.id}"
+                                                                                aria-pressed="${liked}" aria-label="${liked ? "Remove from" : "Add to"} favorites">
+                                                                          <i class="bi ${liked ? "bi-heart-fill" : "bi-heart"}"></i>
+                                                                        </button>
+                                                                      </div>
+                                                                      <div class="cf-product-body">
+                                                                        <div class="cf-product-meta">
+                                                                          <span class="cf-cat-label">${categoryLabel(p.category)}</span>
+                                                                          ${p.vegetarian ? `<span class="cf-veg" title="Vegetarian"><i class="bi bi-flower2"></i> Veg</span>` : ""}
+                                                                        </div>
+                                                                        <h3><a href="${detailUrl(p.id)}">${p.name}</a></h3>
+                                                                        <p>${p.description}</p>
+                                                                        <div class="cf-product-foot">
+                                                                          <span class="cf-price">${fromLabel}${formatMoney(p.price)}</span>
+                                                                          <button type="button" class="btn cf-add-btn" data-add="${p.id}">${btnLabel}</button>
+                                                                        </div>
+                                                                      </div>
+                                                                    </article>
+                                                                  </div>`;
+                }
+
+                function renderProducts() {
+                    const list = getVisibleProducts();
+                    grid.innerHTML = list.map(productCardTemplate).join("");
+                    applyFallbacks(grid);
+
+                    emptyState.classList.toggle("d-none", list.length > 0);
+                    resultCount.innerHTML = list.length === 1
+                        ? `Showing <strong>1</strong> delicious treat`
+                        : `Showing <strong>${list.length}</strong> delicious treats`;
+
+                    const isFiltered = state.category !== "all" || state.search || state.filters.size || state.sort !== "recommended";
+                    resetBtn.classList.toggle("show", Boolean(isFiltered));
+                }
+
+                function setCategory(id) {
+                    state.category = id;
+                    renderCategories();
+                    renderProducts();
+                    const activePill = categoryBar.querySelector(".cf-pill.active");
+                    if (activePill) activePill.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+                }
+
+                function resetAll() {
+                    state.category = "all";
+                    state.search = "";
+                    state.sort = "recommended";
+                    state.filters.clear();
+                    searchInput.value = "";
+                    searchClear.classList.remove("show");
+                    sortSelect.value = "recommended";
+                    chipInputs.forEach((c) => (c.checked = false));
+                    renderCategories();
+                    renderProducts();
+                }
+
+                /* ---------- 6. CUSTOMIZATION MODAL ---------- */
+                const modalEl = $("#customizeModal");
+                const modal = new bootstrap.Modal(modalEl);
+                const customizeForm = $("#customizeForm");
+                const modalOptions = $("#customizeOptions");
+                const modalTotal = $("#modalTotal");
+                const modalQtyEl = $("#modalQty");
+                const modalQtyDec = $("#modalQtyDec");
+                let modalProduct = null;
+                let modalQty = 1;
+
+                function readSelectedOptions() {
+                    const selected = {};
+                    let extra = 0;
+                    CUSTOM_OPTIONS.forEach((group) => {
+                        const input = customizeForm.querySelector(`input[name="${group.key}"]:checked`);
+                        const value = input ? input.value : group.default;
+                        selected[group.key] = value;
+                        extra += group.choices.find((c) => c.value === value).price;
+                    });
+                    return { options: selected, unitPrice: modalProduct.price + extra };
+                }
+
+                function updateModalTotal() {
+                    const { unitPrice } = readSelectedOptions();
+                    modalTotal.textContent = formatMoney(unitPrice * modalQty);
+                    modalQtyEl.textContent = modalQty;
+                    modalQtyDec.disabled = modalQty <= 1;
+                }
+
+                function openCustomizer(product) {
+                    modalProduct = product;
+                    modalQty = 1;
+
+                    $("#customizeTitle").textContent = product.name;
+                    $("#customizeDesc").textContent = product.description;
+                    $("#customizeCategory").textContent = categoryLabel(product.category);
+                    $("#customizeImage").innerHTML = `<img src="${product.image}" alt="${product.name}" data-fallback="${product.category}" />`;
+                    applyFallbacks($("#customizeImage"));
+
+                    modalOptions.innerHTML = CUSTOM_OPTIONS.map((group) => `
+                                                                  <fieldset class="cf-opt-group">
+                                                                    <legend class="cf-opt-label">${group.label}</legend>
+                                                                    <div class="cf-opt-choices">
+                                                                      ${group.choices.map((c) => `
+                                                                        <label class="cf-opt">
+                                                                          <input type="radio" name="${group.key}" value="${c.value}" ${c.value === group.default ? "checked" : ""} />
+                                                                          <span>${c.value}<small>${c.price ? `+${formatMoney(c.price)}` : "Included"}</small></span>
+                                                                        </label>`).join("")}
+                                                                    </div>
+                                                                  </fieldset>`).join("");
+
+                    updateModalTotal();
+                    modal.show();
+                }
+
+                /* ---------- 7. CART DRAWER ---------- */
+                const cartCountEl = $("#cartCount");
+                const cartItemsEl = $("#cartItems");
+                const cartEmptyEl = $("#cartEmpty");
+                const cartFooterEl = $("#cartFooter");
+
+                const describeOptions = (options) => {
+                    if (!options) return "";
+                    const parts = [options.size, options.milk !== "Regular" ? `${options.milk} milk` : "Regular milk"];
+                    if (options.extraShot === "Yes") parts.push("Extra shot");
+                    if (options.syrup && options.syrup !== "None") parts.push(`${options.syrup} syrup`);
+                    return parts.join(" · ");
+                };
+
+                function renderCart() {
+                    const count = Cart.count();
+                    cartCountEl.textContent = count;
+                    $("#cartDrawerCount").textContent = count ? `(${count})` : "";
+                    $("#cartItemCount").textContent = count;
+                    $("#cartTotal").textContent = formatMoney(Cart.subtotal());
+
+                    const empty = Cart.items.length === 0;
+                    cartEmptyEl.classList.toggle("d-none", !empty);
+                    cartFooterEl.classList.toggle("d-none", empty);
+
+                    cartItemsEl.innerHTML = Cart.items.map((line) => {
+                        const product = PRODUCTS.find((p) => p.id === line.productId);
+                        const fallback = product ? product.category : "coffee";
+                        return `
+                                                                    <li class="cf-cart-line" data-line="${line.lineId}">
+                                                                      <a href="${detailUrl(line.productId)}" class="cf-cart-thumb">
+                                                                        <img src="${line.image}" alt="${line.name}" data-fallback="${fallback}" />
+                                                                      </a>
+                                                                      <div>
+                                                                        <div class="cf-cart-line-top">
+                                                                          <h6>${line.name}</h6>
+                                                                          <button type="button" class="cf-cart-remove" data-action="remove" aria-label="Remove ${line.name}">
+                                                                            <i class="bi bi-trash3"></i>
+                                                                          </button>
+                                                                        </div>
+                                                                        <div class="cf-cart-opts">${describeOptions(line.options) || `${formatMoney(line.unitPrice)} each`}</div>
+                                                                        <div class="cf-cart-line-bottom">
+                                                                          <div class="cf-stepper">
+                                                                            <button type="button" data-action="dec" aria-label="Decrease ${line.name}"><i class="bi bi-dash"></i></button>
+                                                                            <span>${line.quantity}</span>
+                                                                            <button type="button" data-action="inc" aria-label="Increase ${line.name}"><i class="bi bi-plus"></i></button>
+                                                                          </div>
+                                                                          <span class="cf-line-price">${formatMoney(line.unitPrice * line.quantity)}</span>
+                                                                        </div>
+                                                                      </div>
+                                                                    </li>`;
+                    }).join("");
+                    applyFallbacks(cartItemsEl);
+                }
+
+                function bumpCartCounter() {
+                    cartCountEl.classList.add("bump");
+                    setTimeout(() => cartCountEl.classList.remove("bump"), 300);
+                }
+
+                function flashButton(btn) {
+                    if (!btn) return;
+                    const original = btn.innerHTML;
+                    btn.classList.add("added");
+                    btn.innerHTML = '<i class="bi bi-check-lg"></i> Added';
+                    btn.disabled = true;
+                    setTimeout(() => {
+                        btn.classList.remove("added");
+                        btn.innerHTML = original;
+                        btn.disabled = false;
+                    }, 1100);
+                }
+
+                /* ---------- 8. EVENTS & PAGE BOOTSTRAP ---------- */
+
+                // Navbar shadow on scroll (same behaviour as Homepage)
+                const nav = $("#mainNav");
+                const onScroll = () => nav.classList.toggle("scrolled", window.scrollY > 30);
+                onScroll();
+                window.addEventListener("scroll", onScroll, { passive: true });
+
+                // Close mobile menu after clicking a link
+                const navCollapse = $("#navLinks");
+                navCollapse.querySelectorAll(".nav-link").forEach((link) =>
+                    link.addEventListener("click", () => {
+                        if (navCollapse.classList.contains("show")) bootstrap.Collapse.getOrCreateInstance(navCollapse).hide();
+                    })
+                );
+
+                // Categories
+                categoryBar.addEventListener("click", (e) => {
+                    const pill = e.target.closest("[data-category]");
+                    if (pill) setCategory(pill.dataset.category);
+                });
+
+                // Search (real time)
+                searchInput.addEventListener("input", () => {
+                    state.search = searchInput.value;
+                    searchClear.classList.toggle("show", searchInput.value.length > 0);
+                    renderProducts();
+                });
+                searchClear.addEventListener("click", () => {
+                    searchInput.value = "";
+                    state.search = "";
+                    searchClear.classList.remove("show");
+                    searchInput.focus();
+                    renderProducts();
+                });
+
+                // Sorting
+                sortSelect.addEventListener("change", () => {
+                    state.sort = sortSelect.value;
+                    renderProducts();
+                });
+
+                // Extra filters
+                chipInputs.forEach((input) =>
+                    input.addEventListener("change", () => {
+                        input.checked ? state.filters.add(input.value) : state.filters.delete(input.value);
+                        renderProducts();
+                    })
+                );
+
+                // Reset
+                resetBtn.addEventListener("click", resetAll);
+                $("#emptyReset").addEventListener("click", resetAll);
+
+                // Product grid: favorites + add to cart (event delegation)
+                grid.addEventListener("click", (e) => {
+                    const favBtn = e.target.closest("[data-fav]");
+                    if (favBtn) {
+                        const id = Number(favBtn.dataset.fav);
+                        const liked = Favorites.toggle(id);
+                        favBtn.classList.toggle("liked", liked);
+                        favBtn.setAttribute("aria-pressed", liked);
+                        favBtn.setAttribute("aria-label", `${liked ? "Remove from" : "Add to"} favorites`);
+                        favBtn.querySelector("i").className = `bi ${liked ? "bi-heart-fill" : "bi-heart"}`;
+                        favBtn.classList.remove("pop");
+                        void favBtn.offsetWidth;
+                        favBtn.classList.add("pop");
+                        const product = PRODUCTS.find((p) => p.id === id);
+                        showToast(liked ? `${product.name} saved to favorites` : `${product.name} removed from favorites`);
+                        return;
+                    }
+
+                    const addBtn = e.target.closest("[data-add]");
+                    if (addBtn) {
+                        const product = PRODUCTS.find((p) => p.id === Number(addBtn.dataset.add));
+                        if (product.customizable) {
+                            openCustomizer(product);
+                        } else {
+                            Cart.add(product);
+                            flashButton(addBtn);
+                            bumpCartCounter();
+                            showToast(`${product.name} added to your cart`);
+                        }
+                    }
+                });
+
+                // Customization modal
+                customizeForm.addEventListener("change", updateModalTotal);
+                $("#modalQtyInc").addEventListener("click", () => { modalQty = Math.min(modalQty + 1, 20); updateModalTotal(); });
+                modalQtyDec.addEventListener("click", () => { modalQty = Math.max(modalQty - 1, 1); updateModalTotal(); });
+                customizeForm.addEventListener("submit", (e) => {
+                    e.preventDefault();
+                    const { options, unitPrice } = readSelectedOptions();
+                    Cart.add(modalProduct, { options, unitPrice, quantity: modalQty });
+                    modal.hide();
+                    bumpCartCounter();
+                    showToast(`${modalQty > 1 ? modalQty + " × " : ""}${modalProduct.name} added to your cart`);
+                });
+
+                // Cart drawer: quantity + remove (event delegation)
+                cartItemsEl.addEventListener("click", (e) => {
+                    const btn = e.target.closest("[data-action]");
+                    if (!btn) return;
+                    const lineId = btn.closest("[data-line]").dataset.line;
+                    const line = Cart.items.find((l) => l.lineId === lineId);
+                    if (!line) return;
+                    if (btn.dataset.action === "inc") Cart.setQuantity(lineId, line.quantity + 1);
+                    if (btn.dataset.action === "dec") Cart.setQuantity(lineId, line.quantity - 1);
+                    if (btn.dataset.action === "remove") {
+                        Cart.remove(lineId);
+                        showToast(`${line.name} removed from your cart`);
+                    }
+                });
+
+                document.addEventListener("cart:changed", renderCart);
+
+                // Keep cart in sync if it changes in another tab (e.g. Homepage or Product Details)
+                window.addEventListener("storage", (e) => {
+                    if (e.key === STORAGE_KEYS.cart) {
+                        Cart.items = storage.read(STORAGE_KEYS.cart, []);
+                        renderCart();
+                    }
+                });
+
+                // Promo CTA: show desserts to pair with coffee
+                $("#exploreCombos").addEventListener("click", () => {
+                    resetAll();
+                    setCategory("cakes");
+                    $("#categoryBar").scrollIntoView({ behavior: "smooth", block: "start" });
+                    showToast("Pick a slice to pair with your coffee");
+                });
+
+                // Newsletter
+                $("#newsletterForm").addEventListener("submit", (e) => {
+                    e.preventDefault();
+                    e.target.reset();
+                    showToast("Thanks! You're on the sweet list.");
+                });
+
+                // Open / closed status
+                const now = new Date();
+                const hours = { 0: [9 * 60, 20 * 60], 6: [8 * 60 + 30, 22 * 60] };
+                const [open, close] = hours[now.getDay()] || [7 * 60 + 30, 21 * 60];
+                const mins = now.getHours() * 60 + now.getMinutes();
+                if (mins < open || mins >= close) {
+                    const status = $("#openStatus");
+                    status.classList.add("closed");
+                    status.innerHTML = '<span class="cf-dot"></span> Closed now';
+                }
+                $("#year").textContent = now.getFullYear();
+
+                // Optional deep link: products.html?category=cakes
+                const urlCategory = new URLSearchParams(location.search).get("category");
+                if (urlCategory && CATEGORIES.some((c) => c.id === urlCategory)) state.category = urlCategory;
+
+                // Initial render
+                renderCategories();
+                renderProducts();
+                renderCart();
+                applyFallbacks(document);
+            })();
+    </script>
+
+</body>
+

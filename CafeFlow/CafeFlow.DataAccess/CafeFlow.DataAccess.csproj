@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CafeFlow.DTO\CafeFlow.DTO.csproj" />
     <ProjectReference Include="..\CafeFlow.Entity\CafeFlow.Entity.csproj" />
   </ItemGroup>
 
