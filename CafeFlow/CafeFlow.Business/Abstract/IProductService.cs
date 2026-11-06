@@ -1,4 +1,5 @@
 ﻿using CafeFlow.DTO.Product;
+using CafeFlow.Entity;
 
 namespace CafeFlow.Business.Abstract
 {
@@ -6,6 +7,7 @@ namespace CafeFlow.Business.Abstract
     {
         Task<List<ProductListDto>> GetAllAsync();
         Task<List<ProductListDto>> GetFeaturedProductsAsync();
+        Task<List<ProductListDto>> GetAllForMenuAsync();
         Task<UpdateProductDto> GetByIdAsync(int id);
         Task CreateAsync(CreateProductDto dto);
         Task UpdateAsync(UpdateProductDto dto);

@@ -10,5 +10,6 @@ namespace CafeFlow.DataAccess.Repositories.Products
     {
         Task<List<Product>> GetAllWithCategoryAsync();
         Task<List<Product>> GetFeaturedProductsAsync();
+        Task<List<Product>> GetAllForMenuAsync();
     }
 }

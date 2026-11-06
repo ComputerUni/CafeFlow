@@ -14,6 +14,11 @@ namespace CafeFlow.DataAccess.Repositories.Products
         {
         }
 
+        public async Task<List<Product>> GetAllForMenuAsync()
+        {
+            return await _context.Products.Include(x => x.Category).Include(x => x.ProductOptions).Where(x => !x.IsDeleted && x.IsActive).ToListAsync();
+        }
+
         public async Task<List<Product>> GetAllWithCategoryAsync()
         {
             return await _context.Products.Include(x => x.Category).Where(x => !x.IsDeleted).ToListAsync();

@@ -1,0 +1,618 @@
+﻿@using System.Text.Json
+@model MenuPageViewModel
+
+@{
+    var dynamicCategories = new List<object>
+    {
+        new{id="all", label="Tüm Menü", icon="bi-grid"}
+    };
+
+    foreach(var cat in Model.Categories)
+    {
+        string icon = "bi-cup-hot";
+        string n = cat.Name?.ToLower() ?? "";
+        if (n.Contains("soğuk") || n.Contains("içecek")) icon = "bi-cup-straw";
+        else if (n.Contains("tatlı") || n.Contains("pasta")) icon = "bi-cake2";
+        else if (n.Contains("atıştırma") || n.Contains("snack")) icon = "bi-egg-fried";
+
+        dynamicCategories.Add(new { id = cat.Id.ToString(), label = cat.Name, icon = icon });
+    }
+
+    var jsProducts = Model.Products.Select(p => new
+    {
+        id = p.Id,
+        name = p.Name,
+        category = p.CategoryId.ToString(),
+        categoryName = p.CategoryName,
+        price = p.Price,
+        image = p.ImageUrl,
+        description = p.Description,
+        badge = p.IsFeatured ? "Öne Çıkan" : null,
+        customizable = p.CategoryName != null && (p.CategoryName.ToLower().Contains("kahve"))
+    }).ToList();
+
+    var jsonCategories = JsonSerializer.Serialize(dynamicCategories);
+    var jsonProducts = JsonSerializer.Serialize(jsProducts);
+
+}
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    /* =========================================================
+       CafeFlow — Products / Menu Page
+       Sections:
+       1. Data (categories, products, customization options)
+       2. Storage helpers (cart + favorites in localStorage)
+       3. Cart module (shared data structure for future pages)
+       4. UI helpers (money, images, toast)
+       5. Menu rendering, filtering, sorting
+       6. Customization modal
+       7. Cart drawer rendering
+       8. Page bootstrap (events, footer, etc.)
+       ========================================================= */
+    (() => {
+        "use strict";
+
+        /* ---------- 1. DATA ---------- */
+        const IMG = (id, w = 700) => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&q=80`;
+
+        const CATEGORIES = @Html.Raw(jsonCategories);
+
+        const BADGES = {
+            "Öne Çıkan": "cf-tag-best"
+        };
+
+        const FALLBACK_ICON = {
+            coffee: "bi-cup-hot",
+            drink: "bi-cup-straw",
+            cake: "bi-cake2"
+        };
+
+        const PRODUCTS = @Html.Raw(jsonProducts);
+
+        const CUSTOM_OPTIONS = [
+            {
+                key: "size", label: "Boyut Seçimi", choices: [
+                    { value: "Küçük (Standart)", price: 0 },
+                    { value: "Orta (Medium)", price: 15 },
+                    { value: "Büyük (Large)", price: 25 },
+                ], default: "Küçük (Standart)"
+            },
+            {
+                key: "milk", label: "Süt Tercihi", choices: [
+                    { value: "Standart Yağlı", price: 0 },
+                    { value: "Yulaf Sütü", price: 15 },
+                    { value: "Badem Sütü", price: 15 },
+                    { value: "Laktozsuz", price: 10 },
+                ], default: "Standart Yağlı"
+            },
+            {
+                key: "extraShot", label: "Ekstra Espresso Shot", choices: [
+                    { value: "İstemiyorum", price: 0 },
+                    { value: "+1 Shot Espresso", price: 20 },
+                ], default: "İstemiyorum"
+            },
+            {
+                key: "syrup", label: "Aroma Şurubu", choices: [
+                    { value: "Yok", price: 0 },
+                    { value: "Vanilya", price: 15 },
+                    { value: "Karamel", price: 15 },
+                    { value: "Fındık", price: 15 },
+                ], default: "Yok"
+            },
+        ];
+
+        /* ---------- 2. STORAGE HELPERS ---------- */
+        const STORAGE_KEYS = { cart: "cafeflow_cart", favorites: "cafeflow_favorites" };
+
+        const storage = {
+            read(key, fallback) {
+                try {
+                    const raw = localStorage.getItem(key);
+                    return raw ? JSON.parse(raw) : fallback;
+                } catch { return fallback; }
+            },
+            write(key, value) {
+                try { localStorage.setItem(key, JSON.stringify(value)); } catch { /* storage unavailable */ }
+            },
+        };
+
+        /* ---------- 3. CART MODULE ----------
+           Cart line structure (reusable by Product Details & Cart pages):
+           {
+             lineId:   "7|size:Large|milk:Oat|extraShot:No|syrup:None",
+             productId: 7,
+             name:     "Strawberry Cloud Latte",
+             image:    "https://...",
+             unitPrice: 250,          // base price + option extras
+             quantity:  2,
+             options:  { size: "Large", milk: "Oat", extraShot: "No", syrup: "None" } | null
+           }
+        */
+        const Cart = {
+            items: storage.read(STORAGE_KEYS.cart, []),
+
+            save() {
+                storage.write(STORAGE_KEYS.cart, this.items);
+                document.dispatchEvent(new CustomEvent("cart:changed"));
+            },
+            buildLineId(productId, options) {
+                if (!options) return String(productId);
+                return [productId, ...Object.entries(options).map(([k, v]) => `${k}:${v}`)].join("|");
+            },
+            add(product, { options = null, unitPrice = product.price, quantity = 1 } = {}) {
+                const lineId = this.buildLineId(product.id, options);
+                const existing = this.items.find((l) => l.lineId === lineId);
+                if (existing) existing.quantity += quantity;
+                else this.items.push({ lineId, productId: product.id, name: product.name, image: product.image, unitPrice, quantity, options });
+                this.save();
+            },
+            setQuantity(lineId, quantity) {
+                const line = this.items.find((l) => l.lineId === lineId);
+                if (!line) return;
+                if (quantity <= 0) this.items = this.items.filter((l) => l.lineId !== lineId);
+                else line.quantity = quantity;
+                this.save();
+            },
+            remove(lineId) {
+                this.items = this.items.filter((l) => l.lineId !== lineId);
+                this.save();
+            },
+            count() { return this.items.reduce((sum, l) => sum + l.quantity, 0); },
+            subtotal() { return this.items.reduce((sum, l) => sum + l.unitPrice * l.quantity, 0); },
+        };
+
+        const Favorites = {
+            ids: new Set(storage.read(STORAGE_KEYS.favorites, [])),
+            toggle(id) {
+                this.ids.has(id) ? this.ids.delete(id) : this.ids.add(id);
+                storage.write(STORAGE_KEYS.favorites, [...this.ids]);
+                return this.ids.has(id);
+            },
+            has(id) { return this.ids.has(id); },
+        };
+
+        /* ---------- 4. UI HELPERS ---------- */
+        const $ = (sel, root = document) => root.querySelector(sel);
+        const formatMoney = (n) => `₺${n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        const detailUrl = (id) => `product-detail.html?id=${id}`;
+        const categoryLabel = (id) => (CATEGORIES.find((c) => c.id === id) || {}).label || "";
+
+        /** Replace a broken image with a soft pastel placeholder. */
+        function attachImageFallback(img) {
+            const swap = () => {
+                const div = document.createElement("div");
+                div.className = "cf-img-fallback";
+                div.setAttribute("role", "img");
+                div.setAttribute("aria-label", img.alt);
+                div.innerHTML = `<i class="bi ${FALLBACK_ICON[img.dataset.fallback] || "bi-heart"}"></i>`;
+                img.replaceWith(div);
+            };
+            if (img.complete && img.naturalWidth === 0 && img.getAttribute("src")) swap();
+            else img.addEventListener("error", swap, { once: true });
+        }
+        const applyFallbacks = (root = document) => root.querySelectorAll("img[data-fallback]").forEach(attachImageFallback);
+
+        const toastEl = $("#cfToast");
+        const toastText = $("#cfToastText");
+        let toastTimer;
+        function showToast(message) {
+            toastText.textContent = message;
+            toastEl.classList.add("show");
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => toastEl.classList.remove("show"), 2400);
+        }
+
+        /* ---------- 5. MENU RENDERING, FILTERING, SORTING ---------- */
+        const state = {
+            category: "all",
+            search: "",
+            sort: "recommended",
+            filters: new Set(), // vegetarian | bestseller | new
+        };
+
+        const categoryBar = $("#categoryBar");
+        const grid = $("#menuGrid");
+        const emptyState = $("#emptyState");
+        const resultCount = $("#resultCount");
+        const searchInput = $("#searchInput");
+        const searchClear = $("#searchClear");
+        const sortSelect = $("#sortSelect");
+        const resetBtn = $("#resetFilters");
+        const chipInputs = document.querySelectorAll(".cf-chip input");
+
+        function renderCategories() {
+            categoryBar.innerHTML = CATEGORIES.map((cat) => {
+                const count = cat.id === "all" ? PRODUCTS.length : PRODUCTS.filter((p) => p.category === cat.id).length;
+                const active = cat.id === state.category;
+                return `
+                                                                                <button type="button" class="cf-pill${active ? " active" : ""}" role="tab"
+                                                                                        aria-selected="${active}" data-category="${cat.id}">
+                                                                                  <i class="bi ${cat.icon}"></i>${cat.label}
+                                                                                  <span class="cf-pill-count">${count}</span>
+                                                                                </button>`;
+            }).join("");
+        }
+
+        function getVisibleProducts() {
+            const term = state.search.trim().toLowerCase();
+            let list = PRODUCTS.filter((p) => {
+                if (state.category !== "all" && p.category !== state.category) return false;
+                if (term && !`${p.name} ${p.description} ${categoryLabel(p.category)}`.toLowerCase().includes(term)) return false;
+                if (state.filters.has("bestseller") && (!p.badge || p.badge.trim() === "")) return false;
+                return true;
+            });
+
+            const sorters = {
+                "price-asc": (a, b) => a.price - b.price,
+                "price-desc": (a, b) => b.price - a.price,
+                "name-asc": (a, b) => a.name.localeCompare(b.name),
+                "popular": (a, b) => b.popularity - a.popularity,
+            };
+            if (sorters[state.sort]) list = [...list].sort(sorters[state.sort]);
+            return list;
+        }
+
+        function productCardTemplate(p, index) {
+            const liked = Favorites.has(p.id);
+            const badge = p.badge ? `<span class="cf-tag ${BADGES[p.badge]}">${p.badge}</span>` : "";
+            const fromLabel = p.customizable ? "<small>from</small>" : "";
+            const btnLabel = p.customizable
+                ? `<i class="bi bi-sliders"></i> Customize`
+                : `<i class="bi bi-bag-plus"></i> Add`;
+
+            return `
+                                                                              <div class="col-12 col-sm-6 col-lg-4 col-xl-3 cf-grid-item" style="animation-delay:${Math.min(index, 12) * 40}ms">
+                                                                                <article class="cf-product-card">
+                                                                                  <div class="cf-product-img">
+                                                                                    <a href="${detailUrl(p.id)}" class="cf-product-img-link" aria-label="View ${p.name} details">
+                                                                                      <img src="${p.image}" alt="${p.name}" loading="lazy" data-fallback="${p.category}" />
+                                                                                    </a>
+                                                                                    ${badge}
+                                                                                    <button type="button" class="cf-fav${liked ? " liked" : ""}" data-fav="${p.id}"
+                                                                                            aria-pressed="${liked}" aria-label="${liked ? "Remove from" : "Add to"} favorites">
+                                                                                      <i class="bi ${liked ? "bi-heart-fill" : "bi-heart"}"></i>
+                                                                                    </button>
+                                                                                  </div>
+                                                                                  <div class="cf-product-body">
+                                                                                    <div class="cf-product-meta">
+                                                                                      <span class="cf-cat-label">${categoryLabel(p.category)}</span>
+                                                                                      ${p.vegetarian ? `<span class="cf-veg" title="Vegetarian"><i class="bi bi-flower2"></i> Veg</span>` : ""}
+                                                                                    </div>
+                                                                                    <h3><a href="${detailUrl(p.id)}">${p.name}</a></h3>
+                                                                                    <p>${p.description}</p>
+                                                                                    <div class="cf-product-foot">
+                                                                                      <span class="cf-price">${fromLabel}${formatMoney(p.price)}</span>
+                                                                                      <button type="button" class="btn cf-add-btn" data-add="${p.id}">${btnLabel}</button>
+                                                                                    </div>
+                                                                                  </div>
+                                                                                </article>
+                                                                              </div>`;
+        }
+
+        function renderProducts() {
+            const list = getVisibleProducts();
+            grid.innerHTML = list.map(productCardTemplate).join("");
+            applyFallbacks(grid);
+
+            emptyState.classList.toggle("d-none", list.length > 0);
+            resultCount.innerHTML = list.length === 1
+                ? `Toplam <strong>1</strong> lezzet listeleniyor`
+                : `Toplam <strong>${list.length}</strong> lezzet listeleniyor`;
+
+            const isFiltered = state.category !== "all" || state.search || state.filters.size || state.sort !== "recommended";
+            resetBtn.classList.toggle("show", Boolean(isFiltered));
+        }
+
+        function setCategory(id) {
+            state.category = id;
+            renderCategories();
+            renderProducts();
+            const activePill = categoryBar.querySelector(".cf-pill.active");
+            if (activePill) activePill.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+        }
+
+        function resetAll() {
+            state.category = "all";
+            state.search = "";
+            state.sort = "recommended";
+            state.filters.clear();
+            searchInput.value = "";
+            searchClear.classList.remove("show");
+            sortSelect.value = "recommended";
+            chipInputs.forEach((c) => (c.checked = false));
+            renderCategories();
+            renderProducts();
+        }
+
+        /* ---------- 6. CUSTOMIZATION MODAL ---------- */
+        const modalEl = $("#customizeModal");
+        const modal = new bootstrap.Modal(modalEl);
+        const customizeForm = $("#customizeForm");
+        const modalOptions = $("#customizeOptions");
+        const modalTotal = $("#modalTotal");
+        const modalQtyEl = $("#modalQty");
+        const modalQtyDec = $("#modalQtyDec");
+        let modalProduct = null;
+        let modalQty = 1;
+
+        function readSelectedOptions() {
+            const selected = {};
+            let extra = 0;
+            CUSTOM_OPTIONS.forEach((group) => {
+                const input = customizeForm.querySelector(`input[name="${group.key}"]:checked`);
+                const value = input ? input.value : group.default;
+                selected[group.key] = value;
+                extra += group.choices.find((c) => c.value === value).price;
+            });
+            return { options: selected, unitPrice: modalProduct.price + extra };
+        }
+
+        function updateModalTotal() {
+            const { unitPrice } = readSelectedOptions();
+            modalTotal.textContent = formatMoney(unitPrice * modalQty);
+            modalQtyEl.textContent = modalQty;
+            modalQtyDec.disabled = modalQty <= 1;
+        }
+
+        function openCustomizer(product) {
+            modalProduct = product;
+            modalQty = 1;
+
+            $("#customizeTitle").textContent = product.name;
+            $("#customizeDesc").textContent = product.description;
+            $("#customizeCategory").textContent = categoryLabel(product.category);
+            $("#customizeImage").innerHTML = `<img src="${product.image}" alt="${product.name}" data-fallback="${product.category}" />`;
+            applyFallbacks($("#customizeImage"));
+
+            modalOptions.innerHTML = CUSTOM_OPTIONS.map((group) => `
+                                                                              <fieldset class="cf-opt-group">
+                                                                                <legend class="cf-opt-label">${group.label}</legend>
+                                                                                <div class="cf-opt-choices">
+                                                                                  ${group.choices.map((c) => `
+                                                                                    <label class="cf-opt">
+                                                                                      <input type="radio" name="${group.key}" value="${c.value}" ${c.value === group.default ? "checked" : ""} />
+                                                                                      <span>${c.value}<small>${c.price ? `+${formatMoney(c.price)}` : "Included"}</small></span>
+                                                                                    </label>`).join("")}
+                                                                                </div>
+                                                                              </fieldset>`).join("");
+
+            updateModalTotal();
+            modal.show();
+        }
+
+        /* ---------- 7. CART DRAWER ---------- */
+        const cartCountEl = $("#cartCount");
+        const cartItemsEl = $("#cartItems");
+        const cartEmptyEl = $("#cartEmpty");
+        const cartFooterEl = $("#cartFooter");
+
+        const describeOptions = (options) => {
+            if (!options) return "";
+            const parts = [options.size, options.milk !== "Regular" ? `${options.milk} milk` : "Regular milk"];
+            if (options.extraShot === "Yes") parts.push("Extra shot");
+            if (options.syrup && options.syrup !== "None") parts.push(`${options.syrup} syrup`);
+            return parts.join(" · ");
+        };
+
+        function renderCart() {
+            const count = Cart.count();
+            cartCountEl.textContent = count;
+            $("#cartDrawerCount").textContent = count ? `(${count})` : "";
+            $("#cartItemCount").textContent = count;
+            $("#cartTotal").textContent = formatMoney(Cart.subtotal());
+
+            const empty = Cart.items.length === 0;
+            cartEmptyEl.classList.toggle("d-none", !empty);
+            cartFooterEl.classList.toggle("d-none", empty);
+
+            cartItemsEl.innerHTML = Cart.items.map((line) => {
+                const product = PRODUCTS.find((p) => p.id === line.productId);
+                const fallback = product ? product.category : "coffee";
+                return `
+                                                                                <li class="cf-cart-line" data-line="${line.lineId}">
+                                                                                  <a href="${detailUrl(line.productId)}" class="cf-cart-thumb">
+                                                                                    <img src="${line.image}" alt="${line.name}" data-fallback="${fallback}" />
+                                                                                  </a>
+                                                                                  <div>
+                                                                                    <div class="cf-cart-line-top">
+                                                                                      <h6>${line.name}</h6>
+                                                                                      <button type="button" class="cf-cart-remove" data-action="remove" aria-label="Remove ${line.name}">
+                                                                                        <i class="bi bi-trash3"></i>
+                                                                                      </button>
+                                                                                    </div>
+                                                                                    <div class="cf-cart-opts">${describeOptions(line.options) || `${formatMoney(line.unitPrice)} each`}</div>
+                                                                                    <div class="cf-cart-line-bottom">
+                                                                                      <div class="cf-stepper">
+                                                                                        <button type="button" data-action="dec" aria-label="Decrease ${line.name}"><i class="bi bi-dash"></i></button>
+                                                                                        <span>${line.quantity}</span>
+                                                                                        <button type="button" data-action="inc" aria-label="Increase ${line.name}"><i class="bi bi-plus"></i></button>
+                                                                                      </div>
+                                                                                      <span class="cf-line-price">${formatMoney(line.unitPrice * line.quantity)}</span>
+                                                                                    </div>
+                                                                                  </div>
+                                                                                </li>`;
+            }).join("");
+            applyFallbacks(cartItemsEl);
+        }
+
+        function bumpCartCounter() {
+            cartCountEl.classList.add("bump");
+            setTimeout(() => cartCountEl.classList.remove("bump"), 300);
+        }
+
+        function flashButton(btn) {
+            if (!btn) return;
+            const original = btn.innerHTML;
+            btn.classList.add("added");
+            btn.innerHTML = '<i class="bi bi-check-lg"></i> Added';
+            btn.disabled = true;
+            setTimeout(() => {
+                btn.classList.remove("added");
+                btn.innerHTML = original;
+                btn.disabled = false;
+            }, 1100);
+        }
+
+        /* ---------- 8. EVENTS & PAGE BOOTSTRAP ---------- */
+
+        // Navbar shadow on scroll (same behaviour as Homepage)
+        const nav = $("#mainNav");
+        const onScroll = () => nav.classList.toggle("scrolled", window.scrollY > 30);
+        onScroll();
+        window.addEventListener("scroll", onScroll, { passive: true });
+
+        // Close mobile menu after clicking a link
+        const navCollapse = $("#navLinks");
+        navCollapse.querySelectorAll(".nav-link").forEach((link) =>
+            link.addEventListener("click", () => {
+                if (navCollapse.classList.contains("show")) bootstrap.Collapse.getOrCreateInstance(navCollapse).hide();
+            })
+        );
+
+        // Categories
+        categoryBar.addEventListener("click", (e) => {
+            const pill = e.target.closest("[data-category]");
+            if (pill) setCategory(pill.dataset.category);
+        });
+
+        // Search (real time)
+        searchInput.addEventListener("input", () => {
+            state.search = searchInput.value;
+            searchClear.classList.toggle("show", searchInput.value.length > 0);
+            renderProducts();
+        });
+        searchClear.addEventListener("click", () => {
+            searchInput.value = "";
+            state.search = "";
+            searchClear.classList.remove("show");
+            searchInput.focus();
+            renderProducts();
+        });
+
+        // Sorting
+        sortSelect.addEventListener("change", () => {
+            state.sort = sortSelect.value;
+            renderProducts();
+        });
+
+        // Extra filters
+        chipInputs.forEach((input) =>
+            input.addEventListener("change", () => {
+                input.checked ? state.filters.add(input.value) : state.filters.delete(input.value);
+                renderProducts();
+            })
+        );
+
+        // Reset
+        resetBtn.addEventListener("click", resetAll);
+        $("#emptyReset").addEventListener("click", resetAll);
+
+        // Product grid: favorites + add to cart (event delegation)
+        grid.addEventListener("click", (e) => {
+            const favBtn = e.target.closest("[data-fav]");
+            if (favBtn) {
+                const id = Number(favBtn.dataset.fav);
+                const liked = Favorites.toggle(id);
+                favBtn.classList.toggle("liked", liked);
+                favBtn.setAttribute("aria-pressed", liked);
+                favBtn.setAttribute("aria-label", `${liked ? "Remove from" : "Add to"} favorites`);
+                favBtn.querySelector("i").className = `bi ${liked ? "bi-heart-fill" : "bi-heart"}`;
+                favBtn.classList.remove("pop");
+                void favBtn.offsetWidth;
+                favBtn.classList.add("pop");
+                const product = PRODUCTS.find((p) => p.id === id);
+                showToast(liked ? `${product.name} saved to favorites` : `${product.name} removed from favorites`);
+                return;
+            }
+
+            const addBtn = e.target.closest("[data-add]");
+            if (addBtn) {
+                const product = PRODUCTS.find((p) => p.id === Number(addBtn.dataset.add));
+                if (product.customizable) {
+                    openCustomizer(product);
+                } else {
+                    Cart.add(product);
+                    flashButton(addBtn);
+                    bumpCartCounter();
+                    showToast(`${product.name} added to your cart`);
+                }
+            }
+        });
+
+        // Customization modal
+        customizeForm.addEventListener("change", updateModalTotal);
+        $("#modalQtyInc").addEventListener("click", () => { modalQty = Math.min(modalQty + 1, 20); updateModalTotal(); });
+        modalQtyDec.addEventListener("click", () => { modalQty = Math.max(modalQty - 1, 1); updateModalTotal(); });
+        customizeForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const { options, unitPrice } = readSelectedOptions();
+            Cart.add(modalProduct, { options, unitPrice, quantity: modalQty });
+            modal.hide();
+            bumpCartCounter();
+            showToast(`${modalQty > 1 ? modalQty + " × " : ""}${modalProduct.name} added to your cart`);
+        });
+
+        // Cart drawer: quantity + remove (event delegation)
+        cartItemsEl.addEventListener("click", (e) => {
+            const btn = e.target.closest("[data-action]");
+            if (!btn) return;
+            const lineId = btn.closest("[data-line]").dataset.line;
+            const line = Cart.items.find((l) => l.lineId === lineId);
+            if (!line) return;
+            if (btn.dataset.action === "inc") Cart.setQuantity(lineId, line.quantity + 1);
+            if (btn.dataset.action === "dec") Cart.setQuantity(lineId, line.quantity - 1);
+            if (btn.dataset.action === "remove") {
+                Cart.remove(lineId);
+                showToast(`${line.name} removed from your cart`);
+            }
+        });
+
+        document.addEventListener("cart:changed", renderCart);
+
+        // Keep cart in sync if it changes in another tab (e.g. Homepage or Product Details)
+        window.addEventListener("storage", (e) => {
+            if (e.key === STORAGE_KEYS.cart) {
+                Cart.items = storage.read(STORAGE_KEYS.cart, []);
+                renderCart();
+            }
+        });
+
+        // Promo CTA: show desserts to pair with coffee
+        $("#exploreCombos").addEventListener("click", () => {
+            resetAll();
+            setCategory("cakes");
+            $("#categoryBar").scrollIntoView({ behavior: "smooth", block: "start" });
+            showToast("Pick a slice to pair with your coffee");
+        });
+
+        // Newsletter
+        $("#newsletterForm").addEventListener("submit", (e) => {
+            e.preventDefault();
+            e.target.reset();
+            showToast("Thanks! You're on the sweet list.");
+        });
+
+        // Open / closed status
+        const now = new Date();
+        const hours = { 0: [9 * 60, 20 * 60], 6: [8 * 60 + 30, 22 * 60] };
+        const [open, close] = hours[now.getDay()] || [7 * 60 + 30, 21 * 60];
+        const mins = now.getHours() * 60 + now.getMinutes();
+        if (mins < open || mins >= close) {
+            const status = $("#openStatus");
+            status.classList.add("closed");
+            status.innerHTML = '<span class="cf-dot"></span> Closed now';
+        }
+        $("#year").textContent = now.getFullYear();
+
+        // Optional deep link: products.html?category=cakes
+        const urlCategory = new URLSearchParams(location.search).get("category");
+        if (urlCategory && CATEGORIES.some((c) => c.id === urlCategory)) state.category = urlCategory;
+
+        // Initial render
+        renderCategories();
+        renderProducts();
+        renderCart();
+        applyFallbacks(document);
+    })();
+</script>

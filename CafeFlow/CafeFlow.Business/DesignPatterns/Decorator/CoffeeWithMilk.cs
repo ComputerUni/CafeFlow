@@ -6,17 +6,18 @@ namespace CafeFlow.Business.DesignPatterns.Decorator
 {
     public class CoffeeWithMilk : CoffeeDecorator
     {
+        private readonly string _milkType;
         private readonly decimal _additionalPrice;
 
-        public CoffeeWithMilk(ICoffee coffee, decimal additionalPrice) : base(coffee)
+        public CoffeeWithMilk(ICoffee coffee, string milkType, decimal additionalPrice) : base(coffee)
         {
+            _milkType = milkType;
             _additionalPrice = additionalPrice;
         }
 
-
         public override string GetDescription()
         {
-            return _coffee.GetDescription() + ", Sütlü";
+            return _coffee.GetDescription() + $", {_milkType}";
         }
 
         public override decimal GetPrice()
