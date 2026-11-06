@@ -1,77 +1,63 @@
-﻿<!-- ============ MENU: CATEGORIES, TOOLBAR, GRID ============ -->
-<main class="cf-menu-section">
+﻿<main class="cf-menu-section">
     <div class="container">
 
-        <!-- Categories (rendered by JS) -->
-        <div class="cf-cat-scroll" id="categoryBar" role="tablist" aria-label="Product categories"></div>
+        <div class="cf-cat-scroll" id="categoryBar" role="tablist" aria-label="Ürün kategorileri"></div>
 
-        <!-- Search & filter toolbar -->
         <div class="cf-toolbar">
             <div class="cf-search">
                 <i class="bi bi-search"></i>
-                <input type="search" id="searchInput" placeholder="Search for your favorite treat..." aria-label="Search products" autocomplete="off" />
-                <button type="button" class="cf-search-clear" id="searchClear" aria-label="Clear search"><i class="bi bi-x-lg"></i></button>
+                <input type="search" id="searchInput" placeholder="Favori lezzetinizi arayın..." aria-label="Ürün ara" autocomplete="off" />
+                <button type="button" class="cf-search-clear" id="searchClear" aria-label="Aramayı temizle"><i class="bi bi-x-lg"></i></button>
             </div>
 
-            <select class="form-select cf-select" id="sortSelect" aria-label="Sort products">
-                <option value="recommended">Recommended</option>
-                <option value="price-asc">Price: Low to High</option>
-                <option value="price-desc">Price: High to Low</option>
-                <option value="name-asc">Name: A to Z</option>
-                <option value="popular">Most Popular</option>
+            <select class="form-select cf-select" id="sortSelect" aria-label="Ürünleri sırala">
+                <option value="recommended">Önerilen</option>
+                <option value="price-asc">Fiyat: Düşükten Yükseğe</option>
+                <option value="price-desc">Fiyat: Yüksekten Düşüğe</option>
+                <option value="name-asc">İsim: A'dan Z'ye</option>
+                <option value="popular">Öne Çıkanlar</option>
             </select>
 
-            <div class="cf-chips" role="group" aria-label="Additional filters">
-                <label class="cf-chip">
-                    <input type="checkbox" value="vegetarian" />
-                    <span><i class="bi bi-flower2"></i> Vegetarian</span>
-                </label>
+            <div class="cf-chips" role="group" aria-label="Ek filtreler">
                 <label class="cf-chip">
                     <input type="checkbox" value="bestseller" />
-                    <span><i class="bi bi-award"></i> Best Sellers</span>
-                </label>
-                <label class="cf-chip">
-                    <input type="checkbox" value="new" />
-                    <span><i class="bi bi-stars"></i> New Arrivals</span>
+                    <span><i class="bi bi-award"></i> Öne Çıkanlar</span>
                 </label>
             </div>
         </div>
 
         <div class="cf-results-bar">
-            <span id="resultCount" aria-live="polite">Showing <strong>0</strong> delicious treats</span>
-            <button type="button" class="cf-reset-link" id="resetFilters"><i class="bi bi-arrow-counterclockwise"></i> Reset filters</button>
+            <span id="resultCount" aria-live="polite">Toplam <strong>0</strong> lezzet listeleniyor</span>
+            <button type="button" class="cf-reset-link" id="resetFilters"><i class="bi bi-arrow-counterclockwise"></i> Filtreleri sıfırla</button>
         </div>
 
-        <!-- Product grid (rendered by JS) -->
         <div class="row g-4" id="menuGrid"></div>
 
-        <!-- Empty state -->
         <div class="cf-empty-state d-none" id="emptyState">
             <span class="cf-cat-icon"><i class="bi bi-search-heart"></i></span>
-            <h3>No treats found</h3>
-            <p>Try another search or clear the filters to see the full menu.</p>
-            <button type="button" class="btn cf-btn-outline" id="emptyReset">Show all products</button>
+            <h3>Aradığınız lezzet bulunamadı</h3>
+            <p>Farklı bir arama yapmayı deneyin veya filtreleri temizleyerek tüm menüyü görüntüleyin.</p>
+            <button type="button" class="btn cf-btn-outline" id="emptyReset">Tüm ürünleri göster</button>
         </div>
 
-        <!-- ============ PROMO BANNER ============ -->
         <section class="cf-promo mt-5" aria-labelledby="promoTitle">
             <div class="row align-items-center g-4">
                 <div class="col-lg-7">
-                    <span class="cf-offer-pill"><i class="bi bi-heart"></i> Perfect pairing</span>
-                    <h2 class="cf-promo-title" id="promoTitle">Your Coffee Deserves Something Sweet!</h2>
-                    <p class="cf-promo-text">Pair any handcrafted coffee with your favorite slice of cake.</p>
+                    <span class="cf-offer-pill"><i class="bi bi-heart"></i> Mükemmel Uyum</span>
+                    <h2 class="cf-promo-title" id="promoTitle">Kahveniz Tatlı Bir Eşliği Hak Ediyor!</h2>
+                    <p class="cf-promo-text">Özenle hazırlanan el yapımı kahvenizi en sevdiğiniz pasta dilimiyle tamamlayın.</p>
                     <button type="button" class="btn cf-btn-dark cf-btn-lg" id="exploreCombos">
-                        Explore Combos <i class="bi bi-arrow-right"></i>
+                        Kombinleri Keşfet <i class="bi bi-arrow-right"></i>
                     </button>
                 </div>
                 <div class="col-lg-5">
                     <div class="cf-promo-photos position-relative">
                         <div class="cf-promo-photo">
-                            <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=500&q=80" alt="Latte with latte art" data-fallback="coffee" loading="lazy" />
+                            <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=500&q=80" alt="Latte art ile hazırlanmış latte" data-fallback="coffee" loading="lazy" />
                         </div>
                         <span class="cf-promo-plus" aria-hidden="true"><i class="bi bi-plus-lg"></i></span>
                         <div class="cf-promo-photo">
-                            <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=500&q=80" alt="Slice of layered cake" data-fallback="cake" loading="lazy" />
+                            <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=500&q=80" alt="Kat kat pasta dilimi" data-fallback="cake" loading="lazy" />
                         </div>
                     </div>
                 </div>
