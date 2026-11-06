@@ -15,6 +15,10 @@ namespace CafeFlow.Entity
         public bool IsActive { get; set; }
         public int CategoryId { get; set; }
         public Category Category { get; set; }
+        public bool IsFeatured { get; set; } = false;
+        public bool? IsCustomizable { get; set; }
         public ICollection<ProductOption> ProductOptions { get; set; }
+        public ICollection<Favorite> Favorites { get; set; }
+        public ICollection<Comment> Comments { get; set; }
     }
 }

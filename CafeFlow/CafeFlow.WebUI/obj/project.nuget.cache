@@ -1,11 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "Y5GR9N2dr/o=",
+  "dgSpecHash": "1y0q2qt9njI=",
   "success": true,
   "projectFilePath": "C:\\Users\\BURHAN\\Desktop\\CafeFlow\\CafeFlow\\CafeFlow.WebUI\\CafeFlow.WebUI.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\BURHAN\\.nuget\\packages\\automapper\\16.2.0\\automapper.16.2.0.nupkg.sha512",
-    "C:\\Users\\BURHAN\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\12.0.0\\automapper.extensions.microsoft.dependencyinjection.12.0.0.nupkg.sha512",
     "C:\\Users\\BURHAN\\.nuget\\packages\\azure.core\\1.50.0\\azure.core.1.50.0.nupkg.sha512",
     "C:\\Users\\BURHAN\\.nuget\\packages\\azure.identity\\1.17.1\\azure.identity.1.17.1.nupkg.sha512",
     "C:\\Users\\BURHAN\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",

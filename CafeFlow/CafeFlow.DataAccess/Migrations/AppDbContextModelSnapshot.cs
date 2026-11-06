@@ -139,6 +139,9 @@ namespace CafeFlow.DataAccess.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("ImageUrl")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -153,6 +156,45 @@ namespace CafeFlow.DataAccess.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("CafeFlow.Entity.Comment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsApproved")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("Comments");
                 });
 
             modelBuilder.Entity("CafeFlow.Entity.Customer", b =>
@@ -194,6 +236,35 @@ namespace CafeFlow.DataAccess.Migrations
                         .HasFilter("[AppUserId] IS NOT NULL");
 
                     b.ToTable("Customers");
+                });
+
+            modelBuilder.Entity("CafeFlow.Entity.Favorite", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("Favorites");
                 });
 
             modelBuilder.Entity("CafeFlow.Entity.Notification", b =>
@@ -371,7 +442,13 @@ namespace CafeFlow.DataAccess.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
+                    b.Property<bool?>("IsCustomizable")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsFeatured")
                         .HasColumnType("bit");
 
                     b.Property<string>("Name")
@@ -557,6 +634,23 @@ namespace CafeFlow.DataAccess.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("CafeFlow.Entity.Comment", b =>
+                {
+                    b.HasOne("CafeFlow.Entity.Customer", "Customer")
+                        .WithMany("Comments")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CafeFlow.Entity.Product", "Product")
+                        .WithMany("Comments")
+                        .HasForeignKey("ProductId");
+
+                    b.Navigation("Customer");
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("CafeFlow.Entity.Customer", b =>
                 {
                     b.HasOne("CafeFlow.Entity.AppUser", "AppUser")
@@ -564,6 +658,25 @@ namespace CafeFlow.DataAccess.Migrations
                         .HasForeignKey("CafeFlow.Entity.Customer", "AppUserId");
 
                     b.Navigation("AppUser");
+                });
+
+            modelBuilder.Entity("CafeFlow.Entity.Favorite", b =>
+                {
+                    b.HasOne("CafeFlow.Entity.Customer", "Customer")
+                        .WithMany("Favorites")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CafeFlow.Entity.Product", "Product")
+                        .WithMany("Favorites")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("CafeFlow.Entity.Notification", b =>
@@ -709,6 +822,10 @@ namespace CafeFlow.DataAccess.Migrations
 
             modelBuilder.Entity("CafeFlow.Entity.Customer", b =>
                 {
+                    b.Navigation("Comments");
+
+                    b.Navigation("Favorites");
+
                     b.Navigation("Orders");
                 });
 
@@ -723,6 +840,10 @@ namespace CafeFlow.DataAccess.Migrations
 
             modelBuilder.Entity("CafeFlow.Entity.Product", b =>
                 {
+                    b.Navigation("Comments");
+
+                    b.Navigation("Favorites");
+
                     b.Navigation("ProductOptions");
                 });
 

@@ -1,12 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using CafeFlow.Business.Abstract;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CafeFlow.WebUI.ViewComponents._CustomerLayoutViewComponents
 {
-    public class _CustomerLayoutPopularProductsViewComponent : ViewComponent
+    public class _CustomerLayoutPopularProductsViewComponent(IProductService _productService) : ViewComponent
     {
-        public IViewComponentResult Invoke()
+        public async Task<IViewComponentResult> InvokeAsync()
         {
-            return View();
+            var products = await _productService.GetFeaturedProductsAsync();
+            return View(products);
         }
     }
 }

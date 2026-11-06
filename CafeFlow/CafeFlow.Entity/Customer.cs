@@ -14,5 +14,7 @@ namespace CafeFlow.Entity
         public string Email { get; set; }
         public string Phone { get; set; }
         public string? Address { get; set; }
+        public ICollection<Favorite> Favorites { get; set; }
+        public ICollection<Comment> Comments { get; set; }
     }
 }

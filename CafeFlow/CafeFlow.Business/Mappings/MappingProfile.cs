@@ -14,7 +14,7 @@ namespace CafeFlow.Business.Mappings
     {
         public MappingProfile()
         {
-            CreateMap<Category, CategoryListDto>();
+            CreateMap<Category, CategoryListDto>().ForMember(dest => dest.ProductCount, opt => opt.MapFrom(src => src.Products != null ? src.Products.Count(p => !p.IsDeleted && p.IsActive) : 0));
             CreateMap<UpdateCategoryDto, Category>();
             CreateMap<CreateCategoryDto, Category>();
 

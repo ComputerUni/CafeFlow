@@ -8,6 +8,7 @@
     ".NETCoreApp,Version=v10.0": {
       "CafeFlow.DataAccess/1.0.0": {
         "dependencies": {
+          "CafeFlow.DTO": "1.0.0",
           "CafeFlow.Entity": "1.0.0",
           "Microsoft.EntityFrameworkCore": "10.0.14",
           "Microsoft.EntityFrameworkCore.Design": "10.0.14",
@@ -1075,6 +1076,17 @@
           }
         }
       },
+      "CafeFlow.DTO/1.0.0": {
+        "dependencies": {
+          "CafeFlow.Entity": "1.0.0"
+        },
+        "runtime": {
+          "CafeFlow.DTO.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
       "CafeFlow.Entity/1.0.0": {
         "dependencies": {
           "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "10.0.14"
@@ -1548,6 +1560,11 @@
       "sha512": "sha512-s8yUYuYYu+PAwvBdhLG1KyrGrk9gkYeuPxfAsXsTqqWyepwSyEw8hAaflW4nO98NG52YpYI1am2+9o+79h2RtQ==",
       "path": "system.security.cryptography.protecteddata/9.0.11",
       "hashPath": "system.security.cryptography.protecteddata.9.0.11.nupkg.sha512"
+    },
+    "CafeFlow.DTO/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
     },
     "CafeFlow.Entity/1.0.0": {
       "type": "project",

@@ -2,7 +2,6 @@ using CafeFlow.Business.Mappings;
 using CafeFlow.DataAccess.Context;
 using CafeFlow.Entity;
 using CafeFlow.WebUI.Extensions;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,7 +13,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 });
 
 builder.Services.AddIdentity<AppUser, AppRole>().AddEntityFrameworkStores<AppDbContext>();
-builder.Services.AddAutoMapper(typeof(MappingProfile));
+builder.Services.AddAutoMapper(cfg => { }, typeof(MappingProfile));
 
 builder.Services.AddBusinessServices();
 builder.Services.AddRepositories();

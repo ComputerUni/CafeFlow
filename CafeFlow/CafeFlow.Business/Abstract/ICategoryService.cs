@@ -1,4 +1,5 @@
 ﻿using CafeFlow.DTO.Category;
+using CafeFlow.Entity;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -12,5 +13,6 @@ namespace CafeFlow.Business.Abstract
         Task CreateAsync(CreateCategoryDto dto);
         Task UpdateAsync(UpdateCategoryDto dto);
         Task DeleteAsync(int id);
+        Task<List<CategoryListDto>> GetCategoriesWithProductAsync();
     }
 }

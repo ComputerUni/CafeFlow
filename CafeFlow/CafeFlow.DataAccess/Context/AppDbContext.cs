@@ -19,5 +19,7 @@ namespace CafeFlow.DataAccess.Context
         public DbSet<Product> Products { get; set; }
         public DbSet<ProductOption> ProductOptions { get; set; }
         public DbSet<Table> Tables { get; set; }
+        public DbSet<Favorite> Favorites { get; set; }
+        public DbSet<Comment> Comments { get; set; }
     }
 }

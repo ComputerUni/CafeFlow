@@ -672,6 +672,7 @@
       },
       "CafeFlow.DataAccess/1.0.0": {
         "dependencies": {
+          "CafeFlow.DTO": "1.0.0",
           "CafeFlow.Entity": "1.0.0",
           "Microsoft.EntityFrameworkCore": "10.0.14",
           "Microsoft.EntityFrameworkCore.SqlServer": "10.0.14",
