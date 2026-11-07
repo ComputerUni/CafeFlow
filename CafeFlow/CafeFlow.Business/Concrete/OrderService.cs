@@ -16,11 +16,11 @@ namespace CafeFlow.Business.Concrete
 {
     public class OrderService(IOrderRepository _orderRepository, IMapper _mapper, OrderValidationHandler _orderValidatonHandler, OrderObserverObject _orderObserverObject, IOrderStatusHistoryRepository _orderStatusHistoryRepository, ICustomerRepository _customerRepository) : IOrderService
     {
-        public async Task CreateOrderAsync(CreateOrderDto createOrderDto)
+        public async Task<string> CreateOrderAsync(CreateOrderDto createOrderDto)
         {
             Customer customer;
 
-            if(createOrderDto.AppUserId.HasValue)
+            if (createOrderDto.AppUserId.HasValue)
             {
                 customer = await _customerRepository.GetByAppUserIdAsync(createOrderDto.AppUserId.Value);
             }
@@ -36,17 +36,20 @@ namespace CafeFlow.Business.Concrete
                 await _customerRepository.CreateAsync(customer);
             }
 
-            var validationRequest = new OrderValidationRequest
+            foreach (var detail in createOrderDto.OrderDetails)
             {
-                ProductId = createOrderDto.OrderDetails.First().ProductId,
-                Quantity = createOrderDto.OrderDetails.First().Quantity,
-                OrderType = createOrderDto.OrderType,
-                Address = createOrderDto.Address,
-                TableId = createOrderDto.TableId,
-                TotalAmount = createOrderDto.TotalAmount
-            };
+                var validationRequest = new OrderValidationRequest
+                {
+                    ProductId = detail.ProductId,
+                    Quantity = detail.Quantity,
+                    OrderType = createOrderDto.OrderType,
+                    Address = createOrderDto.Address,
+                    TableId = createOrderDto.TableId,
+                    TotalAmount = createOrderDto.TotalAmount
+                };
 
-            await _orderValidatonHandler.Validate(validationRequest);
+                await _orderValidatonHandler.Validate(validationRequest);
+            }
 
             IOrderFactory orderFactory = createOrderDto.OrderType switch
             {
@@ -73,13 +76,22 @@ namespace CafeFlow.Business.Concrete
 
             await _orderObserverObject.NotifyObserver(order.Id, OrderStatus.Received);
 
+            return order.OrderCode;
+
+        }
+
+        public async Task<OrderConfirmationDto> GetByCodeAsync(string code)
+        {
+            var order = await _orderRepository.GetByCodeWithDetailsAsync(code);
+            if (order == null) return null;
+            return _mapper.Map<OrderConfirmationDto>(order);
         }
 
         public async Task UpdateOrderAsync(int id)
         {
             var order = await _orderRepository.GetByIdAsync(id);
 
-            if(order is null)
+            if (order is null)
             {
                 throw new Exception("Aradığınız sipariş bulunamadı.");
             }

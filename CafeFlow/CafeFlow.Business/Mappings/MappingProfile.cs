@@ -17,6 +17,13 @@ namespace CafeFlow.Business.Mappings
             CreateMap<Category, CategoryListDto>().ForMember(dest => dest.ProductCount, opt => opt.MapFrom(src => src.Products != null ? src.Products.Count(p => !p.IsDeleted && p.IsActive) : 0));
             CreateMap<UpdateCategoryDto, Category>();
             CreateMap<CreateCategoryDto, Category>();
+            CreateMap<Order, OrderConfirmationDto>()
+                .ForMember(dest => dest.CustomerName, opt => opt.MapFrom(src => src.Customer.FullName))
+                .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.Customer.Phone))
+                .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Customer.Address));
+
+            CreateMap<OrderDetail, OrderDetailConfirmDto>().ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product.Name)); 
+
 
             CreateMap<Product, ProductListDto>().ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.Name));
             CreateMap<UpdateProductDto, Product>();

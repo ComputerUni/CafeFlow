@@ -4,1399 +4,247 @@
 
 <!DOCTYPE html>
 <html lang="en">
+
 @await Component.InvokeAsync("_CartLayoutHead")
+
 <body>
 
-  <!-- ============ PAGE HEADER ============ -->
-  <header class="cf-page-header cf-compact">
-    <div class="cf-blob cf-blob-1"></div>
-    <div class="cf-blob cf-blob-2"></div>
-    <span class="cf-deco cf-deco-1" aria-hidden="true"><i class="bi bi-bag-heart"></i></span>
-    <span class="cf-deco cf-deco-2" aria-hidden="true"><i class="bi bi-flower1"></i></span>
-    <span class="cf-deco cf-deco-3" aria-hidden="true"><i class="bi bi-cup-hot"></i></span>
-    <span class="cf-deco cf-deco-4" aria-hidden="true"><i class="bi bi-heart"></i></span>
+    @await Component.InvokeAsync("_CartLayoutPageHeader")
 
-    <div class="container position-relative">
-      <nav aria-label="Breadcrumb">
-        <div class="cf-breadcrumb">
-          <a href="index.html"><i class="bi bi-house-heart"></i> Home</a>
-          <i class="bi bi-chevron-right"></i>
-          <a href="products.html">Menu</a>
-          <i class="bi bi-chevron-right"></i>
-          <span aria-current="page">Your Cart</span>
+    <main class="cf-cart-section">
+        <div class="container">
+            <div class="row g-4">
+
+                <div class="col-lg-8">
+
+                    <section class="cf-panel" aria-labelledby="itemsTitle">
+                        <div class="cf-panel-head">
+                            <h2 class="cf-panel-title" id="itemsTitle">
+                                <span class="cf-step">1</span> Seçtiğiniz Lezzetler <small class="text-muted fs-6 fw-normal" id="itemsCount"></small>
+                            </h2>
+                            <button type="button" class="cf-clear-btn d-none" id="clearCartBtn"><i class="bi bi-trash3"></i> Sepeti Temizle</button>
+                        </div>
+
+                        <div id="cartList"></div>
+
+                        <div class="cf-empty-cart d-none" id="emptyCart">
+                            <div class="cf-empty-art" aria-hidden="true">
+                                <span class="cf-empty-circle"></span>
+                                <span class="cf-empty-main"><i class="bi bi-bag-heart"></i></span>
+                                <span class="cf-empty-mini one"><i class="bi bi-cup-hot"></i></span>
+                                <span class="cf-empty-mini two"><i class="bi bi-cake2"></i></span>
+                            </div>
+                            <h2>Sepetiniz biraz boş görünüyor...</h2>
+                            <p>Hemen enfes bir kahve veya tatlıyla dolduralım!</p>
+                            <a href="/Menu/Index" class="btn cf-btn-primary cf-btn-lg">Menüyü İncele <i class="bi bi-arrow-right"></i></a>
+                        </div>
+
+                        <a href="/Menu/Index" class="cf-continue" id="continueShopping"><span><i class="bi bi-arrow-left"></i></span> Alışverişe Devam Et</a>
+                    </section>
+
+                    <section class="cf-panel" id="orderTypePanel" aria-labelledby="typeTitle">
+                        <div class="cf-panel-head">
+                            <h2 class="cf-panel-title" id="typeTitle"><span class="cf-step">2</span> Siparişinizi Nasıl Almak İstersiniz?</h2>
+                        </div>
+
+                        <div class="cf-type-grid" role="radiogroup" aria-labelledby="typeTitle">
+                            <label class="cf-type">
+                                <input type="radio" name="orderType" value="delivery" />
+                                <span class="cf-type-card">
+                                    <span class="cf-type-check"><i class="bi bi-check-lg"></i></span>
+                                    <span class="cf-type-icon"><i class="bi bi-scooter"></i></span>
+                                    <span class="cf-type-text">
+                                        <span class="cf-type-name">Adrese Teslimat</span>
+                                        <span class="cf-type-desc">Sıcak ve taze, kapınıza kadar gelsin.</span>
+                                    </span>
+                                </span>
+                            </label>
+                            <label class="cf-type">
+                                <input type="radio" name="orderType" value="pickup" />
+                                <span class="cf-type-card">
+                                    <span class="cf-type-check"><i class="bi bi-check-lg"></i></span>
+                                    <span class="cf-type-icon"><i class="bi bi-bag"></i></span>
+                                    <span class="cf-type-text">
+                                        <span class="cf-type-name">Gel-Al</span>
+                                        <span class="cf-type-desc">Önceden sipariş verin, sıra beklemeden teslim alın.</span>
+                                    </span>
+                                </span>
+                            </label>
+                            <label class="cf-type">
+                                <input type="radio" name="orderType" value="dinein" />
+                                <span class="cf-type-card">
+                                    <span class="cf-type-check"><i class="bi bi-check-lg"></i></span>
+                                    <span class="cf-type-icon"><i class="bi bi-cup-hot"></i></span>
+                                    <span class="cf-type-text">
+                                        <span class="cf-type-name">Masadan Sipariş</span>
+                                        <span class="cf-type-desc">Kafemizde masanızdan doğrudan sipariş verin.</span>
+                                        <span class="cf-type-badge pending" id="dineInBadge"><i class="bi bi-qr-code"></i> Masa QR Gerekli</span>
+                                    </span>
+                                </span>
+                            </label>
+                        </div>
+
+                        <form class="cf-details" id="detailsForm" novalidate>
+                            <div class="cf-field-group is-hidden" data-for="delivery pickup">
+                                <div>
+                                    <div class="row g-3 pb-3">
+                                        <div class="col-md-6">
+                                            <label class="cf-label" for="fullName">Ad Soyad</label>
+                                            <input class="cf-input" id="fullName" name="fullName" type="text" autocomplete="name" placeholder="Örn: Elif Yılmaz" data-required="delivery pickup" />
+                                            <div class="cf-error">Lütfen adınızı ve soyadınızı giriniz.</div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="cf-label" for="phone">Telefon Numarası</label>
+                                            <input class="cf-input" id="phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="05xx xxx xx xx" data-required="delivery pickup" data-validate="phone" />
+                                            <div class="cf-error">Lütfen geçerli bir telefon numarası giriniz.</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="cf-field-group is-hidden" data-for="delivery">
+                                <div>
+                                    <div class="row g-3 pb-3">
+                                        <div class="col-12">
+                                            <label class="cf-label" for="address">Teslimat Adresi</label>
+                                            <textarea class="cf-textarea" id="address" name="address" rows="2" autocomplete="street-address" placeholder="Sokak, bina, daire, mahalle..." data-required="delivery" data-validate="address"></textarea>
+                                            <div class="cf-error">Lütfen açık adresinizi belirtiniz.</div>
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="cf-label" for="addressNotes">Adres Tarifi / Notu <span class="opt">(isteğe bağlı)</span></label>
+                                            <input class="cf-input" id="addressNotes" name="addressNotes" type="text" placeholder="Kapı zili, kat, blok vb." />
+                                        </div>
+                                    </div>
+                                    <div class="cf-fee-hint" id="deliveryHint"></div>
+                                </div>
+                            </div>
+
+                            <div class="cf-field-group is-hidden" data-for="pickup">
+                                <div>
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label class="cf-label" for="pickupTime">Teslim Alma Saati</label>
+                                            <select class="cf-input" id="pickupTime" name="pickupTime" data-required="pickup"></select>
+                                            <div class="cf-error">Lütfen bir teslim alma saati seçiniz.</div>
+                                        </div>
+                                        <div class="col-md-6 d-flex align-items-end">
+                                            <div class="cf-fee-hint w-100 mt-0"><i class="bi bi-geo-alt"></i> CafeFlow Teslim Noktası</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="cf-field-group is-hidden" data-for="dinein">
+                                <div>
+                                    <div id="tableVerified" class="d-none">
+                                        <div class="cf-table-card">
+                                            <span class="cf-table-num" id="tableNumBig">7</span>
+                                            <div>
+                                                <small>Sipariş verdiğiniz yer</small>
+                                                <strong id="tableLabel">Masa 7 · Bahçe Bölümü</strong><br />
+                                                <span class="cf-verified"><i class="bi bi-patch-check-fill"></i> QR kod ile doğrulandı</span>
+                                            </div>
+                                        </div>
+                                        <div class="row g-3">
+                                            <div class="col-md-4">
+                                                <label class="cf-label" for="tableNumber">Masa No</label>
+                                                <input class="cf-input" id="tableNumber" name="tableNumber" type="text" readonly aria-readonly="true" />
+                                            </div>
+                                            <div class="col-md-8">
+                                                <label class="cf-label" for="dineNote">Masa İçin Not <span class="opt">(isteğe bağlı)</span></label>
+                                                <input class="cf-input" id="dineNote" name="dineNote" type="text" placeholder="Örn: Tatlı kahveyle beraber gelsin" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div id="tableMissing" class="cf-notice">
+                                        <i class="bi bi-qr-code-scan"></i>
+                                        <div>
+                                            <strong>Masanızdaki QR Kodu Okutun</strong>
+                                            Masadan sipariş verebilmek için masanızdaki QR kodu okutmanız gerekmektedir.
+                                            <div><a href="" class="cf-text-link">Masa simülasyonu yap (Demo) <i class="bi bi-arrow-right"></i></a></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <p class="text-muted small mb-0" id="typeHint"><i class="bi bi-hand-index"></i> Devam etmek için yukarıdan bir sipariş türü seçin.</p>
+                        </form>
+                    </section>
+
+                    <section class="cf-panel" aria-labelledby="noteTitle">
+                        <div class="cf-panel-head">
+                            <h2 class="cf-panel-title" id="noteTitle"><span class="cf-step">3</span> Baristamıza Bir Notunuz Var mı?</h2>
+                        </div>
+                        <label class="visually-hidden" for="orderNote">Sipariş Notu</label>
+                        <textarea class="cf-textarea" id="orderNote" rows="3" maxlength="300" placeholder="Az şekerli, bol buzlu veya ek peçete gibi özel isteklerinizi yazabilirsiniz..."></textarea>
+                        <div class="text-end small text-muted mt-1"><span id="noteCount">0</span>/300</div>
+                    </section>
+
+                    <section class="cf-reco" id="recoSection" aria-labelledby="recoTitle">
+                        <h2 class="cf-reco-title" id="recoTitle">Bunları da Çok Seveceksiniz</h2>
+                        <div class="row g-4" id="recoGrid"></div>
+                    </section>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="cf-summary-wrap">
+                        <aside class="cf-summary" aria-labelledby="summaryTitle">
+                            <div class="cf-summary-head">
+                                <h2 id="summaryTitle">Sipariş Özeti</h2>
+                                <p id="summaryType">Sipariş türünü seçiniz</p>
+                            </div>
+                            <div class="cf-summary-body">
+                                <ul class="cf-summary-items" id="summaryItems"></ul>
+
+                                <ul class="cf-sum-rows">
+                                    <li><span>Ara Toplam</span><span id="sumSubtotal">₺0,00</span></li>
+                                    <li class="cf-sum-sub" id="sumCustomRow"><span>özelleştirmeler dahil</span><span id="sumCustom">₺0,00</span></li>
+                                    <li class="cf-sum-discount"><span>İndirim</span><span id="sumDiscount">−₺0,00</span></li>
+                                    <li><span>Teslimat Ücreti</span><span id="sumDelivery">—</span></li>
+                                </ul>
+
+                                <div class="cf-grand">
+                                    <span>Toplam<small>KDV Dahil</small></span>
+                                    <strong id="sumTotal">₺0,00</strong>
+                                </div>
+
+                                <button type="button" class="btn cf-btn-primary cf-btn-lg w-100 cf-checkout-btn" id="checkoutBtn">
+                                    <i class="bi bi-lock"></i> Siparişi Onayla
+                                </button>
+
+                                <div class="cf-secure">
+                                    <i class="bi bi-shield-check"></i>
+                                    <span>Güvenli Sipariş. Ödeme işlemi öncesi tüm detayları inceleyebilirsiniz.</span>
+                                </div>
+                            </div>
+                        </aside>
+
+                        <div class="cf-perks">
+                            <div class="cf-perk"><i class="bi bi-cup-hot"></i>Taze Hazırlanır</div>
+                            <div class="cf-perk"><i class="bi bi-clock-history"></i>~15 Dk Hazır</div>
+                            <div class="cf-perk"><i class="bi bi-heart"></i>Özenle Paketlenir</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </nav>
-      <h1 class="cf-page-title">Your Sweet <em>Cart</em></h1>
-      <p class="cf-page-sub">Your favorite little treats are almost on their way!</p>
-    </div>
-  </header>
+    </main>
 
-  <!-- ============ CART ============ -->
-  <main class="cf-cart-section">
-    <div class="container">
-      <div class="row g-4">
-
-        <!-- LEFT: items + order type + note -->
-        <div class="col-lg-8">
-
-          <!-- Cart items -->
-          <section class="cf-panel" aria-labelledby="itemsTitle">
-            <div class="cf-panel-head">
-              <h2 class="cf-panel-title" id="itemsTitle"><span class="cf-step">1</span> Your Treats <small class="text-muted fs-6 fw-normal" id="itemsCount"></small></h2>
-              <button type="button" class="cf-clear-btn d-none" id="clearCartBtn"><i class="bi bi-trash3"></i> Clear cart</button>
-            </div>
-
-            <div class="cf-preview-banner d-none" id="previewBanner" role="status">
-              <i class="bi bi-eye"></i>
-              <p><strong>Preview mode</strong>These are sample items to show how your cart looks. Nothing is saved until you add them.</p>
-              <button type="button" class="btn cf-btn-dark" id="previewKeep">Add these to my cart</button>
-              <button type="button" class="btn cf-btn-outline" id="previewExit">Exit preview</button>
-            </div>
-
-            <div id="cartList"></div>
-
-            <!-- Empty state -->
-            <div class="cf-empty-cart d-none" id="emptyCart">
-              <div class="cf-empty-art" aria-hidden="true">
-                <span class="cf-empty-circle"></span>
-                <span class="cf-empty-main"><i class="bi bi-bag-heart"></i></span>
-                <span class="cf-empty-mini one"><i class="bi bi-cup-hot"></i></span>
-                <span class="cf-empty-mini two"><i class="bi bi-cake2"></i></span>
-              </div>
-              <h2>Your cart feels a little lonely...</h2>
-              <p>Let's fill it with something sweet!</p>
-              <a href="products.html" class="btn cf-btn-primary cf-btn-lg">Explore Our Menu <i class="bi bi-arrow-right"></i></a>
-              <div><button type="button" class="cf-preview-link" id="previewStart">Just looking? Preview the cart with sample items</button></div>
-            </div>
-
-            <a href="products.html" class="cf-continue" id="continueShopping"><span><i class="bi bi-arrow-left"></i></span> Continue Shopping</a>
-          </section>
-
-          <!-- Order type -->
-          <section class="cf-panel" id="orderTypePanel" aria-labelledby="typeTitle">
-            <div class="cf-panel-head">
-              <h2 class="cf-panel-title" id="typeTitle"><span class="cf-step">2</span> How Would You Like to Enjoy Your Order?</h2>
-            </div>
-
-            <div class="cf-type-grid" role="radiogroup" aria-labelledby="typeTitle">
-              <label class="cf-type">
-                <input type="radio" name="orderType" value="delivery" />
-                <span class="cf-type-card">
-                  <span class="cf-type-check"><i class="bi bi-check-lg"></i></span>
-                  <span class="cf-type-icon"><i class="bi bi-scooter"></i></span>
-                  <span class="cf-type-text">
-                    <span class="cf-type-name">Delivery</span>
-                    <span class="cf-type-desc">Your favorites, delivered to your doorstep.</span>
-                  </span>
-                </span>
-              </label>
-              <label class="cf-type">
-                <input type="radio" name="orderType" value="pickup" />
-                <span class="cf-type-card">
-                  <span class="cf-type-check"><i class="bi bi-check-lg"></i></span>
-                  <span class="cf-type-icon"><i class="bi bi-bag"></i></span>
-                  <span class="cf-type-text">
-                    <span class="cf-type-name">Pickup</span>
-                    <span class="cf-type-desc">Order ahead and pick up when you're ready.</span>
-                  </span>
-                </span>
-              </label>
-              <label class="cf-type">
-                <input type="radio" name="orderType" value="dinein" />
-                <span class="cf-type-card">
-                  <span class="cf-type-check"><i class="bi bi-check-lg"></i></span>
-                  <span class="cf-type-icon"><i class="bi bi-cup-hot"></i></span>
-                  <span class="cf-type-text">
-                    <span class="cf-type-name">Dine-In</span>
-                    <span class="cf-type-desc">Ordering from your favorite spot in our cafe.</span>
-                    <span class="cf-type-badge pending" id="dineInBadge"><i class="bi bi-qr-code"></i> Table QR needed</span>
-                  </span>
-                </span>
-              </label>
-            </div>
-
-            <form class="cf-details" id="detailsForm" novalidate>
-              <!-- Shared contact fields (delivery + pickup) -->
-              <div class="cf-field-group is-hidden" data-for="delivery pickup">
-                <div>
-                  <div class="row g-3 pb-3">
-                    <div class="col-md-6">
-                      <label class="cf-label" for="fullName">Full Name</label>
-                      <input class="cf-input" id="fullName" name="fullName" type="text" autocomplete="name" placeholder="e.g. Elif Yılmaz" data-required="delivery pickup" />
-                      <div class="cf-error">Please enter your full name.</div>
-                    </div>
-                    <div class="col-md-6">
-                      <label class="cf-label" for="phone">Phone Number</label>
-                      <input class="cf-input" id="phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="05xx xxx xx xx" data-required="delivery pickup" data-validate="phone" />
-                      <div class="cf-error">Please enter a valid phone number.</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Delivery only -->
-              <div class="cf-field-group is-hidden" data-for="delivery">
-                <div>
-                  <div class="row g-3 pb-3">
-                    <div class="col-12">
-                      <label class="cf-label" for="address">Delivery Address</label>
-                      <textarea class="cf-textarea" id="address" name="address" rows="2" autocomplete="street-address" placeholder="Street, building, apartment, district" data-required="delivery" data-validate="address"></textarea>
-                      <div class="cf-error">Please enter your full delivery address.</div>
-                    </div>
-                    <div class="col-12">
-                      <label class="cf-label" for="addressNotes">Address Notes <span class="opt">(optional)</span></label>
-                      <input class="cf-input" id="addressNotes" name="addressNotes" type="text" placeholder="Door code, floor, landmark..." />
-                    </div>
-                  </div>
-                  <div class="cf-fee-hint" id="deliveryHint"></div>
-                </div>
-              </div>
-
-              <!-- Pickup only -->
-              <div class="cf-field-group is-hidden" data-for="pickup">
-                <div>
-                  <div class="row g-3">
-                    <div class="col-md-6">
-                      <label class="cf-label" for="pickupTime">Preferred Pickup Time</label>
-                      <select class="cf-input" id="pickupTime" name="pickupTime" data-required="pickup"></select>
-                      <div class="cf-error">Please choose a pickup time.</div>
-                    </div>
-                    <div class="col-md-6 d-flex align-items-end">
-                      <div class="cf-fee-hint w-100 mt-0"><i class="bi bi-geo-alt"></i> Pickup counter · 24 Blossom Street</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Dine-in only -->
-              <div class="cf-field-group is-hidden" data-for="dinein">
-                <div>
-                  <div id="tableVerified" class="d-none">
-                    <div class="cf-table-card">
-                      <span class="cf-table-num" id="tableNumBig">7</span>
-                      <div>
-                        <small>You're ordering from</small>
-                        <strong id="tableLabel">Table 7 · Garden Corner</strong><br />
-                        <span class="cf-verified"><i class="bi bi-patch-check-fill"></i> Verified by table QR code</span>
-                      </div>
-                    </div>
-                    <div class="row g-3">
-                      <div class="col-md-4">
-                        <label class="cf-label" for="tableNumber">Table Number</label>
-                        <input class="cf-input" id="tableNumber" name="tableNumber" type="text" readonly aria-readonly="true" />
-                      </div>
-                      <div class="col-md-8">
-                        <label class="cf-label" for="dineNote">Note for Your Table <span class="opt">(optional)</span></label>
-                        <input class="cf-input" id="dineNote" name="dineNote" type="text" placeholder="e.g. Please bring the cake with the coffee" />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div id="tableMissing" class="cf-notice">
-                    <i class="bi bi-qr-code-scan"></i>
-                    <div>
-                      <strong>Scan the QR code on your table</strong>
-                      Dine-in orders are linked to your table automatically when you scan its QR code, so we always know where to bring your treats.
-                      <div><a href="cart.html?qr=CF-T07-ROSE" class="cf-text-link">Simulate a table scan (demo) <i class="bi bi-arrow-right"></i></a></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Nothing selected yet -->
-              <p class="text-muted small mb-0" id="typeHint"><i class="bi bi-hand-index"></i> Choose an option above to continue.</p>
-            </form>
-          </section>
-
-          <!-- Special instructions -->
-          <section class="cf-panel" aria-labelledby="noteTitle">
-            <div class="cf-panel-head">
-              <h2 class="cf-panel-title" id="noteTitle"><span class="cf-step">3</span> Anything We Should Know?</h2>
-            </div>
-            <label class="visually-hidden" for="orderNote">Special instructions</label>
-            <textarea class="cf-textarea" id="orderNote" rows="3" maxlength="300" placeholder="Less sugar, extra napkins, or a little note for our baristas..."></textarea>
-            <div class="text-end small text-muted mt-1"><span id="noteCount">0</span>/300</div>
-          </section>
-
-          <!-- Recommendations -->
-          <section class="cf-reco" id="recoSection" aria-labelledby="recoTitle">
-            <h2 class="cf-reco-title" id="recoTitle">You Might Also Love</h2>
-            <div class="row g-4" id="recoGrid"></div>
-          </section>
-        </div>
-
-        <!-- RIGHT: summary -->
-        <div class="col-lg-4">
-          <div class="cf-summary-wrap">
-            <aside class="cf-summary" aria-labelledby="summaryTitle">
-              <div class="cf-summary-head">
-                <h2 id="summaryTitle">Order Summary</h2>
-                <p id="summaryType">Choose how you'd like your order</p>
-              </div>
-              <div class="cf-summary-body">
-                <ul class="cf-summary-items" id="summaryItems"></ul>
-
-                <div id="promoBox">
-                  <form class="cf-promo-form" id="promoForm" novalidate>
-                    <label for="promoInput" class="visually-hidden">Promo code</label>
-                    <input type="text" id="promoInput" placeholder="Enter your sweet code" autocomplete="off" maxlength="20" />
-                    <button type="submit" class="btn cf-btn-primary">Apply</button>
-                  </form>
-                  <p class="cf-promo-msg" id="promoMsg" aria-live="polite"></p>
-                </div>
-                <div class="cf-promo-applied d-none" id="promoApplied">
-                  <span><i class="bi bi-ticket-perforated"></i> <span id="promoAppliedText">SWEET10 · 10% off</span></span>
-                  <button type="button" id="promoRemove">Remove</button>
-                </div>
-                <p class="cf-promo-hint">Demo codes: SWEET10 or PINK20. Final discount is confirmed at checkout.</p>
-
-                <ul class="cf-sum-rows">
-                  <li><span>Subtotal</span><span id="sumSubtotal">₺0.00</span></li>
-                  <li class="cf-sum-sub" id="sumCustomRow"><span>incl. customizations</span><span id="sumCustom">₺0.00</span></li>
-                  <li class="cf-sum-discount"><span>Discount</span><span id="sumDiscount">−₺0.00</span></li>
-                  <li><span>Delivery Fee</span><span id="sumDelivery">—</span></li>
-                </ul>
-
-                <div class="cf-grand">
-                  <span>Total<small>VAT included</small></span>
-                  <strong id="sumTotal">₺0.00</strong>
-                </div>
-
-                <button type="button" class="btn cf-btn-primary cf-btn-lg w-100 cf-checkout-btn" id="checkoutBtn">
-                  <i class="bi bi-lock"></i> Continue to Checkout
-                </button>
-
-                <div class="cf-secure">
-                  <i class="bi bi-shield-check"></i>
-                  <span>Secure order. You'll review everything before any payment is taken.</span>
-                </div>
-              </div>
-            </aside>
-
-            <div class="cf-perks">
-              <div class="cf-perk"><i class="bi bi-cup-hot"></i>Freshly made</div>
-              <div class="cf-perk"><i class="bi bi-clock-history"></i>~15 min ready</div>
-              <div class="cf-perk"><i class="bi bi-heart"></i>Made with love</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </main>
-
-  <!-- Mobile checkout bar -->
-  <div class="cf-mobile-bar hide" id="mobileBar">
-    <div>
-      <small>Total</small>
-      <strong id="mobileTotal">₺0.00</strong>
-    </div>
-    <button type="button" class="btn cf-btn-primary" id="mobileCheckout">Checkout <i class="bi bi-arrow-right"></i></button>
-  </div>
-
-  <!-- ============ FOOTER (shared with Homepage) ============ -->
-  <footer id="contact" class="cf-footer">
-    <div class="container">
-      <div class="cf-newsletter">
+    <div class="cf-mobile-bar hide" id="mobileBar">
         <div>
-          <h3>Get sweet news first</h3>
-          <p>New flavors, seasonal menus and members-only offers.</p>
+            <small>Toplam</small>
+            <strong id="mobileTotal">₺0,00</strong>
         </div>
-        <form class="cf-newsletter-form" id="newsletterForm">
-          <input type="email" placeholder="Your email address" aria-label="Email address" required />
-          <button class="btn cf-btn-primary" type="submit">Subscribe</button>
-        </form>
-      </div>
-
-      <div class="row g-5 cf-footer-main">
-        <div class="col-lg-4">
-          <a class="cf-logo mb-3 d-inline-flex" href="index.html">
-            <span class="cf-logo-mark"><i class="bi bi-cup-hot-fill"></i></span>
-            Cafe<span>Flow</span>
-          </a>
-          <p class="cf-footer-text">A boutique café for handcrafted coffee, pretty desserts and slow, happy moments.</p>
-          <div class="cf-socials">
-            <a href="#" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
-            <a href="#" aria-label="TikTok"><i class="bi bi-tiktok"></i></a>
-            <a href="#" aria-label="Pinterest"><i class="bi bi-pinterest"></i></a>
-            <a href="#" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
-          </div>
-        </div>
-
-        <div class="col-6 col-lg-2">
-          <h5>Explore</h5>
-          <ul class="cf-footer-links">
-            <li><a href="index.html">Home</a></li>
-            <li><a href="products.html">Menu</a></li>
-            <li><a href="index.html#about">About</a></li>
-            <li><a href="index.html#order">Order</a></li>
-          </ul>
-        </div>
-
-        <div class="col-6 col-lg-3">
-          <h5>Visit us</h5>
-          <ul class="cf-contact-list">
-            <li><i class="bi bi-geo-alt"></i> 24 Blossom Street, Rose District</li>
-            <li><i class="bi bi-telephone"></i> <a href="tel:+15550142233">+1 (555) 014-2233</a></li>
-            <li><i class="bi bi-envelope"></i> <a href="mailto:hello@cafeflow.com">hello@cafeflow.com</a></li>
-          </ul>
-        </div>
-
-        <div class="col-lg-3">
-          <h5>Opening hours</h5>
-          <ul class="cf-hours">
-            <li><span>Mon – Fri</span><span>07:30 – 21:00</span></li>
-            <li><span>Saturday</span><span>08:30 – 22:00</span></li>
-            <li><span>Sunday</span><span>09:00 – 20:00</span></li>
-          </ul>
-          <span class="cf-open-now" id="openStatus"><span class="cf-dot"></span> Open now</span>
-        </div>
-      </div>
-
-      <div class="cf-footer-bottom">
-        <span>© <span id="year"></span> CafeFlow. All rights reserved.</span>
-        <span>Made with <i class="bi bi-heart-fill"></i> and good coffee.</span>
-      </div>
+        <button type="button" class="btn cf-btn-primary" id="mobileCheckout">Siparişi Tamamla <i class="bi bi-arrow-right"></i></button>
     </div>
-  </footer>
 
-  <!-- ============ CUSTOMIZE / EDIT MODAL (same design as Products Page) ============ -->
-  <div class="modal fade cf-modal" id="customizeModal" tabindex="-1" aria-labelledby="customizeTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-      <div class="modal-content">
-        <div class="row g-0">
-          <div class="col-md-5">
-            <div class="cf-modal-img" id="customizeImage"></div>
-          </div>
-          <div class="col-md-7">
-            <button type="button" class="cf-modal-close" data-bs-dismiss="modal" aria-label="Close"><i class="bi bi-x-lg"></i></button>
-            <form class="cf-modal-body" id="customizeForm">
-              <span class="cf-cat-label" id="customizeCategory">Hot Coffee</span>
-              <h2 class="cf-modal-title" id="customizeTitle">Vanilla Latte</h2>
-              <p class="cf-modal-desc" id="customizeDesc"></p>
-              <div id="customizeOptions"></div>
+    @await Component.InvokeAsync("_CartLayoutFooter")
 
-              <div class="cf-modal-foot">
-                <div class="cf-stepper" aria-label="Quantity">
-                  <button type="button" id="modalQtyDec" aria-label="Decrease quantity"><i class="bi bi-dash"></i></button>
-                  <span id="modalQty">1</span>
-                  <button type="button" id="modalQtyInc" aria-label="Increase quantity"><i class="bi bi-plus"></i></button>
-                </div>
-                <div class="cf-modal-total">
-                  <small>Estimated total</small>
-                  <strong id="modalTotal">₺0.00</strong>
-                </div>
-                <button type="submit" class="btn cf-btn-primary cf-btn-lg" id="customizeSubmit">
-                  <i class="bi bi-bag-plus"></i> Add to Cart
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+    @await Component.InvokeAsync("_CartLayoutCustomizeModal")
 
-  <!-- ============ CONFIRM REMOVE MODAL ============ -->
-  <div class="modal fade cf-dialog" id="confirmModal" tabindex="-1" aria-labelledby="confirmTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" style="max-width:420px">
-      <div class="modal-content">
-        <span class="cf-dialog-icon"><i class="bi bi-trash3"></i></span>
-        <h3 id="confirmTitle">Remove this treat?</h3>
-        <p id="confirmText">Setting the quantity to zero will remove it from your cart.</p>
-        <div class="d-flex gap-2 justify-content-center flex-wrap">
-          <button type="button" class="btn cf-btn-outline" data-bs-dismiss="modal">Keep it</button>
-          <button type="button" class="btn cf-btn-primary" id="confirmYes">Yes, remove</button>
-        </div>
-      </div>
-    </div>
-  </div>
+    @await Component.InvokeAsync("_CartLayoutCartModals")
 
-  <!-- ============ CHECKOUT PLACEHOLDER MODAL ============ -->
-  <div class="modal fade cf-dialog" id="checkoutModal" tabindex="-1" aria-labelledby="checkoutTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" style="max-width:460px">
-      <div class="modal-content">
-        <span class="cf-dialog-icon"><i class="bi bi-bag-check"></i></span>
-        <h3 id="checkoutTitle">Your order details are ready</h3>
-        <p>Here's what we'll take to the checkout step.</p>
-        <div class="cf-dialog-recap" id="checkoutRecap"></div>
-        <div class="cf-dev-note">
-          <i class="bi bi-info-circle"></i>
-          <span>The checkout step is not implemented yet. No order has been placed and no payment has been taken.</span>
-        </div>
-        <button type="button" class="btn cf-btn-primary w-100" data-bs-dismiss="modal">Got it</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Toast -->
-  <div class="cf-toast" id="cfToast" role="status" aria-live="polite">
-    <i class="bi bi-check-circle-fill" id="cfToastIcon"></i> <span id="cfToastText">Updated</span>
-    <button type="button" class="cf-toast-action" id="cfToastAction">Undo</button>
-  </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
-/* =========================================================
-   CafeFlow — Cart Page
-   Sections:
-   1. Catalog data (identical to the Products Page)
-   2. Cart-page config (fees, promo codes, table registry)
-   3. Storage helpers + shared Cart module (same contract as Products Page)
-   4. UI helpers
-   5. Cart items rendering & actions
-   6. Customize / edit modal
-   7. Order type & details form
-   8. Promo code
-   9. Totals & summary
-   10. Checkout
-   11. Page bootstrap
-   ========================================================= */
-(() => {
-  "use strict";
-
-  /* ---------- 1. CATALOG DATA ----------
-     Copied verbatim from products.html so IDs, prices and options match.
-     In the ASP.NET Core MVC build this block (and the Cart module below)
-     should move into one shared script, e.g. wwwroot/js/cafeflow-core.js. */
-  const IMG = (id, w = 700) => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&q=80`;
-
-  const CATEGORIES = [
-    { id: "all",       label: "All Products",     icon: "bi-grid" },
-    { id: "hot",       label: "Hot Coffees",      icon: "bi-cup-hot" },
-    { id: "iced",      label: "Iced Coffees",     icon: "bi-cup-straw" },
-    { id: "signature", label: "Signature Drinks", icon: "bi-stars" },
-    { id: "cakes",     label: "Cakes & Desserts", icon: "bi-cake2" },
-    { id: "bakery",    label: "Bakery",           icon: "bi-basket" },
-    { id: "snacks",    label: "Snacks",           icon: "bi-egg-fried" },
-  ];
-
-  const BADGES = {
-    "Best Seller":   "cf-tag-best",
-    "New":           "cf-tag-new",
-    "Popular":       "cf-tag-popular",
-    "Chef's Choice": "cf-tag-chef",
-  };
-
-  // Image fallback icon per category
-  const FALLBACK_ICON = {
-    hot: "bi-cup-hot", iced: "bi-cup-straw", signature: "bi-cup-straw",
-    cakes: "bi-cake2", bakery: "bi-basket", snacks: "bi-egg-fried",
-    coffee: "bi-cup-hot", cake: "bi-cake2",
-  };
-
-  /**
-   * Central product catalogue. `popularity` drives "Most Popular" sorting,
-   * `customizable` opens the options modal before adding to cart.
-   */
-  const PRODUCTS = [
-    { id: 1,  name: "Classic Cappuccino",     category: "hot",       price: 145, image: IMG("1572442388796-11668a67e53d"), description: "Rich double espresso under a deep layer of velvety milk foam.", badge: null,            vegetarian: true,  popularity: 88, customizable: true },
-    { id: 2,  name: "Vanilla Latte",          category: "hot",       price: 160, image: IMG("1509042239860-f550ce710b93"), description: "Smooth espresso and steamed milk with Madagascar vanilla.",       badge: "Best Seller",   vegetarian: true,  popularity: 95, customizable: true },
-    { id: 3,  name: "Caramel Macchiato",      category: "hot",       price: 170, image: IMG("1485808191679-5f86510681a2"), description: "Vanilla milk marked with espresso and a buttery caramel drizzle.", badge: "Popular",      vegetarian: true,  popularity: 90, customizable: true },
-    { id: 4,  name: "Iced Spanish Latte",     category: "iced",      price: 175, image: IMG("1461023058943-07fcbe16d735"), description: "Espresso over ice with creamy condensed milk sweetness.",           badge: "Best Seller",  vegetarian: true,  popularity: 96, customizable: true },
-    { id: 5,  name: "Iced Mocha",             category: "iced",      price: 180, image: IMG("1517701604599-bb29b565090c"), description: "Double espresso, Belgian chocolate and cold milk over ice.",       badge: null,            vegetarian: true,  popularity: 82, customizable: true },
-    { id: 6,  name: "Cold Brew",              category: "iced",      price: 155, image: IMG("1534778101976-62847782c213"), description: "Slow-steeped for 18 hours. Smooth, bold and naturally sweet.",     badge: null,            vegetarian: true,  popularity: 74, customizable: false },
-    { id: 7,  name: "Strawberry Cloud Latte", category: "signature", price: 205, image: IMG("1572490122747-3968b75cc699"), description: "Fresh strawberry milk, espresso and a cloud of pink cold foam.",   badge: "Best Seller",  vegetarian: true,  popularity: 99, customizable: true },
-    { id: 8,  name: "Rose Matcha",            category: "signature", price: 210, image: IMG("1515823064-d6e0c04616a7"),    description: "Ceremonial matcha with a delicate rose syrup and oat milk.",       badge: "New",           vegetarian: true,  popularity: 85, customizable: true },
-    { id: 9,  name: "Pink Berry Frappe",      category: "signature", price: 215, image: IMG("1553530666-ba11a7da3888"),    description: "Blended raspberry, strawberry and vanilla cream with whipped top.", badge: "Popular",     vegetarian: true,  popularity: 91, customizable: false },
-    { id: 10, name: "Pink Velvet Cake",       category: "cakes",     price: 225, image: IMG("1578985545062-69928b1d9587"), description: "Rose-tinted sponge layered with vanilla cream cheese frosting.",   badge: "Chef's Choice", vegetarian: true,  popularity: 93, customizable: false },
-    { id: 11, name: "Lotus Cheesecake",       category: "cakes",     price: 245, image: IMG("1533134242443-d4fd215305ad"), description: "Baked cheesecake on a Biscoff crumb with caramel drizzle.",       badge: "Best Seller",  vegetarian: true,  popularity: 97, customizable: false },
-    { id: 12, name: "Strawberry Shortcake",   category: "cakes",     price: 230, image: IMG("1565958011703-44f9829ba187"), description: "Light chiffon, fresh strawberries and whipped mascarpone.",       badge: "New",           vegetarian: true,  popularity: 80, customizable: false },
-    { id: 13, name: "Raspberry Macarons",     category: "cakes",     price: 180, image: IMG("1569864358642-9d1684040f43"), description: "Box of four almond macarons with tangy raspberry ganache.",       badge: null,            vegetarian: true,  popularity: 76, customizable: false },
-    { id: 14, name: "Butter Croissant",       category: "bakery",    price: 95,  image: IMG("1555507036-ab1f4038808a"),    description: "Flaky, golden and laminated with French butter every morning.",  badge: "Popular",       vegetarian: true,  popularity: 89, customizable: false },
-    { id: 15, name: "Almond Croissant",       category: "bakery",    price: 125, image: IMG("1623334044303-241021148842"), description: "Twice-baked with almond frangipane and toasted almond flakes.",  badge: null,            vegetarian: true,  popularity: 78, customizable: false },
-    { id: 16, name: "Cinnamon Roll",          category: "bakery",    price: 115, image: IMG("1509365465985-25d11c17e812"), description: "Soft brioche swirl with cinnamon sugar and cream cheese glaze.",  badge: "New",           vegetarian: true,  popularity: 72, customizable: false },
-    { id: 17, name: "Avocado Toast",          category: "snacks",    price: 235, image: IMG("1541519227354-08fa5d50c44d"), description: "Sourdough, smashed avocado, cherry tomatoes and chili flakes.",   badge: "Chef's Choice", vegetarian: true,  popularity: 84, customizable: false },
-    { id: 18, name: "Grilled Cheese Sandwich",category: "snacks",    price: 210, image: IMG("1528735602780-2552fd46c7af"), description: "Cheddar and mozzarella melted on buttery toasted brioche.",       badge: null,            vegetarian: true,  popularity: 70, customizable: false },
-    { id: 19, name: "Turkey & Brie Panini",   category: "snacks",    price: 255, image: IMG("1528736235302-52922df5c122"), description: "Smoked turkey, creamy brie and fig jam, pressed until golden.",   badge: null,            vegetarian: false, popularity: 77, customizable: false },
-    { id: 20, name: "Chicken Caesar Wrap",    category: "snacks",    price: 245, image: IMG("1626700051175-6818013e1d4f"), description: "Grilled chicken, crisp romaine, parmesan and house Caesar dressing.", badge: null,       vegetarian: false, popularity: 73, customizable: false },
-  ];
-
-  /** Option groups for customizable drinks. `price` is added to the base price. */
-  const CUSTOM_OPTIONS = [
-    { key: "size", label: "Size", choices: [
-      { value: "Small",  price: 0 },
-      { value: "Medium", price: 15 },
-      { value: "Large",  price: 30 },
-    ], default: "Medium" },
-    { key: "milk", label: "Milk", choices: [
-      { value: "Regular", price: 0 },
-      { value: "Oat",     price: 15 },
-      { value: "Almond",  price: 15 },
-    ], default: "Regular" },
-    { key: "extraShot", label: "Extra Espresso Shot", choices: [
-      { value: "No",  price: 0 },
-      { value: "Yes", price: 20 },
-    ], default: "No" },
-    { key: "syrup", label: "Additional Syrup", choices: [
-      { value: "None",    price: 0 },
-      { value: "Vanilla", price: 10 },
-      { value: "Caramel", price: 10 },
-    ], default: "None" },
-  ];
-
-  const findProduct = (id) => PRODUCTS.find((p) => p.id === id);
-
-  /* ---------- 2. CART-PAGE CONFIG ---------- */
-  const PRICING = {
-    deliveryFee: 30,          // ₺ per delivery order
-    freeDeliveryFrom: 600,    // ₺ subtotal after discount
-  };
-
-  /** Simulated promo codes (frontend demo only, not validated by a server). */
-  const PROMO_CODES = {
-    SWEET10: { percent: 10, label: "10% off" },
-    PINK20:  { percent: 20, label: "20% off" },
-  };
-
-  /**
-   * Mock table registry. In production the QR token would be validated by the
-   * server; the customer can never type a table number themselves.
-   */
-  const TABLE_REGISTRY = {
-    "CF-T07-ROSE":  { tableNumber: 7,  area: "Garden Corner" },
-    "CF-T12-PEACH": { tableNumber: 12, area: "Window Seats" },
-  };
-
-  const OPENING_HOURS = { 0: [9 * 60, 20 * 60], 6: [8 * 60 + 30, 22 * 60], default: [7 * 60 + 30, 21 * 60] };
-
-  /** Sample lines for the optional preview. Never saved unless the customer chooses to. */
-  const PREVIEW_LINES = [
-    { productId: 7,  options: { size: "Large",  milk: "Oat",     extraShot: "Yes", syrup: "None" }, quantity: 1 },
-    { productId: 10, options: null, quantity: 1 },
-    { productId: 4,  options: { size: "Medium", milk: "Regular", extraShot: "No",  syrup: "None" }, quantity: 2 },
-  ];
-
-  /* ---------- 3. STORAGE + CART MODULE ---------- */
-  const STORAGE_KEYS = {
-    cart: "cafeflow_cart",                    // shared with Products Page
-    favorites: "cafeflow_favorites",          // shared with Products Page
-    tableContext: "cafeflow_table_context",   // set only by a validated QR scan
-    orderDraft: "cafeflow_order_draft",       // order type, form values, note, promo
-  };
-
-  const storage = {
-    read(key, fallback, store = localStorage) {
-      try {
-        const raw = store.getItem(key);
-        return raw ? JSON.parse(raw) : fallback;
-      } catch { return fallback; }
-    },
-    write(key, value, store = localStorage) {
-      try { store.setItem(key, JSON.stringify(value)); } catch { /* storage unavailable */ }
-    },
-    remove(key, store = localStorage) {
-      try { store.removeItem(key); } catch { /* ignore */ }
-    },
-  };
-
-  /** Unit price = base price + option extras (same rule as Products Page). */
-  function priceWithOptions(product, options) {
-    if (!options) return product.price;
-    return product.price + CUSTOM_OPTIONS.reduce((sum, group) => {
-      const choice = group.choices.find((c) => c.value === options[group.key]);
-      return sum + (choice ? choice.price : 0);
-    }, 0);
-  }
-
-  /**
-   * Cart module — same data contract and storage key as the Products Page:
-   * { lineId, productId, name, image, unitPrice, quantity, options }
-   * In preview mode it works on an in-memory copy and never writes to storage.
-   */
-  const Cart = {
-    items: [],
-    preview: false,
-
-    load() {
-      const stored = storage.read(STORAGE_KEYS.cart, []);
-      // Re-price lines from the catalog so the page always uses current prices.
-      this.items = stored
-        .filter((l) => findProduct(l.productId) && l.quantity > 0)
-        .map((l) => {
-          const product = findProduct(l.productId);
-          return { ...l, name: product.name, image: product.image, unitPrice: priceWithOptions(product, l.options) };
-        });
-      this.preview = false;
-    },
-    startPreview() {
-      this.preview = true;
-      this.items = PREVIEW_LINES.map((l) => this.makeLine(findProduct(l.productId), l.options, l.quantity));
-    },
-    save() {
-      if (!this.preview) storage.write(STORAGE_KEYS.cart, this.items);
-      document.dispatchEvent(new CustomEvent("cart:changed"));
-    },
-    buildLineId(productId, options) {
-      if (!options) return String(productId);
-      return [productId, ...Object.entries(options).map(([k, v]) => `${k}:${v}`)].join("|");
-    },
-    makeLine(product, options, quantity = 1) {
-      return {
-        lineId: this.buildLineId(product.id, options),
-        productId: product.id,
-        name: product.name,
-        image: product.image,
-        unitPrice: priceWithOptions(product, options),
-        quantity,
-        options: options || null,
-      };
-    },
-    get(lineId) { return this.items.find((l) => l.lineId === lineId); },
-    add(product, { options = null, quantity = 1 } = {}) {
-      const line = this.makeLine(product, options, quantity);
-      const existing = this.get(line.lineId);
-      if (existing) existing.quantity += quantity;
-      else this.items.push(line);
-      this.save();
-    },
-    setQuantity(lineId, quantity) {
-      const line = this.get(lineId);
-      if (!line) return;
-      line.quantity = Math.max(1, Math.min(quantity, 50));
-      this.save();
-    },
-    /** Replace a line's options; merges into an existing identical line if needed. */
-    updateOptions(lineId, options, quantity) {
-      const index = this.items.findIndex((l) => l.lineId === lineId);
-      if (index === -1) return;
-      const product = findProduct(this.items[index].productId);
-      const updated = this.makeLine(product, options, quantity);
-      const duplicate = this.items.find((l, i) => i !== index && l.lineId === updated.lineId);
-      if (duplicate) {
-        duplicate.quantity += updated.quantity;
-        this.items.splice(index, 1);
-      } else {
-        this.items.splice(index, 1, updated);
-      }
-      this.save();
-    },
-    remove(lineId) {
-      const index = this.items.findIndex((l) => l.lineId === lineId);
-      if (index === -1) return null;
-      const [removed] = this.items.splice(index, 1);
-      this.save();
-      return { line: removed, index };
-    },
-    restore({ line, index }) {
-      this.items.splice(Math.min(index, this.items.length), 0, line);
-      this.save();
-    },
-    clear() { this.items = []; this.save(); },
-    count() { return this.items.reduce((s, l) => s + l.quantity, 0); },
-    subtotal() { return this.items.reduce((s, l) => s + l.unitPrice * l.quantity, 0); },
-    customizationTotal() {
-      return this.items.reduce((s, l) => {
-        const product = findProduct(l.productId);
-        return s + (l.unitPrice - product.price) * l.quantity;
-      }, 0);
-    },
-  };
-
-  /* ---------- 4. UI HELPERS ---------- */
-  const $ = (sel, root = document) => root.querySelector(sel);
-  const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
-  const round2 = (n) => Math.round(n * 100) / 100;
-  const formatMoney = (n) => `₺${n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-  const detailUrl = (id) => `product-detail.html?id=${id}`;
-  const categoryLabel = (id) => (CATEGORIES.find((c) => c.id === id) || {}).label || "";
-  const escapeHtml = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-
-  function attachImageFallback(img) {
-    const swap = () => {
-      const div = document.createElement("div");
-      div.className = "cf-img-fallback";
-      div.setAttribute("role", "img");
-      div.setAttribute("aria-label", img.alt);
-      div.innerHTML = `<i class="bi ${FALLBACK_ICON[img.dataset.fallback] || "bi-heart"}"></i>`;
-      img.replaceWith(div);
-    };
-    if (img.complete && img.naturalWidth === 0 && img.getAttribute("src")) swap();
-    else img.addEventListener("error", swap, { once: true });
-  }
-  const applyFallbacks = (root = document) => $$("img[data-fallback]", root).forEach(attachImageFallback);
-
-  const toast = {
-    el: $("#cfToast"),
-    text: $("#cfToastText"),
-    icon: $("#cfToastIcon"),
-    action: $("#cfToastAction"),
-    timer: null,
-    onAction: null,
-    show(message, { error = false, actionLabel = null, onAction = null, duration = 2600 } = {}) {
-      this.text.textContent = message;
-      this.el.classList.toggle("error", error);
-      this.icon.className = `bi ${error ? "bi-exclamation-circle-fill" : "bi-check-circle-fill"}`;
-      this.onAction = onAction;
-      this.action.textContent = actionLabel || "";
-      this.action.classList.toggle("show", Boolean(actionLabel));
-      this.el.classList.add("show");
-      clearTimeout(this.timer);
-      this.timer = setTimeout(() => this.hide(), actionLabel ? 5000 : duration);
-    },
-    hide() {
-      this.el.classList.remove("show");
-      this.onAction = null;
-    },
-  };
-  toast.action.addEventListener("click", () => {
-    if (toast.onAction) toast.onAction();
-    toast.hide();
-  });
-
-  /** Option tags shown under each cart line. */
-  function optionTags(options) {
-    if (!options) return "";
-    const tags = [
-      `<span class="cf-opt-tag"><i class="bi bi-cup"></i> ${options.size}</span>`,
-      `<span class="cf-opt-tag"><i class="bi bi-droplet"></i> ${options.milk === "Regular" ? "Regular milk" : options.milk + " milk"}</span>`,
-    ];
-    if (options.extraShot === "Yes") tags.push(`<span class="cf-opt-tag"><i class="bi bi-lightning-charge"></i> Extra shot</span>`);
-    if (options.syrup && options.syrup !== "None") tags.push(`<span class="cf-opt-tag"><i class="bi bi-stars"></i> ${options.syrup} syrup</span>`);
-    return `<div class="cf-opt-tags">${tags.join("")}</div>`;
-  }
-
-  /* ---------- 5. CART ITEMS ---------- */
-  const cartList = $("#cartList");
-  const emptyCart = $("#emptyCart");
-  const cartCountEl = $("#cartCount");
-
-  function renderNavCount() {
-    // Navbar always reflects the real saved cart, even while previewing samples.
-    const saved = storage.read(STORAGE_KEYS.cart, []);
-    cartCountEl.textContent = saved.reduce((s, l) => s + (l.quantity || 0), 0);
-  }
-
-  function renderItems() {
-    const empty = Cart.items.length === 0;
-    emptyCart.classList.toggle("d-none", !empty);
-    $("#continueShopping").classList.toggle("d-none", empty);
-    $("#clearCartBtn").classList.toggle("d-none", empty || Cart.preview);
-    $("#previewBanner").classList.toggle("d-none", !Cart.preview);
-    const count = Cart.count();
-    $("#itemsCount").textContent = count ? `(${count} ${count === 1 ? "item" : "items"})` : "";
-
-    cartList.innerHTML = Cart.items.map((line) => {
-      const product = findProduct(line.productId);
-      return `
-        <article class="cf-item" data-line="${escapeHtml(line.lineId)}">
-          <a href="${detailUrl(product.id)}" class="cf-item-thumb" aria-label="View ${product.name}">
-            <img src="${product.image}" alt="${product.name}" data-fallback="${product.category}" loading="lazy" />
-          </a>
-          <div class="cf-item-info">
-            <span class="cf-cat-label">${categoryLabel(product.category)}</span>
-            <h3 class="cf-item-name"><a href="${detailUrl(product.id)}">${product.name}</a></h3>
-            <p class="cf-item-desc">${product.description}</p>
-            ${optionTags(line.options)}
-            <div class="cf-item-actions">
-              ${product.customizable ? `<button type="button" class="cf-link-btn" data-action="edit"><i class="bi bi-sliders"></i> Edit</button>` : ""}
-              <button type="button" class="cf-link-btn muted" data-action="remove"><i class="bi bi-trash3"></i> Remove</button>
-            </div>
-          </div>
-          <div class="cf-item-side">
-            <span class="cf-unit">${formatMoney(line.unitPrice)} each</span>
-            <div class="cf-stepper" role="group" aria-label="Quantity for ${product.name}">
-              <button type="button" data-action="dec" aria-label="Decrease quantity"><i class="bi bi-dash"></i></button>
-              <span aria-live="polite">${line.quantity}</span>
-              <button type="button" data-action="inc" aria-label="Increase quantity" ${line.quantity >= 50 ? "disabled" : ""}><i class="bi bi-plus"></i></button>
-            </div>
-            <span class="cf-line-total">${formatMoney(line.unitPrice * line.quantity)}</span>
-          </div>
-        </article>`;
-    }).join("");
-    applyFallbacks(cartList);
-  }
-
-  function removeLine(lineId) {
-    const card = cartList.querySelector(`[data-line="${CSS.escape(lineId)}"]`);
-    const doRemove = () => {
-      const removed = Cart.remove(lineId);
-      if (!removed) return;
-      toast.show(`${removed.line.name} removed from your cart`, {
-        actionLabel: "Undo",
-        onAction: () => {
-          Cart.restore(removed);
-          toast.show(`${removed.line.name} is back in your cart`);
-        },
-      });
-    };
-    if (card) {
-      card.classList.add("removing");
-      setTimeout(doRemove, 250);
-    } else doRemove();
-  }
-
-  // Confirmation before a line reaches zero
-  const confirmModal = new bootstrap.Modal($("#confirmModal"));
-  let pendingRemoval = null;
-  function askRemove(lineId) {
-    const line = Cart.get(lineId);
-    if (!line) return;
-    pendingRemoval = lineId;
-    $("#confirmTitle").textContent = `Remove ${line.name}?`;
-    confirmModal.show();
-  }
-  $("#confirmYes").addEventListener("click", () => {
-    confirmModal.hide();
-    if (pendingRemoval) removeLine(pendingRemoval);
-    pendingRemoval = null;
-  });
-
-  cartList.addEventListener("click", (e) => {
-    const btn = e.target.closest("[data-action]");
-    if (!btn) return;
-    const lineId = btn.closest("[data-line]").dataset.line;
-    const line = Cart.get(lineId);
-    if (!line) return;
-
-    switch (btn.dataset.action) {
-      case "inc":
-        Cart.setQuantity(lineId, line.quantity + 1);
-        break;
-      case "dec":
-        if (line.quantity <= 1) askRemove(lineId);
-        else Cart.setQuantity(lineId, line.quantity - 1);
-        break;
-      case "remove":
-        removeLine(lineId);
-        break;
-      case "edit":
-        openCustomizer(findProduct(line.productId), { lineId });
-        break;
-    }
-  });
-
-  $("#clearCartBtn").addEventListener("click", () => {
-    const snapshot = Cart.items.map((l) => ({ ...l }));
-    Cart.clear();
-    toast.show("Your cart has been cleared", {
-      actionLabel: "Undo",
-      onAction: () => { Cart.items = snapshot; Cart.save(); },
-    });
-  });
-
-  // Preview mode
-  $("#previewStart").addEventListener("click", () => {
-    Cart.startPreview();
-    document.dispatchEvent(new CustomEvent("cart:changed"));
-    toast.show("Showing sample items. Nothing is saved.");
-  });
-  $("#previewExit").addEventListener("click", () => {
-    Cart.load();
-    document.dispatchEvent(new CustomEvent("cart:changed"));
-  });
-  $("#previewKeep").addEventListener("click", () => {
-    Cart.preview = false;
-    Cart.save();
-    toast.show("Sample items added to your cart");
-  });
-
-  /* ---------- 6. CUSTOMIZE / EDIT MODAL ---------- */
-  const customizeModal = new bootstrap.Modal($("#customizeModal"));
-  const customizeForm = $("#customizeForm");
-  const modalQtyEl = $("#modalQty");
-  const modalQtyDec = $("#modalQtyDec");
-  const modalState = { product: null, lineId: null, qty: 1 };
-
-  function readModalOptions() {
-    const options = {};
-    CUSTOM_OPTIONS.forEach((group) => {
-      const input = customizeForm.querySelector(`input[name="${group.key}"]:checked`);
-      options[group.key] = input ? input.value : group.default;
-    });
-    return options;
-  }
-
-  function updateModalTotal() {
-    const unit = priceWithOptions(modalState.product, readModalOptions());
-    $("#modalTotal").textContent = formatMoney(unit * modalState.qty);
-    modalQtyEl.textContent = modalState.qty;
-    modalQtyDec.disabled = modalState.qty <= 1;
-  }
-
-  /** Opens the modal to add a new product, or to edit an existing cart line (lineId). */
-  function openCustomizer(product, { lineId = null } = {}) {
-    const line = lineId ? Cart.get(lineId) : null;
-    const current = line && line.options ? line.options : null;
-    modalState.product = product;
-    modalState.lineId = lineId;
-    modalState.qty = line ? line.quantity : 1;
-
-    $("#customizeTitle").textContent = product.name;
-    $("#customizeDesc").textContent = product.description;
-    $("#customizeCategory").textContent = categoryLabel(product.category);
-    $("#customizeImage").innerHTML = `<img src="${product.image}" alt="${product.name}" data-fallback="${product.category}" />`;
-    applyFallbacks($("#customizeImage"));
-    $("#customizeSubmit").innerHTML = lineId
-      ? `<i class="bi bi-check2"></i> Save Changes`
-      : `<i class="bi bi-bag-plus"></i> Add to Cart`;
-
-    $("#customizeOptions").innerHTML = CUSTOM_OPTIONS.map((group) => {
-      const selected = current ? current[group.key] : group.default;
-      return `
-        <fieldset class="cf-opt-group">
-          <legend class="cf-opt-label">${group.label}</legend>
-          <div class="cf-opt-choices">
-            ${group.choices.map((c) => `
-              <label class="cf-opt">
-                <input type="radio" name="${group.key}" value="${c.value}" ${c.value === selected ? "checked" : ""} />
-                <span>${c.value}<small>${c.price ? `+${formatMoney(c.price)}` : "Included"}</small></span>
-              </label>`).join("")}
-          </div>
-        </fieldset>`;
-    }).join("");
-
-    updateModalTotal();
-    customizeModal.show();
-  }
-
-  customizeForm.addEventListener("change", updateModalTotal);
-  $("#modalQtyInc").addEventListener("click", () => { modalState.qty = Math.min(modalState.qty + 1, 50); updateModalTotal(); });
-  modalQtyDec.addEventListener("click", () => { modalState.qty = Math.max(modalState.qty - 1, 1); updateModalTotal(); });
-  customizeForm.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const options = readModalOptions();
-    const { product, lineId, qty } = modalState;
-    if (lineId) {
-      Cart.updateOptions(lineId, options, qty);
-      toast.show(`${product.name} updated`);
-    } else {
-      Cart.add(product, { options, quantity: qty });
-      toast.show(`${product.name} added to your cart`);
-    }
-    customizeModal.hide();
-  });
-
-  /* ---------- 7. ORDER TYPE & DETAILS ---------- */
-  const detailsForm = $("#detailsForm");
-  const typeInputs = $$('input[name="orderType"]');
-  const draft = storage.read(STORAGE_KEYS.orderDraft, {}, sessionStorage);
-  const orderState = {
-    type: draft.type || null,
-    promo: draft.promo || null,
-    tableContext: storage.read(STORAGE_KEYS.tableContext, null, sessionStorage),
-  };
-
-  function saveDraft() {
-    const fields = {};
-    $$("input[name], textarea[name], select[name]", detailsForm).forEach((el) => {
-      if (el.name !== "tableNumber") fields[el.name] = el.value;
-    });
-    storage.write(STORAGE_KEYS.orderDraft, {
-      type: orderState.type,
-      promo: orderState.promo,
-      fields,
-      note: $("#orderNote").value,
-    }, sessionStorage);
-  }
-
-  /** Validates ?qr=TOKEN against the mock registry and stores the table context. */
-  function resolveTableFromUrl() {
-    const params = new URLSearchParams(location.search);
-    const token = params.get("qr");
-    if (!token) return;
-    const entry = TABLE_REGISTRY[token.toUpperCase()];
-    if (entry) {
-      orderState.tableContext = { token: token.toUpperCase(), ...entry, validatedAt: new Date().toISOString() };
-      storage.write(STORAGE_KEYS.tableContext, orderState.tableContext, sessionStorage);
-      orderState.type = "dinein";
-      setTimeout(() => toast.show(`Welcome to Table ${entry.tableNumber}! Dine-In is selected.`), 400);
-    } else {
-      setTimeout(() => toast.show("This table code isn't recognized. Please scan the QR on your table again.", { error: true }), 400);
-    }
-    // Remove the token from the address bar so it can't be edited or shared accidentally.
-    params.delete("qr");
-    const clean = location.pathname + (params.toString() ? `?${params}` : "") + location.hash;
-    history.replaceState(null, "", clean);
-  }
-
-  function renderTableContext() {
-    const ctx = orderState.tableContext;
-    $("#tableVerified").classList.toggle("d-none", !ctx);
-    $("#tableMissing").classList.toggle("d-none", Boolean(ctx));
-    const badge = $("#dineInBadge");
-    if (ctx) {
-      $("#tableNumBig").textContent = ctx.tableNumber;
-      $("#tableLabel").textContent = `Table ${ctx.tableNumber} · ${ctx.area}`;
-      $("#tableNumber").value = `Table ${ctx.tableNumber}`;
-      badge.className = "cf-type-badge";
-      badge.innerHTML = `<i class="bi bi-patch-check-fill"></i> Table ${ctx.tableNumber}`;
-    } else {
-      badge.className = "cf-type-badge pending";
-      badge.innerHTML = `<i class="bi bi-qr-code"></i> Table QR needed`;
-    }
-  }
-
-  function renderOrderType() {
-    typeInputs.forEach((input) => (input.checked = input.value === orderState.type));
-    $$(".cf-field-group", detailsForm).forEach((group) => {
-      const visible = orderState.type && group.dataset.for.split(" ").includes(orderState.type);
-      group.classList.toggle("is-hidden", !visible);
-      $$("input, textarea, select", group).forEach((el) => (el.tabIndex = visible ? 0 : -1));
-    });
-    $("#typeHint").classList.toggle("d-none", Boolean(orderState.type));
-
-    const labels = {
-      delivery: "Delivery to your door",
-      pickup: "Pickup at 24 Blossom Street",
-      dinein: orderState.tableContext ? `Dine-in · Table ${orderState.tableContext.tableNumber}` : "Dine-in · scan your table QR",
-    };
-    $("#summaryType").textContent = labels[orderState.type] || "Choose how you'd like your order";
-  }
-
-  typeInputs.forEach((input) =>
-    input.addEventListener("change", () => {
-      orderState.type = input.value;
-      renderOrderType();
-      renderTotals();
-      saveDraft();
-    })
-  );
-
-  /** Pickup slots: "As soon as possible" + every 15 min until closing (or tomorrow's first slots). */
-  function buildPickupSlots() {
-    const select = $("#pickupTime");
-    const pad = (n) => String(n).padStart(2, "0");
-    const fmt = (mins) => `${pad(Math.floor(mins / 60))}:${pad(mins % 60)}`;
-    const now = new Date();
-    const [open, close] = OPENING_HOURS[now.getDay()] || OPENING_HOURS.default;
-    const nowMins = now.getHours() * 60 + now.getMinutes();
-    let options = [`<option value="">Select a time</option>`];
-
-    if (nowMins >= open && nowMins < close - 20) {
-      options.push(`<option value="asap">As soon as possible (~15 min)</option>`);
-      let start = Math.ceil((nowMins + 30) / 15) * 15;
-      for (let t = start; t <= close - 15; t += 15) options.push(`<option value="today-${fmt(t)}">Today, ${fmt(t)}</option>`);
-    } else {
-      const tomorrow = new Date(now);
-      tomorrow.setDate(now.getDate() + (nowMins >= open ? 1 : 0));
-      const [tOpen, tClose] = OPENING_HOURS[tomorrow.getDay()] || OPENING_HOURS.default;
-      const label = nowMins >= open ? "Tomorrow" : "Today";
-      for (let t = tOpen + 15; t <= Math.min(tOpen + 4 * 60, tClose - 15); t += 15) {
-        options.push(`<option value="${label.toLowerCase()}-${fmt(t)}">${label}, ${fmt(t)}</option>`);
-      }
-    }
-    select.innerHTML = options.join("");
-  }
-
-  // Validation
-  const validators = {
-    phone: (v) => v.replace(/[^\d+]/g, "").replace(/^\+/, "").length >= 10,
-    address: (v) => v.trim().length >= 10,
-  };
-
-  function validateField(el) {
-    const requiredFor = (el.dataset.required || "").split(" ");
-    if (!requiredFor.includes(orderState.type)) {
-      el.classList.remove("is-invalid");
-      return true;
-    }
-    const value = el.value.trim();
-    let ok = value.length > 0;
-    if (ok && el.dataset.validate) ok = validators[el.dataset.validate](value);
-    el.classList.toggle("is-invalid", !ok);
-    return ok;
-  }
-
-  $$("[data-required]", detailsForm).forEach((el) => {
-    el.addEventListener("blur", () => { if (el.value) validateField(el); });
-    el.addEventListener("input", () => { if (el.classList.contains("is-invalid")) validateField(el); });
-  });
-  detailsForm.addEventListener("input", saveDraft);
-  detailsForm.addEventListener("change", saveDraft);
-  detailsForm.addEventListener("submit", (e) => e.preventDefault());
-
-  const noteEl = $("#orderNote");
-  noteEl.addEventListener("input", () => {
-    $("#noteCount").textContent = noteEl.value.length;
-    saveDraft();
-  });
-
-  /* ---------- 8. PROMO CODE ---------- */
-  const promoForm = $("#promoForm");
-  const promoInput = $("#promoInput");
-  const promoMsg = $("#promoMsg");
-
-  function renderPromo() {
-    const code = orderState.promo;
-    $("#promoBox").classList.toggle("d-none", Boolean(code));
-    $("#promoApplied").classList.toggle("d-none", !code);
-    if (code) $("#promoAppliedText").textContent = `${code} · ${PROMO_CODES[code].label}`;
-  }
-
-  promoForm.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const code = promoInput.value.trim().toUpperCase();
-    promoForm.classList.remove("is-invalid");
-    promoMsg.className = "cf-promo-msg";
-
-    if (!code) {
-      promoMsg.textContent = "Please enter a code.";
-      promoMsg.classList.add("err");
-      promoForm.classList.add("is-invalid");
-      return;
-    }
-    if (!PROMO_CODES[code]) {
-      promoMsg.textContent = `"${code}" isn't a valid code. Try another one.`;
-      promoMsg.classList.add("err");
-      promoForm.classList.add("is-invalid");
-      return;
-    }
-    orderState.promo = code;
-    promoInput.value = "";
-    promoMsg.textContent = "";
-    renderPromo();
-    renderTotals();
-    saveDraft();
-    toast.show(`${code} applied · ${PROMO_CODES[code].label}`);
-  });
-
-  $("#promoRemove").addEventListener("click", () => {
-    const old = orderState.promo;
-    orderState.promo = null;
-    renderPromo();
-    renderTotals();
-    saveDraft();
-    toast.show(`${old} removed`);
-  });
-
-  /* ---------- 9. TOTALS & SUMMARY ---------- */
-  /** Single source of truth for all money calculations on the page. */
-  function calculateTotals() {
-    const subtotal = round2(Cart.subtotal());
-    const customizations = round2(Cart.customizationTotal()); // already inside subtotal
-    const percent = orderState.promo ? PROMO_CODES[orderState.promo].percent : 0;
-    const discount = round2(Math.min(subtotal, subtotal * percent / 100));
-    const afterDiscount = round2(subtotal - discount);
-    let deliveryFee = 0;
-    if (orderState.type === "delivery" && subtotal > 0) {
-      deliveryFee = afterDiscount >= PRICING.freeDeliveryFrom ? 0 : PRICING.deliveryFee;
-    }
-    const total = Math.max(0, round2(afterDiscount + deliveryFee));
-    return { subtotal, customizations, discount, afterDiscount, deliveryFee, total };
-  }
-
-  function renderTotals() {
-    const t = calculateTotals();
-    const empty = Cart.items.length === 0;
-
-    $("#summaryItems").innerHTML = Cart.items.map((l) =>
-      `<li><span>${l.quantity} × ${l.name}</span><span>${formatMoney(l.unitPrice * l.quantity)}</span></li>`
-    ).join("");
-
-    $("#sumSubtotal").textContent = empty ? "—" : formatMoney(t.subtotal);
-    $("#sumCustomRow").classList.toggle("d-none", t.customizations <= 0);
-    $("#sumCustom").textContent = formatMoney(t.customizations);
-    $("#sumDiscount").textContent = t.discount > 0 ? `−${formatMoney(t.discount)}` : "—";
-
-    const deliveryEl = $("#sumDelivery");
-    deliveryEl.classList.remove("cf-free");
-    if (empty || orderState.type !== "delivery") {
-      deliveryEl.textContent = orderState.type && orderState.type !== "delivery" && !empty ? "Free" : "—";
-      if (deliveryEl.textContent === "Free") deliveryEl.classList.add("cf-free");
-    } else if (t.deliveryFee === 0) {
-      deliveryEl.textContent = "Free";
-      deliveryEl.classList.add("cf-free");
-    } else {
-      deliveryEl.textContent = formatMoney(t.deliveryFee);
-    }
-
-    $("#sumTotal").textContent = empty ? "—" : formatMoney(t.total);
-    $("#mobileTotal").textContent = empty ? "—" : formatMoney(t.total);
-
-    // Free-delivery hint
-    const hint = $("#deliveryHint");
-    const remaining = round2(PRICING.freeDeliveryFrom - t.afterDiscount);
-    const pct = Math.min(100, (t.afterDiscount / PRICING.freeDeliveryFrom) * 100);
-    hint.innerHTML = remaining > 0
-      ? `<div class="w-100"><i class="bi bi-scooter"></i> Add <strong>${formatMoney(remaining)}</strong> more for free delivery (${formatMoney(PRICING.deliveryFee)} otherwise).<div class="cf-progress"><span style="width:${pct}%"></span></div></div>`
-      : `<i class="bi bi-gift"></i> <span>Yay! Your order qualifies for <strong>free delivery</strong>.</span>`;
-
-    // Checkout availability
-    const checkoutBtn = $("#checkoutBtn");
-    checkoutBtn.disabled = empty;
-    $("#mobileCheckout").disabled = empty;
-    $("#mobileBar").classList.toggle("hide", empty);
-    document.body.classList.toggle("has-mobile-bar", !empty);
-  }
-
-  /* ---------- 10. CHECKOUT ---------- */
-  const checkoutModal = new bootstrap.Modal($("#checkoutModal"));
-
-  function validateOrder() {
-    if (Cart.items.length === 0) {
-      toast.show("Your cart is empty.", { error: true });
-      return false;
-    }
-    if (Cart.preview) {
-      toast.show("You're viewing sample items. Add them to your cart first.", { error: true });
-      return false;
-    }
-    if (!orderState.type) {
-      $("#orderTypePanel").scrollIntoView({ behavior: "smooth", block: "start" });
-      toast.show("Please choose Delivery, Pickup or Dine-In.", { error: true });
-      return false;
-    }
-    if (orderState.type === "dinein" && !orderState.tableContext) {
-      $("#orderTypePanel").scrollIntoView({ behavior: "smooth", block: "start" });
-      toast.show("Dine-in orders need a table QR scan.", { error: true });
-      return false;
-    }
-    const fields = $$("[data-required]", detailsForm);
-    const invalid = fields.filter((el) => !validateField(el));
-    if (invalid.length) {
-      invalid[0].scrollIntoView({ behavior: "smooth", block: "center" });
-      setTimeout(() => invalid[0].focus({ preventScroll: true }), 350);
-      toast.show("Please complete the highlighted details.", { error: true });
-      return false;
-    }
-    return true;
-  }
-
-  function handleCheckout() {
-    if (!validateOrder()) return;
-    const t = calculateTotals();
-    const typeLabel = {
-      delivery: "Delivery",
-      pickup: `Pickup · ${$("#pickupTime").selectedOptions[0]?.textContent || ""}`,
-      dinein: `Dine-in · Table ${orderState.tableContext?.tableNumber}`,
-    }[orderState.type];
-
-    // Hand-off object for the future checkout page (frontend only).
-    storage.write("cafeflow_checkout_request", {
-      orderType: orderState.type,
-      tableContext: orderState.type === "dinein" ? orderState.tableContext : null,
-      items: Cart.items,
-      promoCode: orderState.promo,
-      totals: t,
-      note: noteEl.value.trim(),
-      createdAt: new Date().toISOString(),
-    }, sessionStorage);
-
-    $("#checkoutRecap").innerHTML = `
-      <div><span>Order type</span><strong>${escapeHtml(typeLabel)}</strong></div>
-      <div><span>Items</span><strong>${Cart.count()}</strong></div>
-      ${t.discount ? `<div><span>Discount (${orderState.promo})</span><strong>−${formatMoney(t.discount)}</strong></div>` : ""}
-      <div><span>Total</span><strong>${formatMoney(t.total)}</strong></div>`;
-    checkoutModal.show();
-  }
-
-  $("#checkoutBtn").addEventListener("click", handleCheckout);
-  $("#mobileCheckout").addEventListener("click", handleCheckout);
-
-  /* ---------- RECOMMENDATIONS ---------- */
-  function renderRecommendations() {
-    const inCart = new Set(Cart.items.map((l) => l.productId));
-    const cartCats = new Set(Cart.items.map((l) => findProduct(l.productId).category));
-    // Prefer popular items from categories not yet in the cart (e.g. a cake for a coffee order).
-    const picks = PRODUCTS
-      .filter((p) => !inCart.has(p.id))
-      .sort((a, b) => (cartCats.has(a.category) - cartCats.has(b.category)) || (b.popularity - a.popularity))
-      .slice(0, 3);
-
-    $("#recoSection").classList.toggle("d-none", picks.length === 0);
-    $("#recoGrid").innerHTML = picks.map((p) => `
-      <div class="col-sm-6 col-md-4">
-        <article class="cf-product-card">
-          <div class="cf-product-img">
-            <a href="${detailUrl(p.id)}" class="cf-product-img-link" aria-label="View ${p.name} details">
-              <img src="${p.image}" alt="${p.name}" loading="lazy" data-fallback="${p.category}" />
-            </a>
-            ${p.badge ? `<span class="cf-tag ${BADGES[p.badge]}">${p.badge}</span>` : ""}
-          </div>
-          <div class="cf-product-body">
-            <span class="cf-cat-label mb-1">${categoryLabel(p.category)}</span>
-            <h3><a href="${detailUrl(p.id)}">${p.name}</a></h3>
-            <p>${p.description}</p>
-            <div class="cf-product-foot">
-              <span class="cf-price">${p.customizable ? "<small>from</small>" : ""}${formatMoney(p.price)}</span>
-              <button type="button" class="btn cf-add-btn" data-reco="${p.id}">
-                ${p.customizable ? '<i class="bi bi-sliders"></i> Customize' : '<i class="bi bi-bag-plus"></i> Add'}
-              </button>
-            </div>
-          </div>
-        </article>
-      </div>`).join("");
-    applyFallbacks($("#recoGrid"));
-  }
-
-  $("#recoGrid").addEventListener("click", (e) => {
-    const btn = e.target.closest("[data-reco]");
-    if (!btn) return;
-    const product = findProduct(Number(btn.dataset.reco));
-    if (product.customizable) openCustomizer(product);
-    else {
-      Cart.add(product);
-      toast.show(`${product.name} added to your cart`);
-    }
-  });
-
-  /* ---------- 11. PAGE BOOTSTRAP ---------- */
-  function renderAll() {
-    renderItems();
-    renderTotals();
-    renderRecommendations();
-    renderNavCount();
-  }
-  document.addEventListener("cart:changed", renderAll);
-
-  // Sync if the cart changes in another tab (e.g. Products Page)
-  window.addEventListener("storage", (e) => {
-    if (e.key === STORAGE_KEYS.cart && !Cart.preview) {
-      Cart.load();
-      renderAll();
-    }
-  });
-
-  // Navbar behaviour (same as other pages)
-  const nav = $("#mainNav");
-  const onScroll = () => nav.classList.toggle("scrolled", window.scrollY > 30);
-  onScroll();
-  window.addEventListener("scroll", onScroll, { passive: true });
-  const navCollapse = $("#navLinks");
-  $$(".nav-link", navCollapse).forEach((link) =>
-    link.addEventListener("click", () => {
-      if (navCollapse.classList.contains("show")) bootstrap.Collapse.getOrCreateInstance(navCollapse).hide();
-    })
-  );
-
-  // Newsletter
-  $("#newsletterForm").addEventListener("submit", (e) => {
-    e.preventDefault();
-    e.target.reset();
-    toast.show("Thanks! You're on the sweet list.");
-  });
-
-  // Open / closed status + year
-  const now = new Date();
-  const [open, close] = OPENING_HOURS[now.getDay()] || OPENING_HOURS.default;
-  const mins = now.getHours() * 60 + now.getMinutes();
-  if (mins < open || mins >= close) {
-    const status = $("#openStatus");
-    status.classList.add("closed");
-    status.innerHTML = '<span class="cf-dot"></span> Closed now';
-  }
-  $("#year").textContent = now.getFullYear();
-
-  // Initial state
-  resolveTableFromUrl();
-  buildPickupSlots();
-  if (draft.fields) {
-    Object.entries(draft.fields).forEach(([name, value]) => {
-      const el = detailsForm.elements.namedItem(name);
-      if (el && !el.readOnly) el.value = value;
-    });
-  }
-  if (draft.note) { noteEl.value = draft.note; $("#noteCount").textContent = draft.note.length; }
-  if (orderState.promo && !PROMO_CODES[orderState.promo]) orderState.promo = null;
-  if (orderState.type === "dinein" && !orderState.tableContext && !draft.type) orderState.type = null;
-
-  Cart.load();
-  renderTableContext();
-  renderOrderType();
-  renderPromo();
-  renderAll();
-  saveDraft();
-})();
-  </script>
+    @await Component.InvokeAsync("_CartLayoutScripts")
 </body>
 </html>

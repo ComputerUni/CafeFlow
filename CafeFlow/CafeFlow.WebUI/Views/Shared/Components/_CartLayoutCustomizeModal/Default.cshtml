@@ -1,0 +1,35 @@
+﻿<div class="modal fade cf-modal" id="customizeModal" tabindex="-1" aria-labelledby="customizeTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="row g-0">
+                <div class="col-md-5">
+                    <div class="cf-modal-img" id="customizeImage"></div>
+                </div>
+                <div class="col-md-7">
+                    <button type="button" class="cf-modal-close" data-bs-dismiss="modal" aria-label="Close"><i class="bi bi-x-lg"></i></button>
+                    <form class="cf-modal-body" id="customizeForm">
+                        <span class="cf-cat-label" id="customizeCategory">Hot Coffee</span>
+                        <h2 class="cf-modal-title" id="customizeTitle">Vanilla Latte</h2>
+                        <p class="cf-modal-desc" id="customizeDesc"></p>
+                        <div id="customizeOptions"></div>
+
+                        <div class="cf-modal-foot">
+                            <div class="cf-stepper" aria-label="Quantity">
+                                <button type="button" id="modalQtyDec" aria-label="Decrease quantity"><i class="bi bi-dash"></i></button>
+                                <span id="modalQty">1</span>
+                                <button type="button" id="modalQtyInc" aria-label="Increase quantity"><i class="bi bi-plus"></i></button>
+                            </div>
+                            <div class="cf-modal-total">
+                                <small>Estimated total</small>
+                                <strong id="modalTotal">₺0.00</strong>
+                            </div>
+                            <button type="submit" class="btn cf-btn-primary cf-btn-lg" id="customizeSubmit">
+                                <i class="bi bi-bag-plus"></i> Add to Cart
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,865 @@
+﻿<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    (() => {
+        "use strict";
+
+        /* ---------- 1. SABİT VERİLER & YARDIMCILAR ---------- */
+        const IMG = (id, w = 700) => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&q=80`;
+
+        const BADGES = {
+            "Best Seller": "cf-tag-best",
+        };
+
+        const FALLBACK_ICON = {
+            hot: "bi-cup-hot", iced: "bi-cup-straw", signature: "bi-cup-straw",
+            cakes: "bi-cake2", bakery: "bi-basket", snacks: "bi-egg-fried",
+            coffee: "bi-cup-hot", cake: "bi-cake2",
+        };
+
+        const CUSTOM_OPTIONS = [
+            {
+                key: "size", label: "Boyut", choices: [
+                    { value: "Small", price: 0 },
+                    { value: "Medium", price: 15 },
+                    { value: "Large", price: 30 },
+                ], default: "Medium"
+            },
+            {
+                key: "milk", label: "Süt Tercihi", choices: [
+                    { value: "Regular", price: 0 },
+                    { value: "Oat", price: 15 },
+                    { value: "Almond", price: 15 },
+                ], default: "Regular"
+            },
+            {
+                key: "extraShot", label: "Ekstra Shot Espresso", choices: [
+                    { value: "No", price: 0 },
+                    { value: "Yes", price: 20 },
+                ], default: "No"
+            },
+            {
+                key: "syrup", label: "Şurup Tercihi", choices: [
+                    { value: "None", price: 0 },
+                    { value: "Vanilla", price: 10 },
+                    { value: "Caramel", price: 10 },
+                ], default: "None"
+            },
+        ];
+
+        const findProduct = (id) => {
+            if (typeof PRODUCTS !== "undefined" && Array.isArray(PRODUCTS)) {
+                return PRODUCTS.find((p) => p.id === Number(id));
+            }
+            return null;
+        };
+
+        // /* ---------- 2. FİYATLANDIRMA & MASA REGISTRY ---------- */
+        // const PRICING = {
+        //     deliveryFee: 30,
+        //     freeDeliveryFrom: 600,
+        // };
+
+        // const TABLE_REGISTRY = {
+        //     "CF-T07-ROSE": { tableNumber: 7, area: "Bahçe Bölümü" },
+        //     "CF-T12-PEACH": { tableNumber: 12, area: "Cam Kenarı" },
+        // };
+
+        // const OPENING_HOURS = { 0: [9 * 60, 20 * 60], 6: [8 * 60 + 30, 22 * 60], default: [7 * 60 + 30, 21 * 60] };
+
+        /* ---------- 3. STORAGE & CART MODÜLÜ ---------- */
+        const STORAGE_KEYS = {
+            cart: "cafeflow_cart",
+            favorites: "cafeflow_favorites",
+            tableContext: "cafeflow_table_context",
+            orderDraft: "cafeflow_order_draft",
+        };
+
+        const storage = {
+            read(key, fallback, store = localStorage) {
+                try {
+                    const raw = store.getItem(key);
+                    return raw ? JSON.parse(raw) : fallback;
+                } catch { return fallback; }
+            },
+            write(key, value, store = localStorage) {
+                try { store.setItem(key, JSON.stringify(value)); } catch { }
+            },
+            remove(key, store = localStorage) {
+                try { store.removeItem(key); } catch { }
+            },
+        };
+
+        function priceWithOptions(product, options) {
+            if (!options) return product.price;
+            return product.price + CUSTOM_OPTIONS.reduce((sum, group) => {
+                const choice = group.choices.find((c) => c.value === options[group.key]);
+                return sum + (choice ? choice.price : 0);
+            }, 0);
+        }
+
+        const Cart = {
+            items: [],
+            preview: false,
+
+            load() {
+                const stored = storage.read(STORAGE_KEYS.cart, []);
+                this.items = (stored || [])
+                    .filter((l) => l && l.quantity > 0)
+                    .map((l) => ({
+                        ...l,
+                        name: l.name || "Ürün",
+                        image: l.image || "",
+                        unitPrice: Number(l.unitPrice) || 0
+                    }));
+                this.preview = false;
+            },
+            save() {
+                if (!this.preview) storage.write(STORAGE_KEYS.cart, this.items);
+                document.dispatchEvent(new CustomEvent("cart:changed"));
+            },
+            buildLineId(productId, options) {
+                if (!options) return String(productId);
+                return [productId, ...Object.entries(options).map(([k, v]) => `${k}:${v}`)].join("|");
+            },
+            makeLine(product, options, quantity = 1) {
+                return {
+                    lineId: this.buildLineId(product.id, options),
+                    productId: product.id,
+                    name: product.name,
+                    image: product.image,
+                    unitPrice: priceWithOptions(product, options),
+                    quantity,
+                    options: options || null,
+                };
+            },
+            get(lineId) { return this.items.find((l) => l.lineId === lineId); },
+            add(product, { options = null, quantity = 1 } = {}) {
+                const line = this.makeLine(product, options, quantity);
+                const existing = this.get(line.lineId);
+                if (existing) existing.quantity += quantity;
+                else this.items.push(line);
+                this.save();
+            },
+            setQuantity(lineId, quantity) {
+                const line = this.get(lineId);
+                if (!line) return;
+                line.quantity = Math.max(1, Math.min(quantity, 50));
+                this.save();
+            },
+            updateOptions(lineId, options, quantity) {
+                const index = this.items.findIndex((l) => l.lineId === lineId);
+                if (index === -1) return;
+                const product = findProduct(this.items[index].productId);
+                if (!product) return;
+                const updated = this.makeLine(product, options, quantity);
+                const duplicate = this.items.find((l, i) => i !== index && l.lineId === updated.lineId);
+                if (duplicate) {
+                    duplicate.quantity += updated.quantity;
+                    this.items.splice(index, 1);
+                } else {
+                    this.items.splice(index, 1, updated);
+                }
+                this.save();
+            },
+            remove(lineId) {
+                const index = this.items.findIndex((l) => l.lineId === lineId);
+                if (index === -1) return null;
+                const [removed] = this.items.splice(index, 1);
+                this.save();
+                return { line: removed, index };
+            },
+            restore({ line, index }) {
+                this.items.splice(Math.min(index, this.items.length), 0, line);
+                this.save();
+            },
+            clear() { this.items = []; this.save(); },
+            count() { return this.items.reduce((s, l) => s + l.quantity, 0); },
+            subtotal() { return this.items.reduce((s, l) => s + (l.unitPrice * l.quantity), 0); },
+            customizationTotal() {
+                return 0;
+            }
+        };
+
+        /* ---------- 4. ARAYÜZ YARDIMCILARI ---------- */
+        const $ = (sel, root = document) => root.querySelector(sel);
+        const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
+        const round2 = (n) => Math.round(n * 100) / 100;
+        const formatMoney = (n) => `₺${Number(n || 0).toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        const detailUrl = (id) => `/Product/Detail/${id}`;
+        const categoryLabel = (id) => {
+            if (!id) return "CafeFlow";
+            if (typeof CATEGORIES !== "undefined" && Array.isArray(CATEGORIES)) {
+                const found = CATEGORIES.find((c) => c.id === id);
+                if (found && found.label) return found.label;
+            }
+            return id.charAt(0).toUpperCase() + id.slice(1);
+        };
+        const escapeHtml = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+        function attachImageFallback(img) {
+            const swap = () => {
+                const div = document.createElement("div");
+                div.className = "cf-img-fallback";
+                div.setAttribute("role", "img");
+                div.setAttribute("aria-label", img.alt || "CafeFlow");
+                div.innerHTML = `<i class="bi ${FALLBACK_ICON[img.dataset.fallback] || "bi-cup-hot"}"></i>`;
+                img.replaceWith(div);
+            };
+            if (img.complete && img.naturalWidth === 0 && img.getAttribute("src")) swap();
+            else img.addEventListener("error", swap, { once: true });
+        }
+        const applyFallbacks = (root = document) => $$("img[data-fallback]", root).forEach(attachImageFallback);
+
+        const toast = {
+            el: $("#cfToast"),
+            text: $("#cfToastText"),
+            icon: $("#cfToastIcon"),
+            action: $("#cfToastAction"),
+            timer: null,
+            onAction: null,
+            show(message, { error = false, actionLabel = null, onAction = null, duration = 2600 } = {}) {
+                if (!this.el) return;
+                this.text.textContent = message;
+                this.el.classList.toggle("error", error);
+                if (this.icon) this.icon.className = `bi ${error ? "bi-exclamation-circle-fill" : "bi-check-circle-fill"}`;
+                this.onAction = onAction;
+                if (this.action) {
+                    this.action.textContent = actionLabel || "";
+                    this.action.classList.toggle("show", Boolean(actionLabel));
+                }
+                this.el.classList.add("show");
+                clearTimeout(this.timer);
+                this.timer = setTimeout(() => this.hide(), actionLabel ? 5000 : duration);
+            },
+            hide() {
+                if (!this.el) return;
+                this.el.classList.remove("show");
+                this.onAction = null;
+            },
+        };
+        if (toast.action) {
+            toast.action.addEventListener("click", () => {
+                if (toast.onAction) toast.onAction();
+                toast.hide();
+            });
+        }
+
+        function optionTags(options) {
+            if (!options) return "";
+            const tags = [];
+            if (options.size) tags.push(`<span class="cf-opt-tag"><i class="bi bi-cup"></i> ${options.size}</span>`);
+            if (options.milk) tags.push(`<span class="cf-opt-tag"><i class="bi bi-droplet"></i> ${options.milk === "Regular" ? "Normal Süt" : options.milk + " Sütü"}</span>`);
+            if (options.extraShot === "Yes") tags.push(`<span class="cf-opt-tag"><i class="bi bi-lightning-charge"></i> Ekstra Shot</span>`);
+            if (options.syrup && options.syrup !== "None") tags.push(`<span class="cf-opt-tag"><i class="bi bi-stars"></i> ${options.syrup} Şurubu</span>`);
+            return `<div class="cf-opt-tags">${tags.join("")}</div>`;
+        }
+
+        /* ---------- 5. SEPET LİSTESİ RENDER ---------- */
+        const cartList = $("#cartList");
+        const emptyCart = $("#emptyCart");
+        const cartCountEl = $("#cartCount");
+
+        function renderNavCount() {
+            const count = Cart.count();
+            if (cartCountEl) cartCountEl.textContent = count;
+        }
+
+        function renderItems() {
+            if (!cartList) return;
+            const empty = Cart.items.length === 0;
+            if (emptyCart) emptyCart.classList.toggle("d-none", !empty);
+            if ($("#continueShopping")) $("#continueShopping").classList.toggle("d-none", empty);
+            if ($("#clearCartBtn")) $("#clearCartBtn").classList.toggle("d-none", empty || Cart.preview);
+            if ($("#previewBanner")) $("#previewBanner").classList.add("d-none");
+
+            const count = Cart.count();
+            if ($("#itemsCount")) $("#itemsCount").textContent = count ? `(${count} ürün)` : "";
+
+            cartList.innerHTML = Cart.items.map((line) => {
+                // Güvenli veri atamaları:
+                const safeLineId = line.lineId || String(line.productId || Math.random());
+                const name = line.name || "Lezzetli Ürün";
+                const image = line.image || "/images/default-coffee.jpg";
+                const category = line.category || "coffee";
+                const price = Number(line.unitPrice) || 0;
+                const qty = Number(line.quantity) || 1;
+                const customizable = Boolean(line.options && Object.keys(line.options).length > 0);
+
+                return `
+                    <article class="cf-item" data-line="${escapeHtml(safeLineId)}">
+                      <a href="${detailUrl(line.productId)}" class="cf-item-thumb" aria-label="${name}">
+                        <img src="${image}" alt="${name}" data-fallback="${category}" loading="lazy" />
+                      </a>
+                      <div class="cf-item-info">
+                        <span class="cf-cat-label">${categoryLabel(category)}</span>
+                        <h3 class="cf-item-name"><a href="${detailUrl(line.productId)}">${name}</a></h3>
+                        ${typeof optionTags === 'function' ? optionTags(line.options) : ''}
+                        <div class="cf-item-actions">
+                          ${customizable ? `<button type="button" class="cf-link-btn" data-action="edit"><i class="bi bi-sliders"></i> Düzenle</button>` : ""}
+                          <button type="button" class="cf-link-btn muted" data-action="remove"><i class="bi bi-trash3"></i> Kaldır</button>
+                        </div>
+                      </div>
+                      <div class="cf-item-side">
+                        <span class="cf-unit">${formatMoney(price)} / adet</span>
+                        <div class="cf-stepper" role="group" aria-label="Adet">
+                          <button type="button" data-action="dec" aria-label="Azalt"><i class="bi bi-dash"></i></button>
+                          <span aria-live="polite">${qty}</span>
+                          <button type="button" data-action="inc" aria-label="Artır" ${qty >= 50 ? "disabled" : ""}><i class="bi bi-plus"></i></button>
+                        </div>
+                        <span class="cf-line-total">${formatMoney(price * qty)}</span>
+                      </div>
+                    </article>`;
+            }).join("");
+
+            applyFallbacks(cartList);
+        }
+
+        function removeLine(lineId) {
+            const card = cartList ? cartList.querySelector(`[data-line="${CSS.escape(lineId)}"]`) : null;
+            const doRemove = () => {
+                const removed = Cart.remove(lineId);
+                if (!removed) return;
+                toast.show(`${removed.line.name} sepetten çıkarıldı`, {
+                    actionLabel: "Geri Al",
+                    onAction: () => {
+                        Cart.restore(removed);
+                        toast.show(`${removed.line.name} tekrar sepete eklendi`);
+                    },
+                });
+            };
+            if (card) {
+                card.classList.add("removing");
+                setTimeout(doRemove, 250);
+            } else doRemove();
+        }
+
+        const confirmModalEl = $("#confirmModal");
+        const confirmModal = confirmModalEl ? new bootstrap.Modal(confirmModalEl) : null;
+        let pendingRemoval = null;
+
+        function askRemove(lineId) {
+            const line = Cart.get(lineId);
+            if (!line) return;
+            pendingRemoval = lineId;
+            if ($("#confirmTitle")) $("#confirmTitle").textContent = `${line.name} çıkarılsın mı?`;
+            if (confirmModal) confirmModal.show();
+            else removeLine(lineId);
+        }
+
+        if ($("#confirmYes")) {
+            $("#confirmYes").addEventListener("click", () => {
+                if (confirmModal) confirmModal.hide();
+                if (pendingRemoval) removeLine(pendingRemoval);
+                pendingRemoval = null;
+            });
+        }
+
+        if (cartList) {
+            cartList.addEventListener("click", (e) => {
+                const btn = e.target.closest("[data-action]");
+                if (!btn) return;
+                const lineId = btn.closest("[data-line]").dataset.line;
+                const line = Cart.get(lineId);
+                if (!line) return;
+
+                switch (btn.dataset.action) {
+                    case "inc":
+                        Cart.setQuantity(lineId, line.quantity + 1);
+                        break;
+                    case "dec":
+                        if (line.quantity <= 1) askRemove(lineId);
+                        else Cart.setQuantity(lineId, line.quantity - 1);
+                        break;
+                    case "remove":
+                        removeLine(lineId);
+                        break;
+                    case "edit":
+                        const prod = findProduct(line.productId);
+                        if (prod) openCustomizer(prod, { lineId });
+                        break;
+                }
+            });
+        }
+
+        if ($("#clearCartBtn")) {
+            $("#clearCartBtn").addEventListener("click", () => {
+                const snapshot = Cart.items.map((l) => ({ ...l }));
+                Cart.clear();
+                toast.show("Sepetiniz temizlendi", {
+                    actionLabel: "Geri Al",
+                    onAction: () => { Cart.items = snapshot; Cart.save(); },
+                });
+            });
+        }
+
+        /* ---------- 6. ÖZELLEŞTİRME / EDIT MODAL ---------- */
+        const customizeModalEl = $("#customizeModal");
+        const customizeModal = customizeModalEl ? new bootstrap.Modal(customizeModalEl) : null;
+        const customizeForm = $("#customizeForm");
+        const modalQtyEl = $("#modalQty");
+        const modalQtyDec = $("#modalQtyDec");
+        const modalState = { product: null, lineId: null, qty: 1 };
+
+        function readModalOptions() {
+            const options = {};
+            CUSTOM_OPTIONS.forEach((group) => {
+                const input = customizeForm ? customizeForm.querySelector(`input[name="${group.key}"]:checked`) : null;
+                options[group.key] = input ? input.value : group.default;
+            });
+            return options;
+        }
+
+        function updateModalTotal() {
+            if (!modalState.product) return;
+            const unit = priceWithOptions(modalState.product, readModalOptions());
+            if ($("#modalTotal")) $("#modalTotal").textContent = formatMoney(unit * modalState.qty);
+            if (modalQtyEl) modalQtyEl.textContent = modalState.qty;
+            if (modalQtyDec) modalQtyDec.disabled = modalState.qty <= 1;
+        }
+
+        function openCustomizer(product, { lineId = null } = {}) {
+            if (!customizeModal) return;
+            const line = lineId ? Cart.get(lineId) : null;
+            const current = line && line.options ? line.options : null;
+            modalState.product = product;
+            modalState.lineId = lineId;
+            modalState.qty = line ? line.quantity : 1;
+
+            if ($("#customizeTitle")) $("#customizeTitle").textContent = product.name;
+            if ($("#customizeDesc")) $("#customizeDesc").textContent = product.description;
+            if ($("#customizeCategory")) $("#customizeCategory").textContent = categoryLabel(product.category);
+            if ($("#customizeImage")) {
+                $("#customizeImage").innerHTML = `<img src="${product.image}" alt="${product.name}" data-fallback="${product.category}" />`;
+                applyFallbacks($("#customizeImage"));
+            }
+            if ($("#customizeSubmit")) {
+                $("#customizeSubmit").innerHTML = lineId
+                    ? `<i class="bi bi-check2"></i> Değişiklikleri Kaydet`
+                    : `<i class="bi bi-bag-plus"></i> Sepete Ekle`;
+            }
+
+            if ($("#customizeOptions")) {
+                $("#customizeOptions").innerHTML = CUSTOM_OPTIONS.map((group) => {
+                    const selected = current ? current[group.key] : group.default;
+                    return `
+                        <fieldset class="cf-opt-group">
+                          <legend class="cf-opt-label">${group.label}</legend>
+                          <div class="cf-opt-choices">
+                            ${group.choices.map((c) => `
+                              <label class="cf-opt">
+                                <input type="radio" name="${group.key}" value="${c.value}" ${c.value === selected ? "checked" : ""} />
+                                <span>${c.value}<small>${c.price ? `+${formatMoney(c.price)}` : "Dahil"}</small></span>
+                              </label>`).join("")}
+                          </div>
+                        </fieldset>`;
+                }).join("");
+            }
+
+            updateModalTotal();
+            customizeModal.show();
+        }
+
+        if (customizeForm) {
+            customizeForm.addEventListener("change", updateModalTotal);
+            customizeForm.addEventListener("submit", (e) => {
+                e.preventDefault();
+                const options = readModalOptions();
+                const { product, lineId, qty } = modalState;
+                if (!product) return;
+
+                if (lineId) {
+                    Cart.updateOptions(lineId, options, qty);
+                    toast.show(`${product.name} güncellendi`);
+                } else {
+                    Cart.add(product, { options, quantity: qty });
+                    toast.show(`${product.name} sepete eklendi`);
+                }
+                if (customizeModal) customizeModal.hide();
+            });
+        }
+        if ($("#modalQtyInc")) $("#modalQtyInc").addEventListener("click", () => { modalState.qty = Math.min(modalState.qty + 1, 50); updateModalTotal(); });
+        if (modalQtyDec) modalQtyDec.addEventListener("click", () => { modalState.qty = Math.max(modalState.qty - 1, 1); updateModalTotal(); });
+
+        /* ---------- 7. SİPARİŞ TÜRÜ & BİLGİLERİ ---------- */
+        const detailsForm = $("#detailsForm");
+        const typeInputs = $$('input[name="orderType"]');
+        const draft = storage.read(STORAGE_KEYS.orderDraft, {}, sessionStorage);
+        const orderState = {
+            type: draft.type || "delivery",
+            tableContext: storage.read(STORAGE_KEYS.tableContext, null, sessionStorage),
+        };
+
+        function saveDraft() {
+            if (!detailsForm) return;
+            const fields = {};
+            $$("input[name], textarea[name], select[name]", detailsForm).forEach((el) => {
+                if (el.name !== "tableNumber") fields[el.name] = el.value;
+            });
+            storage.write(STORAGE_KEYS.orderDraft, {
+                type: orderState.type,
+                fields,
+                note: $("#orderNote") ? $("#orderNote").value : "",
+            }, sessionStorage);
+        }
+
+        function resolveTableFromUrl() {
+            const params = new URLSearchParams(location.search);
+            const token = params.get("qr");
+            if (!token) return;
+            const entry = TABLE_REGISTRY[token.toUpperCase()];
+            if (entry) {
+                orderState.tableContext = { token: token.toUpperCase(), ...entry, validatedAt: new Date().toISOString() };
+                storage.write(STORAGE_KEYS.tableContext, orderState.tableContext, sessionStorage);
+                orderState.type = "dinein";
+                setTimeout(() => toast.show(`Masa ${entry.tableNumber}'e hoş geldiniz!`), 400);
+            }
+            params.delete("qr");
+            const clean = location.pathname + (params.toString() ? `?${params}` : "") + location.hash;
+            history.replaceState(null, "", clean);
+        }
+
+        function renderTableContext() {
+            const ctx = orderState.tableContext;
+            if ($("#tableVerified")) $("#tableVerified").classList.toggle("d-none", !ctx);
+            if ($("#tableMissing")) $("#tableMissing").classList.toggle("d-none", Boolean(ctx));
+            const badge = $("#dineInBadge");
+            if (badge) {
+                if (ctx) {
+                    if ($("#tableNumBig")) $("#tableNumBig").textContent = ctx.tableNumber;
+                    if ($("#tableLabel")) $("#tableLabel").textContent = `Masa ${ctx.tableNumber} · ${ctx.area}`;
+                    if ($("#tableNumber")) $("#tableNumber").value = `Masa ${ctx.tableNumber}`;
+                    badge.className = "cf-type-badge";
+                    badge.innerHTML = `<i class="bi bi-patch-check-fill"></i> Masa ${ctx.tableNumber}`;
+                } else {
+                    badge.className = "cf-type-badge pending";
+                    badge.innerHTML = `<i class="bi bi-qr-code"></i> Masa QR Gerekli`;
+                }
+            }
+        }
+
+        function renderOrderType() {
+            typeInputs.forEach((input) => (input.checked = input.value === orderState.type));
+            if (detailsForm) {
+                $$(".cf-field-group", detailsForm).forEach((group) => {
+                    const visible = orderState.type && group.dataset.for.split(" ").includes(orderState.type);
+                    group.classList.toggle("is-hidden", !visible);
+                    $$("input, textarea, select", group).forEach((el) => (el.tabIndex = visible ? 0 : -1));
+                });
+            }
+            if ($("#typeHint")) $("#typeHint").classList.toggle("d-none", Boolean(orderState.type));
+
+            const labels = {
+                delivery: "Adrese Teslimat",
+                pickup: "CafeFlow Teslim Noktası (Gel-Al)",
+                dinein: orderState.tableContext ? `Masadan Sipariş · Masa ${orderState.tableContext.tableNumber}` : "Masadan Sipariş · QR Okutun",
+            };
+            if ($("#summaryType")) $("#summaryType").textContent = labels[orderState.type] || "Sipariş türünü seçiniz";
+        }
+
+        typeInputs.forEach((input) =>
+            input.addEventListener("change", () => {
+                orderState.type = input.value;
+                renderOrderType();
+                renderTotals();
+                saveDraft();
+            })
+        );
+
+        function buildPickupSlots() {
+            const select = $("#pickupTime");
+            if (!select) return;
+            const pad = (n) => String(n).padStart(2, "0");
+            const fmt = (mins) => `${pad(Math.floor(mins / 60))}:${pad(mins % 60)}`;
+            const now = new Date();
+            const [open, close] = OPENING_HOURS[now.getDay()] || OPENING_HOURS.default;
+            const nowMins = now.getHours() * 60 + now.getMinutes();
+            let options = [`<option value="">Teslim alma saati seçiniz</option>`];
+
+            if (nowMins >= open && nowMins < close - 20) {
+                options.push(`<option value="asap">En Kısa Sürede (~15 dk)</option>`);
+                let start = Math.ceil((nowMins + 30) / 15) * 15;
+                for (let t = start; t <= close - 15; t += 15) options.push(`<option value="today-${fmt(t)}">Bugün, ${fmt(t)}</option>`);
+            } else {
+                options.push(`<option value="tomorrow-09:00">Yarın, 09:00</option>`);
+                options.push(`<option value="tomorrow-10:00">Yarın, 10:00</option>`);
+            }
+            select.innerHTML = options.join("");
+        }
+
+        const validators = {
+            phone: (v) => v.replace(/[^\d+]/g, "").length >= 10,
+            address: (v) => v.trim().length >= 10,
+        };
+
+        function validateField(el) {
+            const requiredFor = (el.dataset.required || "").split(" ");
+            if (!requiredFor.includes(orderState.type)) {
+                el.classList.remove("is-invalid");
+                return true;
+            }
+            const value = el.value.trim();
+            let ok = value.length > 0;
+            if (ok && el.dataset.validate) ok = validators[el.dataset.validate](value);
+            el.classList.toggle("is-invalid", !ok);
+            return ok;
+        }
+
+        if (detailsForm) {
+            $$("[data-required]", detailsForm).forEach((el) => {
+                el.addEventListener("blur", () => { if (el.value) validateField(el); });
+                el.addEventListener("input", () => { if (el.classList.contains("is-invalid")) validateField(el); });
+            });
+            detailsForm.addEventListener("input", saveDraft);
+            detailsForm.addEventListener("change", saveDraft);
+            detailsForm.addEventListener("submit", (e) => e.preventDefault());
+        }
+
+        const noteEl = $("#orderNote");
+        if (noteEl) {
+            noteEl.addEventListener("input", () => {
+                if ($("#noteCount")) $("#noteCount").textContent = noteEl.value.length;
+                saveDraft();
+            });
+        }
+
+        /* ---------- 8. HESAPLAMA & SİPARİŞ ÖZETİ ---------- */
+        function calculateTotals() {
+            const subtotal = round2(Cart.subtotal());
+            const customizations = round2(Cart.customizationTotal());
+            const discount = 0;
+            const afterDiscount = subtotal;
+            let deliveryFee = 0;
+            if (orderState.type === "delivery" && subtotal > 0) {
+                deliveryFee = afterDiscount >= PRICING.freeDeliveryFrom ? 0 : PRICING.deliveryFee;
+            }
+            const total = Math.max(0, round2(afterDiscount + deliveryFee));
+            return { subtotal, customizations, discount, afterDiscount, deliveryFee, total };
+        }
+
+        function renderTotals() {
+            const t = calculateTotals();
+            const empty = Cart.items.length === 0;
+
+            if ($("#summaryItems")) {
+                $("#summaryItems").innerHTML = Cart.items.map((l) =>
+                    `<li><span>${l.quantity} × ${l.name}</span><span>${formatMoney(l.unitPrice * l.quantity)}</span></li>`
+                ).join("");
+            }
+
+            if ($("#sumSubtotal")) $("#sumSubtotal").textContent = empty ? "—" : formatMoney(t.subtotal);
+            if ($("#sumCustomRow")) {
+                $("#sumCustomRow").classList.toggle("d-none", t.customizations <= 0);
+                if ($("#sumCustom")) $("#sumCustom").textContent = formatMoney(t.customizations);
+            }
+            if ($("#sumDiscount")) $("#sumDiscount").textContent = "—";
+
+            const deliveryEl = $("#sumDelivery");
+            if (deliveryEl) {
+                deliveryEl.classList.remove("cf-free");
+                if (empty || orderState.type !== "delivery") {
+                    deliveryEl.textContent = (orderState.type && orderState.type !== "delivery" && !empty) ? "Ücretsiz" : "—";
+                    if (deliveryEl.textContent === "Ücretsiz") deliveryEl.classList.add("cf-free");
+                } else if (t.deliveryFee === 0) {
+                    deliveryEl.textContent = "Ücretsiz";
+                    deliveryEl.classList.add("cf-free");
+                } else {
+                    deliveryEl.textContent = formatMoney(t.deliveryFee);
+                }
+            }
+
+            if ($("#sumTotal")) $("#sumTotal").textContent = empty ? "—" : formatMoney(t.total);
+            if ($("#mobileTotal")) $("#mobileTotal").textContent = empty ? "—" : formatMoney(t.total);
+
+            const hint = $("#deliveryHint");
+            if (hint) {
+                const remaining = round2(PRICING.freeDeliveryFrom - t.afterDiscount);
+                const pct = Math.min(100, (t.afterDiscount / PRICING.freeDeliveryFrom) * 100);
+                hint.innerHTML = remaining > 0
+                    ? `<div class="w-100"><i class="bi bi-scooter"></i> Ücretsiz teslimat için <strong>${formatMoney(remaining)}</strong> daha ekleyin (${formatMoney(PRICING.deliveryFee)} kargo bedeli).<div class="cf-progress"><span style="width:${pct}%"></span></div></div>`
+                    : `<i class="bi bi-gift"></i> <span>Tebrikler! Siparişiniz <strong>ücretsiz teslimat</strong> kapsamındadır.</span>`;
+            }
+
+            const checkoutBtn = $("#checkoutBtn");
+            if (checkoutBtn) checkoutBtn.disabled = empty;
+            if ($("#mobileCheckout")) $("#mobileCheckout").disabled = empty;
+            if ($("#mobileBar")) $("#mobileBar").classList.toggle("hide", empty);
+            document.body.classList.toggle("has-mobile-bar", !empty);
+        }
+
+        /* ---------- 9. SİPARİŞİ TAMAMLAMA (CHECKOUT) ---------- */
+        function validateOrder() {
+            if (Cart.items.length === 0) {
+                toast.show("Sepetiniz boş.", { error: true });
+                return false;
+            }
+            if (!orderState.type) {
+                if ($("#orderTypePanel")) $("#orderTypePanel").scrollIntoView({ behavior: "smooth", block: "start" });
+                toast.show("Lütfen teslimat türünü seçiniz.", { error: true });
+                return false;
+            }
+            if (orderState.type === "dinein" && !orderState.tableContext) {
+                if ($("#orderTypePanel")) $("#orderTypePanel").scrollIntoView({ behavior: "smooth", block: "start" });
+                toast.show("Masadan sipariş için QR okutmanız gerekmektedir.", { error: true });
+                return false;
+            }
+            if (detailsForm) {
+                const fields = $$("[data-required]", detailsForm);
+                const invalid = fields.filter((el) => !validateField(el));
+                if (invalid.length) {
+                    invalid[0].scrollIntoView({ behavior: "smooth", block: "center" });
+                    setTimeout(() => invalid[0].focus({ preventScroll: true }), 350);
+                    toast.show("Lütfen eksik alanları doldurunuz.", { error: true });
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        async function handleCheckout() {
+            if (!validateOrder()) return;
+            const t = calculateTotals();
+
+            // Enum Eşleşmesi (Delivery=0, Pickup=1, DineIn=2)
+            const orderTypeMap = { delivery: 0, pickup: 1, dinein: 2 };
+            const orderTypeNum = orderTypeMap[orderState.type];
+
+            const fullName = $("#fullName") ? $("#fullName").value.trim() : "";
+            const phone = $("#phone") ? $("#phone").value.trim() : "";
+            const email = (fullName.toLowerCase().replace(/[^a-z0-9]/g, "") || "guest");
+            const address = orderState.type === "delivery" ? ($("#address") ? $("#address").value.trim() : "") : null;
+            const tableId = orderState.type === "dinein" && orderState.tableContext ? orderState.tableContext.tableNumber : null;
+
+            const dto = {
+                OrderType: orderTypeNum,
+                Address: address,
+                TableId: tableId,
+                TotalAmount: t.total,
+                CustomerName: fullName,
+                Email: email,
+                PhoneNumber: phone,
+                AppUserId: null,
+                OrderDetails: Cart.items.map(l => ({
+                    ProductId: Number(l.productId),
+                    Quantity: Number(l.quantity),
+                    UnitPrice: Number(l.unitPrice),
+                    CustomizationDescription: l.options ? Object.entries(l.options).map(([k, v]) => `${k}: ${v}`).join(", ") : null
+                }))
+            };
+
+            const checkoutBtn = $("#checkoutBtn");
+            if (checkoutBtn) {
+                checkoutBtn.disabled = true;
+                checkoutBtn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span> Siparişiniz Alınıyor...`;
+            }
+
+            try {
+                const response = await fetch("/Cart/CreateOrder", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(dto)
+                });
+
+                const res = await response.json();
+                if (res.success) {
+                    Cart.clear();
+                    window.location.href = res.redirectUrl || `/Cart/Confirmation/${res.orderId}`;
+                } else {
+                    toast.show(res.message || "Sipariş oluşturulamadı.", { error: true });
+                    if (checkoutBtn) {
+                        checkoutBtn.disabled = false;
+                        checkoutBtn.innerHTML = `<i class="bi bi-lock"></i> Siparişi Onayla`;
+                    }
+                }
+            } catch (err) {
+                toast.show("Sunucu ile bağlantı kurulamadı.", { error: true });
+                if (checkoutBtn) {
+                    checkoutBtn.disabled = false;
+                    checkoutBtn.innerHTML = `<i class="bi bi-lock"></i> Siparişi Onayla`;
+                }
+            }
+        }
+
+        if ($("#checkoutBtn")) $("#checkoutBtn").addEventListener("click", handleCheckout);
+        if ($("#mobileCheckout")) $("#mobileCheckout").addEventListener("click", handleCheckout);
+
+        /* ---------- 10. ÖNERİLEN ÜRÜNLER ---------- */
+        function renderRecommendations() {
+            const grid = $("#recoGrid");
+            if (!grid) return;
+            const inCart = new Set(Cart.items.map((l) => Number(l.productId)));
+            const picks = PRODUCTS.filter((p) => !inCart.has(p.id)).slice(0, 3);
+
+            if ($("#recoSection")) $("#recoSection").classList.toggle("d-none", picks.length === 0);
+            grid.innerHTML = picks.map((p) => `
+                    <div class="col-sm-6 col-md-4">
+                      <article class="cf-product-card">
+                        <div class="cf-product-img">
+                          <a href="${detailUrl(p.id)}" class="cf-product-img-link" aria-label="${p.name}">
+                            <img src="${p.image}" alt="${p.name}" loading="lazy" data-fallback="${p.category}" />
+                          </a>
+                          ${p.badge ? `<span class="cf-tag ${BADGES[p.badge]}">${p.badge}</span>` : ""}
+                        </div>
+                        <div class="cf-product-body">
+                          <span class="cf-cat-label mb-1">${categoryLabel(p.category)}</span>
+                          <h3><a href="${detailUrl(p.id)}">${p.name}</a></h3>
+                          <p>${p.description}</p>
+                          <div class="cf-product-foot">
+                            <span class="cf-price">${formatMoney(p.price)}</span>
+                            <button type="button" class="btn cf-add-btn" data-reco="${p.id}">
+                              <i class="bi bi-bag-plus"></i> Ekle
+                            </button>
+                          </div>
+                        </div>
+                      </article>
+                    </div>`).join("");
+            applyFallbacks(grid);
+        }
+
+        if ($("#recoGrid")) {
+            $("#recoGrid").addEventListener("click", (e) => {
+                const btn = e.target.closest("[data-reco]");
+                if (!btn) return;
+                const product = findProduct(Number(btn.dataset.reco));
+                if (product) {
+                    Cart.add(product);
+                    toast.show(`${product.name} sepete eklendi`);
+                }
+            });
+        }
+
+        /* ---------- 11. BAŞLATICI (BOOTSTRAP) ---------- */
+        function renderAll() {
+            renderItems();
+            renderTotals();
+            renderRecommendations();
+            renderNavCount();
+        }
+        document.addEventListener("cart:changed", renderAll);
+
+        window.addEventListener("storage", (e) => {
+            if (e.key === STORAGE_KEYS.cart && !Cart.preview) {
+                Cart.load();
+                renderAll();
+            }
+        });
+
+        resolveTableFromUrl();
+        buildPickupSlots();
+        if (draft.fields && detailsForm) {
+            Object.entries(draft.fields).forEach(([name, value]) => {
+                const el = detailsForm.elements.namedItem(name);
+                if (el && !el.readOnly) el.value = value;
+            });
+        }
+        if (draft.note && noteEl) {
+            noteEl.value = draft.note;
+            if ($("#noteCount")) $("#noteCount").textContent = draft.note.length;
+        }
+
+        Cart.load();
+        renderTableContext();
+        renderOrderType();
+        renderAll();
+        saveDraft();
+    })();
+</script>
