@@ -11,6 +11,7 @@ using CafeFlow.DataAccess.Repositories.Notifications;
 using CafeFlow.DataAccess.Repositories.Orders;
 using CafeFlow.DataAccess.Repositories.OrderStatusHistoryRepositories;
 using CafeFlow.DataAccess.Repositories.Products;
+using CafeFlow.DataAccess.Repositories.Tables;
 
 namespace CafeFlow.WebUI.Extensions
 {
@@ -21,6 +22,7 @@ namespace CafeFlow.WebUI.Extensions
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IOrderService, OrderService>();
+            services.AddScoped<ITableService, TableService>();
         }
 
         public static void AddRepositories(this IServiceCollection services)
@@ -31,6 +33,7 @@ namespace CafeFlow.WebUI.Extensions
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<INotificationRepository, NotificationRepository>();
             services.AddScoped<ICustomerRepository, CustomerRepository>();
+            services.AddScoped<ITableRepository,  TableRepository>();
         }
 
         public static void AddDesignPatterns(this IServiceCollection services)

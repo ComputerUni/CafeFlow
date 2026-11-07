@@ -138,31 +138,27 @@
                                 <div>
                                     <div id="tableVerified" class="d-none">
                                         <div class="cf-table-card">
-                                            <span class="cf-table-num" id="tableNumBig">7</span>
+                                            <span class="cf-table-num" id="tableNumBig">1</span>
                                             <div>
                                                 <small>Sipariş verdiğiniz yer</small>
-                                                <strong id="tableLabel">Masa 7 · Bahçe Bölümü</strong><br />
-                                                <span class="cf-verified"><i class="bi bi-patch-check-fill"></i> QR kod ile doğrulandı</span>
+                                                <strong id="tableLabel">Masa 1</strong><br />
+                                                <span class="cf-verified"><i class="bi bi-patch-check-fill"></i> Doğrulandı</span>
+                                                <br />
+                                                <button type="button" class="cf-link-btn mt-1" id="changeTableBtn">
+                                                    <i class="bi bi-arrow-left-right"></i> Masa Değiştir
+                                                </button>
                                             </div>
                                         </div>
-                                        <div class="row g-3">
-                                            <div class="col-md-4">
-                                                <label class="cf-label" for="tableNumber">Masa No</label>
-                                                <input class="cf-input" id="tableNumber" name="tableNumber" type="text" readonly aria-readonly="true" />
-                                            </div>
-                                            <div class="col-md-8">
-                                                <label class="cf-label" for="dineNote">Masa İçin Not <span class="opt">(isteğe bağlı)</span></label>
-                                                <input class="cf-input" id="dineNote" name="dineNote" type="text" placeholder="Örn: Tatlı kahveyle beraber gelsin" />
-                                            </div>
-                                        </div>
+                                        ...
                                     </div>
-
                                     <div id="tableMissing" class="cf-notice">
                                         <i class="bi bi-qr-code-scan"></i>
                                         <div>
-                                            <strong>Masanızdaki QR Kodu Okutun</strong>
-                                            Masadan sipariş verebilmek için masanızdaki QR kodu okutmanız gerekmektedir.
-                                            <div><a href="" class="cf-text-link">Masa simülasyonu yap (Demo) <i class="bi bi-arrow-right"></i></a></div>
+                                            <strong>Masanızı Seçin</strong>
+                                            <p class="mb-2">Lütfen oturduğunuz masayı seçiniz.</p>
+                                            <select class="cf-input mt-2" id="tableSelect">
+                                                <option value="">— Masa seçiniz —</option>
+                                            </select>
                                         </div>
                                     </div>
                                 </div>

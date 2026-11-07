@@ -14,6 +14,7 @@ namespace CafeFlow.DTO.Product
         public int Stock { get; set; }
         public bool IsActive { get; set; }
         public bool IsFeatured { get; set; }
+        public bool IsCustomizable { get; set; }
         public int CategoryId { get; set; }
         public double AverageRating { get; set; }
         public string CategoryName { get; set; }

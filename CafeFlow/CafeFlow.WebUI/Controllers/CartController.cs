@@ -14,11 +14,17 @@ namespace CafeFlow.WebUI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Index(CreateOrderDto dto)
+        public async Task<IActionResult> Index([FromBody] CreateOrderDto dto)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                return View();
+                var errors = ModelState
+                    .Where(x => x.Value.Errors.Any())
+                    .ToDictionary(
+                        k => k.Key,
+                        v => v.Value.Errors.Select(e => e.ErrorMessage).ToList()
+                    );
+                return BadRequest(new { success = false, message = "Geçersiz veri.", errors });
             }
 
             if (User.Identity.IsAuthenticated)
@@ -26,9 +32,16 @@ namespace CafeFlow.WebUI.Controllers
                 dto.AppUserId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
             }
 
-            await _orderService.CreateOrderAsync(dto);
-            TempData["OrderSuccess"] = true;
-            return RedirectToAction("Confirmation");
+            try
+            {
+                var orderCode = await _orderService.CreateOrderAsync(dto);
+                return Ok(new { success = true, orderCode });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { success = false, message = ex.Message });
+            }
+
         }
 
         [HttpGet]

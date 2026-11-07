@@ -1,5 +1,9 @@
 ﻿<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+    const PRODUCTS = @Html.Raw(Model.ProductsJson);
+    const TABLE_REGISTRY = @Html.Raw(Model.TableRegistryJson);
+</script>
+<script>
     (() => {
         "use strict";
 
@@ -522,11 +526,12 @@
             const ctx = orderState.tableContext;
             if ($("#tableVerified")) $("#tableVerified").classList.toggle("d-none", !ctx);
             if ($("#tableMissing")) $("#tableMissing").classList.toggle("d-none", Boolean(ctx));
+
             const badge = $("#dineInBadge");
             if (badge) {
                 if (ctx) {
                     if ($("#tableNumBig")) $("#tableNumBig").textContent = ctx.tableNumber;
-                    if ($("#tableLabel")) $("#tableLabel").textContent = `Masa ${ctx.tableNumber} · ${ctx.area}`;
+                    if ($("#tableLabel")) $("#tableLabel").textContent = `Masa ${ctx.tableNumber}`;
                     if ($("#tableNumber")) $("#tableNumber").value = `Masa ${ctx.tableNumber}`;
                     badge.className = "cf-type-badge";
                     badge.innerHTML = `<i class="bi bi-patch-check-fill"></i> Masa ${ctx.tableNumber}`;
@@ -534,6 +539,18 @@
                     badge.className = "cf-type-badge pending";
                     badge.innerHTML = `<i class="bi bi-qr-code"></i> Masa QR Gerekli`;
                 }
+            }
+
+            const changeBtn = $("#changeTableBtn");
+            if (changeBtn) {
+                changeBtn.addEventListener("click", () => {
+                    orderState.tableContext = null;
+                    storage.remove(STORAGE_KEYS.tableContext, sessionStorage);
+                    const sel = $("#tableSelect");
+                    if (sel) sel.value = "";
+                    renderTableContext();
+                    renderOrderType();
+                });
             }
         }
 
@@ -568,22 +585,12 @@
         function buildPickupSlots() {
             const select = $("#pickupTime");
             if (!select) return;
-            const pad = (n) => String(n).padStart(2, "0");
-            const fmt = (mins) => `${pad(Math.floor(mins / 60))}:${pad(mins % 60)}`;
-            const now = new Date();
-            const [open, close] = OPENING_HOURS[now.getDay()] || OPENING_HOURS.default;
-            const nowMins = now.getHours() * 60 + now.getMinutes();
-            let options = [`<option value="">Teslim alma saati seçiniz</option>`];
-
-            if (nowMins >= open && nowMins < close - 20) {
-                options.push(`<option value="asap">En Kısa Sürede (~15 dk)</option>`);
-                let start = Math.ceil((nowMins + 30) / 15) * 15;
-                for (let t = start; t <= close - 15; t += 15) options.push(`<option value="today-${fmt(t)}">Bugün, ${fmt(t)}</option>`);
-            } else {
-                options.push(`<option value="tomorrow-09:00">Yarın, 09:00</option>`);
-                options.push(`<option value="tomorrow-10:00">Yarın, 10:00</option>`);
-            }
-            select.innerHTML = options.join("");
+            select.innerHTML = `
+            <option value="">Teslim alma saati seçiniz</option>
+            <option value="asap">En Kısa Sürede (~15 dk)</option>
+            <option value="30min">30 dakika sonra</option>
+            <option value="1hour">1 saat sonra</option>
+        `;
         }
 
         const validators = {
@@ -625,15 +632,7 @@
         /* ---------- 8. HESAPLAMA & SİPARİŞ ÖZETİ ---------- */
         function calculateTotals() {
             const subtotal = round2(Cart.subtotal());
-            const customizations = round2(Cart.customizationTotal());
-            const discount = 0;
-            const afterDiscount = subtotal;
-            let deliveryFee = 0;
-            if (orderState.type === "delivery" && subtotal > 0) {
-                deliveryFee = afterDiscount >= PRICING.freeDeliveryFrom ? 0 : PRICING.deliveryFee;
-            }
-            const total = Math.max(0, round2(afterDiscount + deliveryFee));
-            return { subtotal, customizations, discount, afterDiscount, deliveryFee, total };
+            return { subtotal, total: subtotal };
         }
 
         function renderTotals() {
@@ -647,37 +646,35 @@
             }
 
             if ($("#sumSubtotal")) $("#sumSubtotal").textContent = empty ? "—" : formatMoney(t.subtotal);
-            if ($("#sumCustomRow")) {
-                $("#sumCustomRow").classList.toggle("d-none", t.customizations <= 0);
-                if ($("#sumCustom")) $("#sumCustom").textContent = formatMoney(t.customizations);
-            }
+            if ($("#sumCustomRow")) $("#sumCustomRow").classList.add("d-none");
             if ($("#sumDiscount")) $("#sumDiscount").textContent = "—";
 
+
+            const DELIVERY_FEE = 25;
             const deliveryEl = $("#sumDelivery");
             if (deliveryEl) {
                 deliveryEl.classList.remove("cf-free");
-                if (empty || orderState.type !== "delivery") {
-                    deliveryEl.textContent = (orderState.type && orderState.type !== "delivery" && !empty) ? "Ücretsiz" : "—";
-                    if (deliveryEl.textContent === "Ücretsiz") deliveryEl.classList.add("cf-free");
-                } else if (t.deliveryFee === 0) {
+                if (empty) {
+                    deliveryEl.textContent = "—";
+                } else if (orderState.type === "delivery") {
+                    deliveryEl.textContent = formatMoney(DELIVERY_FEE);  
+                } else if (orderState.type) {
                     deliveryEl.textContent = "Ücretsiz";
                     deliveryEl.classList.add("cf-free");
                 } else {
-                    deliveryEl.textContent = formatMoney(t.deliveryFee);
+                    deliveryEl.textContent = "—";
                 }
             }
 
-            if ($("#sumTotal")) $("#sumTotal").textContent = empty ? "—" : formatMoney(t.total);
-            if ($("#mobileTotal")) $("#mobileTotal").textContent = empty ? "—" : formatMoney(t.total);
+            const displayTotal = orderState.type === "delivery"
+                ? t.subtotal + DELIVERY_FEE
+                : t.subtotal;
 
-            const hint = $("#deliveryHint");
-            if (hint) {
-                const remaining = round2(PRICING.freeDeliveryFrom - t.afterDiscount);
-                const pct = Math.min(100, (t.afterDiscount / PRICING.freeDeliveryFrom) * 100);
-                hint.innerHTML = remaining > 0
-                    ? `<div class="w-100"><i class="bi bi-scooter"></i> Ücretsiz teslimat için <strong>${formatMoney(remaining)}</strong> daha ekleyin (${formatMoney(PRICING.deliveryFee)} kargo bedeli).<div class="cf-progress"><span style="width:${pct}%"></span></div></div>`
-                    : `<i class="bi bi-gift"></i> <span>Tebrikler! Siparişiniz <strong>ücretsiz teslimat</strong> kapsamındadır.</span>`;
-            }
+
+            if ($("#deliveryHint")) $("#deliveryHint").innerHTML = "";
+
+            if ($("#sumTotal")) $("#sumTotal").textContent = empty ? "—" : formatMoney(t.subtotal);
+            if ($("#mobileTotal")) $("#mobileTotal").textContent = empty ? "—" : formatMoney(t.subtotal);
 
             const checkoutBtn = $("#checkoutBtn");
             if (checkoutBtn) checkoutBtn.disabled = empty;
@@ -685,6 +682,41 @@
             if ($("#mobileBar")) $("#mobileBar").classList.toggle("hide", empty);
             document.body.classList.toggle("has-mobile-bar", !empty);
         }
+
+        function buildTableSelect() {
+            const select = $("#tableSelect");
+            if (!select || typeof TABLE_REGISTRY === "undefined") return;
+
+            const options = Object.entries(TABLE_REGISTRY).map(([token, t]) =>
+                `<option value="${token}">Masa ${t.tableNumber}</option>`
+            ).join("");
+
+            select.innerHTML = `<option value="">— Masa seçiniz —</option>${options}`;
+
+            select.addEventListener("change", () => {
+                const token = select.value;
+                if (!token) {
+                    orderState.tableContext = null;
+                    storage.remove(STORAGE_KEYS.tableContext, sessionStorage);
+                    renderTableContext();
+                    renderOrderType();
+                    return;
+                }
+                const entry = TABLE_REGISTRY[token];
+                if (!entry) return;
+
+                orderState.tableContext = {
+                    token,
+                    tableNumber: entry.tableNumber,
+                    validatedAt: new Date().toISOString()
+                };
+                storage.write(STORAGE_KEYS.tableContext, orderState.tableContext, sessionStorage);
+                renderTableContext();
+                renderOrderType();
+                toast.show(`Masa ${entry.tableNumber} seçildi`);
+            });
+        }
+
 
         /* ---------- 9. SİPARİŞİ TAMAMLAMA (CHECKOUT) ---------- */
         function validateOrder() {
@@ -720,7 +752,7 @@
             const t = calculateTotals();
 
             // Enum Eşleşmesi (Delivery=0, Pickup=1, DineIn=2)
-            const orderTypeMap = { delivery: 0, pickup: 1, dinein: 2 };
+            const orderTypeMap = { delivery: 1, pickup: 2, dinein: 3 };
             const orderTypeNum = orderTypeMap[orderState.type];
 
             const fullName = $("#fullName") ? $("#fullName").value.trim() : "";
@@ -733,7 +765,7 @@
                 OrderType: orderTypeNum,
                 Address: address,
                 TableId: tableId,
-                TotalAmount: t.total,
+                TotalAmount: Cart.subtotal(),
                 CustomerName: fullName,
                 Email: email,
                 PhoneNumber: phone,
@@ -753,7 +785,7 @@
             }
 
             try {
-                const response = await fetch("/Cart/CreateOrder", {
+                const response = await fetch("/Cart/Index", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(dto)
@@ -762,7 +794,7 @@
                 const res = await response.json();
                 if (res.success) {
                     Cart.clear();
-                    window.location.href = res.redirectUrl || `/Cart/Confirmation/${res.orderId}`;
+                    window.location.href = `/Cart/Confirmation/${res.orderCode}`;
                 } else {
                     toast.show(res.message || "Sipariş oluşturulamadı.", { error: true });
                     if (checkoutBtn) {
@@ -856,6 +888,7 @@
             if ($("#noteCount")) $("#noteCount").textContent = draft.note.length;
         }
 
+        buildTableSelect();
         Cart.load();
         renderTableContext();
         renderOrderType();
