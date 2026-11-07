@@ -1,0 +1,31 @@
+﻿<!-- ============ CONFIRM REMOVE MODAL ============ -->
+<div class="modal fade cf-dialog" id="confirmModal" tabindex="-1" aria-labelledby="confirmTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width:420px">
+        <div class="modal-content">
+            <span class="cf-dialog-icon"><i class="bi bi-trash3"></i></span>
+            <h3 id="confirmTitle">Remove this treat?</h3>
+            <p id="confirmText">Setting the quantity to zero will remove it from your cart.</p>
+            <div class="d-flex gap-2 justify-content-center flex-wrap">
+                <button type="button" class="btn cf-btn-outline" data-bs-dismiss="modal">Keep it</button>
+                <button type="button" class="btn cf-btn-primary" id="confirmYes">Yes, remove</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============ CHECKOUT PLACEHOLDER MODAL ============ -->
+<div class="modal fade cf-dialog" id="checkoutModal" tabindex="-1" aria-labelledby="checkoutTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width:460px">
+        <div class="modal-content">
+            <span class="cf-dialog-icon"><i class="bi bi-bag-check"></i></span>
+            <h3 id="checkoutTitle">Your order details are ready</h3>
+            <p>Here's what we'll take to the checkout step.</p>
+            <div class="cf-dialog-recap" id="checkoutRecap"></div>
+            <div class="cf-dev-note">
+                <i class="bi bi-info-circle"></i>
+                <span>The checkout step is not implemented yet. No order has been placed and no payment has been taken.</span>
+            </div>
+            <button type="button" class="btn cf-btn-primary w-100" data-bs-dismiss="modal">Got it</button>
+        </div>
+    </div>
+</div>

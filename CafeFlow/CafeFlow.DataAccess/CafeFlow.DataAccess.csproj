@@ -25,4 +25,8 @@
     <ProjectReference Include="..\CafeFlow.Entity\CafeFlow.Entity.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Repositories\Tables\" />
+  </ItemGroup>
+
 </Project>

@@ -102,46 +102,88 @@
                     });
                 });
 
-                /* ---------- Cart (static, in-memory) ---------- */
-                const cart = new Map(); // name -> { price, qty }
+                /* ---------- Cart (localStorage tabanlı) ---------- */
+                const CART_KEY = "cafeflow_cart";
                 const cartCount = document.getElementById("cartCount");
                 const cartItems = document.getElementById("cartItems");
                 const cartEmpty = document.getElementById("cartEmpty");
                 const cartFooter = document.getElementById("cartFooter");
                 const cartTotal = document.getElementById("cartTotal");
-                const money = (n) => `$${n.toFixed(2)}`;
 
-                const renderCart = () => {
-                    let count = 0;
-                    let total = 0;
-                    cartItems.innerHTML = "";
+                function _cartLoad() {
+                    try { return JSON.parse(localStorage.getItem(CART_KEY) || "[]"); }
+                    catch { return []; }
+                }
+                function _cartSave(items) {
+                    try { localStorage.setItem(CART_KEY, JSON.stringify(items)); } catch { }
+                }
 
-                    cart.forEach((item, name) => {
-                        count += item.qty;
-                        total += item.qty * item.price;
-                        const li = document.createElement("li");
-                        li.className = "cf-cart-item";
-                        li.innerHTML = `
-                                                        <div>
-                                                          <strong>${name}</strong>
-                                                          <small>${money(item.price)} each</small>
-                                                        </div>
-                                                        <div class="cf-qty">
-                                                          <button type="button" data-action="dec" aria-label="Decrease ${name}">−</button>
-                                                          <span>${item.qty}</span>
-                                                          <button type="button" data-action="inc" aria-label="Increase ${name}">+</button>
-                                                        </div>`;
-                        li.querySelector('[data-action="dec"]').addEventListener("click", () => updateQty(name, -1));
-                        li.querySelector('[data-action="inc"]').addEventListener("click", () => updateQty(name, 1));
-                        cartItems.appendChild(li);
+                function renderCart() {
+                    const items = _cartLoad();
+                    const count = items.reduce((s, i) => s + (i.quantity || 0), 0);
+                    const total = items.reduce((s, i) => s + i.unitPrice * i.quantity, 0);
+
+                    if (cartCount) cartCount.textContent = count;
+                    if (cartTotal) cartTotal.textContent = `₺${total.toFixed(2)}`;
+                    if (cartEmpty) cartEmpty.classList.toggle("d-none", items.length > 0);
+                    if (cartFooter) cartFooter.classList.toggle("d-none", items.length === 0);
+
+                    if (cartItems) {
+                        cartItems.innerHTML = items.map(item => `
+                        <li class="cf-cart-line" data-line="${item.lineId}">
+                            <img src="${item.image}" alt="${item.name}" style="width:48px;height:48px;object-fit:cover;border-radius:8px" />
+                            <div style="flex:1">
+                                <strong>${item.name}</strong>
+                                <small>₺${item.unitPrice.toFixed(2)} each</small>
+                            </div>
+                            <div class="cf-stepper">
+                                <button type="button" data-action="dec" data-line="${item.lineId}"><i class="bi bi-dash"></i></button>
+                                <span>${item.quantity}</span>
+                                <button type="button" data-action="inc" data-line="${item.lineId}"><i class="bi bi-plus"></i></button>
+                            </div>
+                            <button type="button" data-action="remove" data-line="${item.lineId}"><i class="bi bi-trash3"></i></button>
+                        </li>`).join("");
+                    }
+                }
+
+                if (cartItems) {
+                    cartItems.addEventListener("click", (e) => {
+                        const btn = e.target.closest("[data-action]");
+                        if (!btn) return;
+                        const lineId = btn.dataset.line;
+                        const items = _cartLoad();
+                        const item = items.find(i => i.lineId === lineId);
+                        if (!item) return;
+                        if (btn.dataset.action === "inc") item.quantity++;
+                        else if (btn.dataset.action === "dec") {
+                            item.quantity--;
+                            if (item.quantity <= 0) { _cartSave(items.filter(i => i.lineId !== lineId)); renderCart(); return; }
+                        } else if (btn.dataset.action === "remove") {
+                            _cartSave(items.filter(i => i.lineId !== lineId)); renderCart(); return;
+                        }
+                        _cartSave(items);
+                        renderCart();
                     });
+                }
 
-                    cartCount.textContent = count;
-                    cartTotal.textContent = money(total);
-                    const empty = cart.size === 0;
-                    cartEmpty.classList.toggle("d-none", !empty);
-                    cartFooter.classList.toggle("d-none", empty);
+                window.addToCart = (productId, name, price, imageUrl = "") => {
+                    const items = _cartLoad();
+                    const lineId = String(productId);
+                    const existing = items.find(i => i.lineId === lineId);
+                    if (existing) existing.quantity++;
+                    else items.push({ lineId, productId, name, unitPrice: price, quantity: 1, image: imageUrl, options: null });
+                    _cartSave(items);
+                    renderCart();
+                    cartCount.classList.add("bump");
+                    setTimeout(() => cartCount.classList.remove("bump"), 300);
+                    showToast(`${name} sepete eklendi`);
                 };
+
+                window.addEventListener("storage", (e) => {
+                    if (e.key === CART_KEY) renderCart();
+                });
+
+                renderCart();
 
                 const updateQty = (name, delta) => {
                     const item = cart.get(name);

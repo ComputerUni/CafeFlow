@@ -8,7 +8,7 @@ namespace CafeFlow.Business.DesignPatterns.Strategy
     {
         public decimal CalculateOrderShipping(decimal orderTotal)
         {
-            return orderTotal + 0m;
+            return 0m;
         }
     }
 }
