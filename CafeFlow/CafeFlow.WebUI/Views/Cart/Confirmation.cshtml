@@ -7,94 +7,130 @@
     ViewData["Title"] = "Siparişiniz Alındı";
 }
 
-<section class="cf-confirmation-section">
+<main class="cf-cart-section" style="padding: 130px 0 80px; min-height: 85vh;">
     <div class="container">
-        <div class="cf-confirm-card">
+        <div style="max-width: 740px; margin: 0 auto;">
 
-            <!-- Başlık -->
-            <div class="cf-confirm-hero">
-                <div class="cf-confirm-icon">
-                    <i class="bi bi-check-lg"></i>
+            <!-- 1. Başlık & Onay Rozeti -->
+            <section class="cf-panel text-center mb-4 p-4" style="border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.03);">
+                <div class="d-inline-flex align-items-center justify-content-center rounded-circle mb-3"
+                     style="width: 68px; height: 68px; background: #e8f5e9; color: #2e7d32; font-size: 32px;">
+                    <i class="bi bi-check2"></i>
                 </div>
-                <h1>Siparişiniz Alındı!</h1>
-                <p class="text-muted">Siparişiniz hazırlanmaya başlandı. Teşekkür ederiz 🎉</p>
-                <div class="cf-order-code">
-                    <span>Sipariş Kodu</span>
-                    <strong>#@Model.OrderCode</strong>
+
+                <h1 class="mb-2" style="font-family: 'Playfair Display', serif; font-size: 30px; color: #3d2329; font-weight: 700;">
+                    Siparişiniz Alındı!
+                </h1>
+                <p class="text-muted small mb-3">Lezzetleriniz özenle hazırlanıyor, bizi tercih ettiğiniz için teşekkür ederiz.</p>
+
+                <div class="d-inline-flex align-items-center gap-2 px-4 py-2 rounded-pill"
+                     style="background: #fff5f7; border: 1.5px solid #f9cbd6; color: #c44569;">
+                    <span class="small fw-semibold">Sipariş Kodu:</span>
+                    <strong class="fs-6" style="letter-spacing: 0.5px;">#@Model.OrderCode</strong>
                 </div>
-            </div>
+            </section>
 
-            <!-- Sipariş Detayları -->
-            <div class="cf-confirm-body">
-                <div class="row g-4">
+            <!-- 2. Sipariş & Müşteri Bilgileri -->
+            <section class="cf-panel mb-4 p-4" style="border-radius: 24px;">
+                <div class="cf-panel-head mb-3">
+                    <h2 class="cf-panel-title fs-5 m-0">
+                        <span class="cf-step" style="width: 28px; height: 28px; font-size: 14px;"><i class="bi bi-receipt"></i></span> Sipariş Bilgileri
+                    </h2>
+                </div>
 
+                <div class="row g-3">
                     <div class="col-md-6">
-                        <div class="cf-confirm-block">
-                            <h6><i class="bi bi-box-seam"></i> Sipariş Türü</h6>
-                            <p>
+                        <div class="p-3 rounded-4 h-100" style="background: #faf8f8; border: 1px solid #f0e6e8;">
+                            <small class="text-muted text-uppercase fw-bold d-block mb-1" style="font-size: 11px;">
+                                <i class="bi bi-geo-alt text-danger me-1"></i> Sipariş Türü
+                            </small>
+                            <strong class="d-block text-dark mb-1">
                                 @switch (Model.OrderType)
                                 {
                                     case OrderType.Online:
-                                        <span><i class="bi bi-scooter"></i> Adrese Teslimat</span>
+                                        <span><i class="bi bi-scooter text-danger me-1"></i> Adrese Teslimat</span>
                                         break;
                                     case OrderType.TakeAway:
-                                        <span><i class="bi bi-bag"></i> Gel-Al</span>
+                                        <span><i class="bi bi-bag text-warning me-1"></i> Gel-Al</span>
                                         break;
                                     case OrderType.Table:
-                                        <span><i class="bi bi-cup-hot"></i> Masa @Model.TableId</span>
+                                        <span><i class="bi bi-cup-hot text-primary me-1"></i> Masadan Sipariş (Masa @Model.TableId)</span>
                                         break;
                                 }
-                            </p>
+                            </strong>
                             @if (!string.IsNullOrEmpty(Model.Address))
                             {
-                                <small class="text-muted">@Model.Address</small>
+                                <span class="small text-muted d-block mt-2" style="line-height: 1.4;">@Model.Address</span>
                             }
                         </div>
                     </div>
 
                     <div class="col-md-6">
-                        <div class="cf-confirm-block">
-                            <h6><i class="bi bi-person"></i> Müşteri</h6>
-                            <p>@Model.CustomerName</p>
-                            <small class="text-muted">@Model.PhoneNumber</small>
+                        <div class="p-3 rounded-4 h-100" style="background: #faf8f8; border: 1px solid #f0e6e8;">
+                            <small class="text-muted text-uppercase fw-bold d-block mb-1" style="font-size: 11px;">
+                                <i class="bi bi-person text-danger me-1"></i> Müşteri Bilgileri
+                            </small>
+                            <strong class="d-block text-dark mb-1">@Model.CustomerName</strong>
+                            <span class="small text-muted d-block"><i class="bi bi-telephone me-1"></i> @Model.PhoneNumber</span>
                         </div>
                     </div>
-
-                    <div class="col-12">
-                        <div class="cf-confirm-block">
-                            <h6><i class="bi bi-receipt"></i> Sipariş İçeriği</h6>
-                            <ul class="cf-confirm-items">
-                                @foreach (var item in Model.OrderDetails)
-                                {
-                                    <li>
-                                        <span>@item.ProductName <small class="text-muted">x@item.Quantity</small></span>
-                                        <span>₺@((item.UnitPrice * item.Quantity).ToString("N2"))</span>
-                                    </li>
-                                }
-                            </ul>
-                            <div class="cf-confirm-total">
-                                <span>Toplam</span>
-                                <strong>₺@Model.TotalAmount.ToString("N2")</strong>
-                            </div>
-                        </div>
-                    </div>
-
                 </div>
-            </div>
+            </section>
 
-            <!-- Aksiyonlar -->
-            <div class="cf-confirm-actions">
-                <a href="/Menu/Index" class="btn cf-btn-outline">
-                    <i class="bi bi-arrow-left"></i> Menüye Dön
+            <!-- 3. Seçilen Ürünler ve Toplam Fiyat -->
+            <section class="cf-panel mb-4 p-4" style="border-radius: 24px;">
+                <div class="cf-panel-head mb-3">
+                    <h2 class="cf-panel-title fs-5 m-0">
+                        <span class="cf-step" style="width: 28px; height: 28px; font-size: 14px;"><i class="bi bi-bag-check"></i></span> Seçilen Ürünler
+                    </h2>
+                </div>
+
+                <div class="p-0">
+                    <ul class="p-0 m-0" style="list-style: none;">
+                        @if (Model.OrderDetails != null && Model.OrderDetails.Any())
+                        {
+                            foreach (var item in Model.OrderDetails)
+                            {
+                                <li class="d-flex justify-content-between align-items-center py-2 border-bottom" style="border-color: #f6eaed !important;">
+                                    <div>
+                                        <span class="fw-semibold text-dark">
+                                            @(string.IsNullOrEmpty(item.ProductName) ? "Özel Ürün / İçecek" : item.ProductName)
+                                        </span>
+                                        <span class="badge rounded-pill ms-2" style="background: #fff0f3; color: #c44569; border: 1.5px solid #fcd3dc; font-weight: 600; padding: 4px 10px;">
+                                            x @(item.Quantity)
+                                        </span>
+                                    </div>
+                                    <span class="fw-bold text-dark">
+                                        ₺@((item.UnitPrice * item.Quantity).ToString("N2"))
+                                    </span>
+                                </li>
+                            }
+                        }
+                        else
+                        {
+                            <li class="text-muted small py-2">Sipariş detayları yüklenemedi.</li>
+                        }
+                    </ul>
+
+                    <div class="pt-3 mt-2 border-top d-flex justify-content-between align-items-center" style="border-color: #f2dfe3 !important;">
+                        <div>
+                            <span class="d-block fw-bold text-dark">Toplam Tutar</span>
+                            <small class="text-muted">KDV ve Teslimat Dahil</small>
+                        </div>
+                        <strong class="fs-3 fw-bold" style="color: #c44569;">
+                            ₺@Model.TotalAmount.ToString("N2")
+                        </strong>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. Geri Dön Butonu -->
+            <div class="text-center mt-4">
+                <a href="/Menu/Index" class="btn cf-continue mb-0 text-decoration-none">
+                    <span><i class="bi bi-arrow-left"></i></span> Menüye Dön
                 </a>
-                @if (User.Identity.IsAuthenticated)
-                {
-                    <a href="/Customer/Orders" class="btn cf-btn-primary">
-                        Siparişlerim <i class="bi bi-arrow-right"></i>
-                    </a>
-                }
             </div>
 
         </div>
     </div>
-</section>
+</main>

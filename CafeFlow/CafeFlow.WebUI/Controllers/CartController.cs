@@ -45,6 +45,7 @@ namespace CafeFlow.WebUI.Controllers
         }
 
         [HttpGet]
+        [Route("Cart/Confirmation/{code}")]
         public async Task<IActionResult> Confirmation(string code)
         {
             if (string.IsNullOrEmpty(code)) return RedirectToAction("Index", "Default");

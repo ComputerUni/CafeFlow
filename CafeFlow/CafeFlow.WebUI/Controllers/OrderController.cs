@@ -1,12 +1,27 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using CafeFlow.Business.Abstract;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CafeFlow.WebUI.Controllers
 {
-    public class OrderController : Controller
+    public class OrderController(IOrderService _orderService) : Controller
     {
-        public IActionResult TrackOrder()
+        public async Task<IActionResult> TrackOrder(string orderCode)
         {
-            return View();
+            if(string.IsNullOrWhiteSpace(orderCode))
+            {
+                return View();
+            }
+
+            ViewBag.code = orderCode;
+            var order = await _orderService.GetByCodeAsync(orderCode);
+
+            if(order is null)
+            {
+                ViewBag.NotFound = true;
+                return View();
+            }
+
+            return View(order);
         }
     }
 }

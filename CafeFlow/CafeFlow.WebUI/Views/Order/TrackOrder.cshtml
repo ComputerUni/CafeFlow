@@ -1,4 +1,8 @@
-﻿@{
+﻿@using CafeFlow.DTO.Order
+@using CafeFlow.Entity.Enums
+@model OrderConfirmationDto
+
+@{
     Layout = "~/Views/Shared/_CustomerLayout.cshtml";
     ViewData["Title"] = "Sipariş Sorgula";
 }
@@ -219,7 +223,6 @@
                     <p class="cf-track-subtitle">Size iletilen benzersiz takip kodunu yazarak anlık hazırlık durumunu görüntüleyin.</p>
                 </div>
 
-                <!-- Sorgulama Formu -->
                 <div class="cf-track-card mb-4">
                     <form asp-controller="Order" asp-action="TrackOrder" method="get" class="cf-track-form">
                         <div class="cf-input-wrap">
@@ -265,7 +268,7 @@
                         <!-- 4 Aşamalı Durum Çizgisi -->
                         <div class="cf-timeline">
                             <!-- 0: Alındı -->
-                            <div class="cf-timeline-step @(currentStatus > 0 ? "completed" : currentStatus == 0 ? "active" : "")">
+                            <div class="cf-timeline-step @(currentStatus > 1 ? "completed" : currentStatus == 1 ? "active" : "")">
                                 <div class="cf-timeline-icon">
                                     <i class="bi bi-receipt"></i>
                                 </div>
@@ -273,7 +276,7 @@
                             </div>
 
                             <!-- 1: Hazırlanıyor -->
-                            <div class="cf-timeline-step @(currentStatus > 1 ? "completed" : currentStatus == 1 ? "active" : "")">
+                            <div class="cf-timeline-step @(currentStatus > 2 ? "completed" : currentStatus == 2 ? "active" : "")">
                                 <div class="cf-timeline-icon">
                                     <i class="bi bi-cup-hot-fill"></i>
                                 </div>
@@ -281,7 +284,7 @@
                             </div>
 
                             <!-- 2: Hazır / Yolda -->
-                            <div class="cf-timeline-step @(currentStatus > 2 ? "completed" : currentStatus == 2 ? "active" : "")">
+                            <div class="cf-timeline-step @(currentStatus > 3 ? "completed" : currentStatus == 3 ? "active" : "")">
                                 <div class="cf-timeline-icon">
                                     <i class="bi bi-box2-heart-fill"></i>
                                 </div>
@@ -289,7 +292,7 @@
                             </div>
 
                             <!-- 3: Teslim Edildi -->
-                            <div class="cf-timeline-step @(currentStatus >= 3 ? "completed" : "")">
+                            <div class="cf-timeline-step @(currentStatus >= 4 ? "completed" : "")">
                                 <div class="cf-timeline-icon">
                                     <i class="bi bi-check2-circle"></i>
                                 </div>

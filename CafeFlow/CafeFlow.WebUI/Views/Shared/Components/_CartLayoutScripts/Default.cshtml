@@ -501,8 +501,7 @@
             });
             storage.write(STORAGE_KEYS.orderDraft, {
                 type: orderState.type,
-                fields,
-                note: $("#orderNote") ? $("#orderNote").value : "",
+                fields
             }, sessionStorage);
         }
 
@@ -751,11 +750,12 @@
             if (!validateOrder()) return;
             const t = calculateTotals();
 
-            // Enum Eşleşmesi (Delivery=0, Pickup=1, DineIn=2)
             const orderTypeMap = { delivery: 1, pickup: 2, dinein: 3 };
             const orderTypeNum = orderTypeMap[orderState.type];
 
-            const fullName = $("#fullName") ? $("#fullName").value.trim() : "";
+            const fullName = orderState.type === "dinein"
+                ? ($("#tableCustomerName") ? $("#tableCustomerName").value.trim() : "")
+                : ($("#fullName") ? $("#fullName").value.trim() : "");
             const phone = $("#phone") ? $("#phone").value.trim() : "";
             const email = (fullName.toLowerCase().replace(/[^a-z0-9]/g, "") || "guest");
             const address = orderState.type === "delivery" ? ($("#address") ? $("#address").value.trim() : "") : null;
@@ -794,6 +794,13 @@
                 const res = await response.json();
                 if (res.success) {
                     Cart.clear();
+
+                    storage.remove(STORAGE_KEYS.orderDraft, sessionStorage);
+                    storage.remove(STORAGE_KEYS.tableContext, sessionStorage);
+                    orderState.tableContext = null;
+                    orderState.type = null;
+                    if (detailsForm) detailsForm.reset();
+                    if ($("#orderNote")) $("#orderNote").value = "";
                     window.location.href = `/Cart/Confirmation/${res.orderCode}`;
                 } else {
                     toast.show(res.message || "Sipariş oluşturulamadı.", { error: true });

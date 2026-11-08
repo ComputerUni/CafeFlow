@@ -72,6 +72,14 @@ namespace CafeFlow.Business.Concrete
             order.OrderStatus = OrderStatus.Received;
             order.TotalAmount = createOrderDto.TotalAmount + shippingStrategy.CalculateOrderShipping(createOrderDto.TotalAmount);
 
+            order.OrderDetails = createOrderDto.OrderDetails.Select(d => new OrderDetail
+            {
+                ProductId = d.ProductId,
+                Quantity = d.Quantity,
+                UnitPrice = d.UnitPrice,
+                SelectedOptions = d.SelectedOptions
+            }).ToList();
+
             await _orderRepository.CreateAsync(order);
 
             await _orderObserverObject.NotifyObserver(order.Id, OrderStatus.Received);
