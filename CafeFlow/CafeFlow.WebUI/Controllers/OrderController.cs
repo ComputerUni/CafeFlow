@@ -1,5 +1,6 @@
 ﻿using CafeFlow.Business.Abstract;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace CafeFlow.WebUI.Controllers
 {
@@ -22,6 +23,13 @@ namespace CafeFlow.WebUI.Controllers
             }
 
             return View(order);
+        }
+
+        public async Task<IActionResult> MyOrders()
+        {
+            var appUserId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var orders = await _orderService.GetMyOrders(appUserId);
+            return View(orders);
         }
     }
 }

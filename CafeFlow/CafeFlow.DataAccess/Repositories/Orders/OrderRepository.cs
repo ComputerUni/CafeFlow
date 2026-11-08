@@ -18,5 +18,10 @@ namespace CafeFlow.DataAccess.Repositories.Orders
         {
             return await _context.Orders.Include(o => o.Customer).Include(o => o.OrderDetails).ThenInclude(d => d.Product).FirstOrDefaultAsync(o => o.OrderCode == code);
         }
+
+        public async Task<List<Order>> GetMyOrders(int appUserId)
+        {
+            return await _context.Orders.Include(o => o.OrderDetails).ThenInclude(od => od.Product).Include(o => o.Customer).Where(o => o.Customer.AppUserId == appUserId).OrderByDescending(o => o.CreatedAt).ToListAsync();
+        }
     }
 }

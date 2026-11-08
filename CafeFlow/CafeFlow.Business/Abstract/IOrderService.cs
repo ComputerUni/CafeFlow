@@ -1,4 +1,5 @@
 ﻿using CafeFlow.DTO.Order;
+using CafeFlow.Entity;
 
 namespace CafeFlow.Business.Abstract
 {
@@ -7,5 +8,6 @@ namespace CafeFlow.Business.Abstract
         Task<string> CreateOrderAsync(CreateOrderDto createOrderDto);
         Task UpdateOrderAsync(int id);
         Task<OrderConfirmationDto> GetByCodeAsync(string code);
+        Task<List<OrderConfirmationDto>> GetMyOrders(int appUserId);
     }
 }

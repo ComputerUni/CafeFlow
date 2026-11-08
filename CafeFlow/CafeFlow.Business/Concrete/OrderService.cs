@@ -8,13 +8,15 @@ using CafeFlow.Business.DesignPatterns.Strategy;
 using CafeFlow.DataAccess.Repositories.Customers;
 using CafeFlow.DataAccess.Repositories.Orders;
 using CafeFlow.DataAccess.Repositories.OrderStatusHistoryRepositories;
+using CafeFlow.DataAccess.Repositories.Products;
 using CafeFlow.DTO.Order;
 using CafeFlow.Entity;
 using CafeFlow.Entity.Enums;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace CafeFlow.Business.Concrete
 {
-    public class OrderService(IOrderRepository _orderRepository, IMapper _mapper, OrderValidationHandler _orderValidatonHandler, OrderObserverObject _orderObserverObject, IOrderStatusHistoryRepository _orderStatusHistoryRepository, ICustomerRepository _customerRepository) : IOrderService
+    public class OrderService(IOrderRepository _orderRepository, IProductRepository _productRepository, IMapper _mapper, OrderValidationHandler _orderValidatonHandler, OrderObserverObject _orderObserverObject, IOrderStatusHistoryRepository _orderStatusHistoryRepository, ICustomerRepository _customerRepository) : IOrderService
     {
         public async Task<string> CreateOrderAsync(CreateOrderDto createOrderDto)
         {
@@ -72,13 +74,26 @@ namespace CafeFlow.Business.Concrete
             order.OrderStatus = OrderStatus.Received;
             order.TotalAmount = createOrderDto.TotalAmount + shippingStrategy.CalculateOrderShipping(createOrderDto.TotalAmount);
 
-            order.OrderDetails = createOrderDto.OrderDetails.Select(d => new OrderDetail
+            var orderDetailList = new List<OrderDetail>();
+
+            foreach(var d in createOrderDto.OrderDetails)
             {
-                ProductId = d.ProductId,
-                Quantity = d.Quantity,
-                UnitPrice = d.UnitPrice,
-                SelectedOptions = d.SelectedOptions
-            }).ToList();
+                var product = await _productRepository.GetByIdAsync(d.ProductId);
+                var basePrice = product.Price;
+
+                var additional = d.UnitPrice > basePrice ? (d.UnitPrice - basePrice) : d.AdditionalPrice;
+
+                orderDetailList.Add(new OrderDetail
+                {
+                    ProductId = d.ProductId,
+                    Quantity = d.Quantity,
+                    UnitPrice = basePrice,
+                    AdditionalPrice = additional,
+                    SelectedOptions = d.SelectedOptions
+                });
+            }
+
+            order.OrderDetails = orderDetailList;
 
             await _orderRepository.CreateAsync(order);
 
@@ -93,6 +108,12 @@ namespace CafeFlow.Business.Concrete
             var order = await _orderRepository.GetByCodeWithDetailsAsync(code);
             if (order == null) return null;
             return _mapper.Map<OrderConfirmationDto>(order);
+        }
+
+        public async Task<List<OrderConfirmationDto>> GetMyOrders(int appUserId)
+        {
+            var myOrders = await _orderRepository.GetMyOrders(appUserId);
+            return _mapper.Map<List<OrderConfirmationDto>>(myOrders);
         }
 
         public async Task UpdateOrderAsync(int id)

@@ -1,0 +1,210 @@
+﻿@using CafeFlow.DTO.Order
+@using CafeFlow.Entity.Enums
+@model List<OrderConfirmationDto>
+
+@{
+    Layout = "~/Views/Shared/_CustomerLayout.cshtml";
+    ViewData["Title"] = "Siparişlerim";
+}
+
+<style>
+    .cf-myorders-section {
+        padding: 130px 0 80px; /* Navbar arkasına kaymayı engeller */
+        min-height: 85vh;
+        background: radial-gradient(circle at top right, rgba(253, 232, 238, 0.45), transparent 45%), radial-gradient(circle at bottom left, rgba(255, 246, 248, 0.6), transparent 50%);
+    }
+
+    .cf-header-title {
+        font-family: var(--cf-font-display, "Playfair Display", Georgia, serif);
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: var(--cf-coffee, #6b4a3a);
+    }
+
+        .cf-header-title span {
+            color: var(--cf-rose-deep, #d46f8c);
+        }
+
+    .cf-order-card {
+        background: #ffffff;
+        border: 1px solid var(--cf-pink-100, #fde8ee);
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(212, 111, 140, 0.06);
+        padding: 24px 28px;
+        transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    }
+
+        .cf-order-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 16px 36px rgba(212, 111, 140, 0.12);
+            border-color: var(--cf-pink-200, #f9d3de);
+        }
+
+    .cf-code-badge {
+        font-family: monospace;
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: var(--cf-coffee, #6b4a3a);
+        letter-spacing: 0.5px;
+    }
+
+    .cf-item-pill {
+        background: #fff0f3;
+        color: var(--cf-rose-deep, #d46f8c);
+        border: 1px solid #fcd3dc;
+        font-weight: 600;
+        font-size: 0.78rem;
+        padding: 2px 8px;
+        border-radius: 999px;
+    }
+
+    .cf-btn-track {
+        background: #fff;
+        color: var(--cf-rose-deep, #d46f8c);
+        border: 1.5px solid var(--cf-pink-200, #f9d3de);
+        border-radius: 999px;
+        font-weight: 600;
+        font-size: 0.88rem;
+        padding: 7px 18px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.2s ease;
+        text-decoration: none;
+    }
+
+        .cf-btn-track:hover {
+            background: linear-gradient(135deg, var(--cf-rose, #e88ea6), var(--cf-rose-deep, #d46f8c));
+            color: #ffffff;
+            border-color: transparent;
+            box-shadow: 0 6px 16px rgba(212, 111, 140, 0.25);
+        }
+</style>
+
+<main class="cf-myorders-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-9 col-md-11">
+
+                <div class="text-center mb-5">
+                    <h1 class="cf-header-title mb-2">
+                        Geçmiş <span>Siparişlerim</span>
+                    </h1>
+                    <p class="text-muted small">Daha önce verdiğiniz tüm siparişleri ve anlık durumlarını buradan inceleyebilirsiniz.</p>
+                </div>
+
+                @if (Model == null || !Model.Any())
+                {
+                    <div class="cf-order-card text-center p-5">
+                        <div class="mb-3 text-muted">
+                            <i class="bi bi-bag-x fs-1" style="color: var(--cf-rose, #e88ea6);"></i>
+                        </div>
+                        <h5 class="fw-bold text-dark">Henüz Bir Siparişiniz Bulunmuyor</h5>
+                        <p class="text-muted small mb-4">Menümüzdeki enfes kahve ve lezzetleri keşfetmeye hemen başlayabilirsiniz.</p>
+                        <a asp-controller="Menu" asp-action="Index" class="btn cf-btn-track px-4 py-2">
+                            Menüyü İncele <i class="bi bi-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                }
+                else
+                {
+                    <div class="d-flex flex-column gap-3">
+                        @foreach (var order in Model)
+                        {
+                            <div class="cf-order-card">
+                                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 pb-3 border-bottom">
+                                    <div>
+                                        <span class="text-muted small d-block mb-1">Sipariş Kodu</span>
+                                        <span class="cf-code-badge">#@order.OrderCode</span>
+                                    </div>
+                                    <div class="text-md-center">
+                                        <span class="text-muted small d-block mb-1">Tarih</span>
+                                        <span class="small fw-semibold text-secondary">
+                                            <i class="bi bi-calendar3 me-1"></i>@order.CreatedAt.ToString("dd.MM.yyyy HH:mm")
+                                        </span>
+                                    </div>
+                                    <div>
+                                        @switch (order.OrderStatus)
+                                        {
+                                            case OrderStatus.Received:
+                                                <span class="badge rounded-pill bg-light text-dark border px-3 py-2">
+                                                    <i class="bi bi-clock me-1 text-warning"></i> Alındı
+                                                </span>
+                                                break;
+                                            case OrderStatus.Preparing:
+                                                <span class="badge rounded-pill px-3 py-2" style="background-color: #fff0f3; color: #c44569; border: 1px solid #fcd3dc;">
+                                                    <i class="bi bi-cup-hot-fill me-1"></i> Hazırlanıyor
+                                                </span>
+                                                break;
+                                            case OrderStatus.Ready:
+                                                <span class="badge rounded-pill bg-info-subtle text-info-emphasis border px-3 py-2">
+                                                    <i class="bi bi-box2-heart-fill me-1"></i> Hazır
+                                                </span>
+                                                break;
+                                            case OrderStatus.Delivered:
+                                                <span class="badge rounded-pill bg-success-subtle text-success border px-3 py-2">
+                                                    <i class="bi bi-check-circle-fill me-1"></i> Teslim Edildi
+                                                </span>
+                                                break;
+                                            case OrderStatus.Cancelled:
+                                                <span class="badge rounded-pill bg-danger-subtle text-danger border px-3 py-2">
+                                                    <i class="bi bi-x-circle me-1"></i> İptal Edildi
+                                                </span>
+                                                break;
+                                        }
+                                    </div>
+                                </div>
+
+                                <div class="py-3">
+                                    @if (order.OrderDetails != null && order.OrderDetails.Any())
+                                    {
+                                        <ul class="list-unstyled mb-0 d-flex flex-column gap-2">
+                                            @foreach (var item in order.OrderDetails)
+                                            {
+                                                <li class="d-flex justify-content-between align-items-center">
+                                                    <div>
+                                                        <div class="d-flex align-items-center gap-2">
+                                                            <span class="fw-semibold text-dark">@item.ProductName</span>
+                                                            <span class="cf-item-pill">x@(item.Quantity)</span>
+                                                        </div>
+
+                                                        @if (!string.IsNullOrEmpty(item.SelectedOptions))
+                                                        {
+                                                            var formatted = item.SelectedOptions
+                                                                .Replace("size:", "Boyut: ")
+                                                                .Replace("milk:", "Süt: ")
+                                                                .Replace("extraShot:", "Ekstra Shot: ")
+                                                                .Replace("syrup:", "Şurup: ");
+
+                                                            <small class="d-block text-muted mt-1" style="font-size: 0.8rem;">
+                                                                <i class="bi bi-sliders2 me-1" style="color: var(--cf-rose-deep, #d46f8c);"></i>@formatted
+                                                            </small>
+                                                        }
+                                                    </div>
+                                                    <span class="fw-semibold text-dark">
+                                                        ₺@(((item.UnitPrice + item.AdditionalPrice) * item.Quantity).ToString("N2"))
+                                                    </span>
+                                                </li>
+                                            }
+                                        </ul>
+                                    }
+                                </div>
+
+                                <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                                    <div>
+                                        <span class="text-muted small">Toplam Tutar: </span>
+                                        <strong class="fs-5" style="color: var(--cf-rose-deep, #d46f8c);">₺@order.TotalAmount.ToString("N2")</strong>
+                                    </div>
+                                    <a asp-controller="Order" asp-action="TrackOrder" asp-route-orderCode="@order.OrderCode" class="cf-btn-track">
+                                        Durumu İncele <i class="bi bi-arrow-right"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+
+            </div>
+        </div>
+    </div>
+</main>

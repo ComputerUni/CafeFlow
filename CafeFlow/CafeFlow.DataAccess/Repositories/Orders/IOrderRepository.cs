@@ -9,5 +9,6 @@ namespace CafeFlow.DataAccess.Repositories.Orders
     public interface IOrderRepository : IGenericRepository<Order>
     {
         Task<Order> GetByCodeWithDetailsAsync(string code);
+        Task<List<Order>> GetMyOrders(int appUserId);
     }
 }

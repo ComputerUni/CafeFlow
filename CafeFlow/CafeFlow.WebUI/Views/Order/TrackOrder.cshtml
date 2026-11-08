@@ -324,7 +324,43 @@
                                 <span class="cf-info-label">Toplam Tutar</span>
                                 <span class="cf-info-val fs-5" style="color: var(--cf-rose-deep, #d46f8c);">@Model.TotalAmount.ToString("C2")</span>
                             </div>
+
+                            <div class="cf-info-row">
+                                <span class="cf-info-label">Sipariş Detayı</span>
+                                <span class="cf-info-val">
+                                    <ul class="list-unstyled mb-0">
+                                        @foreach (var item in Model.OrderDetails)
+                                        {
+                                            <li class="d-flex justify-content-between align-items-center py-2.5 border-bottom" style="border-color: rgba(244, 184, 201, 0.35) !important;">
+                                                <div>
+                                                    <div class="d-flex align-items-center gap-2">
+                                                        <span class="fw-semibold text-dark">
+                                                            @(string.IsNullOrEmpty(item.ProductName) ? "Özel Lezzet / İçecek" : item.ProductName)
+                                                        </span>
+                                                        <span class="badge rounded-pill" style="background: #fff0f3; color: #c44569; border: 1.5px solid #fcd3dc; font-weight: 600; padding: 3px 8px; font-size: 0.78rem;">
+                                                            x@(item.Quantity)
+                                                        </span>
+                                                    </div>
+
+                                                    @if (!string.IsNullOrEmpty(item.SelectedOptions))
+                                                    {
+                                                        <small class="d-block mt-1 text-muted" style="font-size: 0.82rem;">
+                                                            <i class="bi bi-sliders2 me-1" style="color: var(--cf-rose-deep, #d46f8c);"></i>@item.SelectedOptions
+                                                        </small>
+                                                    }
+                                                </div>
+
+                                                <span class="fw-bold text-dark text-nowrap ms-3">
+                                                    ₺@(((item.UnitPrice + item.AdditionalPrice) * item.Quantity).ToString("N2"))
+                                                </span>
+                                            </li>
+                                        }
+                                    </ul>
+                                </span>
+                            </div>
                         </div>
+
+                       
                     </div>
                 }
 

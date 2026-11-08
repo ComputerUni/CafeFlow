@@ -290,29 +290,29 @@
                 const customizable = Boolean(line.options && Object.keys(line.options).length > 0);
 
                 return `
-                    <article class="cf-item" data-line="${escapeHtml(safeLineId)}">
-                      <a href="${detailUrl(line.productId)}" class="cf-item-thumb" aria-label="${name}">
-                        <img src="${image}" alt="${name}" data-fallback="${category}" loading="lazy" />
-                      </a>
-                      <div class="cf-item-info">
-                        <span class="cf-cat-label">${categoryLabel(category)}</span>
-                        <h3 class="cf-item-name"><a href="${detailUrl(line.productId)}">${name}</a></h3>
-                        ${typeof optionTags === 'function' ? optionTags(line.options) : ''}
-                        <div class="cf-item-actions">
-                          ${customizable ? `<button type="button" class="cf-link-btn" data-action="edit"><i class="bi bi-sliders"></i> Düzenle</button>` : ""}
-                          <button type="button" class="cf-link-btn muted" data-action="remove"><i class="bi bi-trash3"></i> Kaldır</button>
-                        </div>
-                      </div>
-                      <div class="cf-item-side">
-                        <span class="cf-unit">${formatMoney(price)} / adet</span>
-                        <div class="cf-stepper" role="group" aria-label="Adet">
-                          <button type="button" data-action="dec" aria-label="Azalt"><i class="bi bi-dash"></i></button>
-                          <span aria-live="polite">${qty}</span>
-                          <button type="button" data-action="inc" aria-label="Artır" ${qty >= 50 ? "disabled" : ""}><i class="bi bi-plus"></i></button>
-                        </div>
-                        <span class="cf-line-total">${formatMoney(price * qty)}</span>
-                      </div>
-                    </article>`;
+                            <article class="cf-item" data-line="${escapeHtml(safeLineId)}">
+                              <a href="${detailUrl(line.productId)}" class="cf-item-thumb" aria-label="${name}">
+                                <img src="${image}" alt="${name}" data-fallback="${category}" loading="lazy" />
+                              </a>
+                              <div class="cf-item-info">
+                                <span class="cf-cat-label">${categoryLabel(category)}</span>
+                                <h3 class="cf-item-name"><a href="${detailUrl(line.productId)}">${name}</a></h3>
+                                ${typeof optionTags === 'function' ? optionTags(line.options) : ''}
+                                <div class="cf-item-actions">
+                                  ${customizable ? `<button type="button" class="cf-link-btn" data-action="edit"><i class="bi bi-sliders"></i> Düzenle</button>` : ""}
+                                  <button type="button" class="cf-link-btn muted" data-action="remove"><i class="bi bi-trash3"></i> Kaldır</button>
+                                </div>
+                              </div>
+                              <div class="cf-item-side">
+                                <span class="cf-unit">${formatMoney(price)} / adet</span>
+                                <div class="cf-stepper" role="group" aria-label="Adet">
+                                  <button type="button" data-action="dec" aria-label="Azalt"><i class="bi bi-dash"></i></button>
+                                  <span aria-live="polite">${qty}</span>
+                                  <button type="button" data-action="inc" aria-label="Artır" ${qty >= 50 ? "disabled" : ""}><i class="bi bi-plus"></i></button>
+                                </div>
+                                <span class="cf-line-total">${formatMoney(price * qty)}</span>
+                              </div>
+                            </article>`;
             }).join("");
 
             applyFallbacks(cartList);
@@ -446,16 +446,16 @@
                 $("#customizeOptions").innerHTML = CUSTOM_OPTIONS.map((group) => {
                     const selected = current ? current[group.key] : group.default;
                     return `
-                        <fieldset class="cf-opt-group">
-                          <legend class="cf-opt-label">${group.label}</legend>
-                          <div class="cf-opt-choices">
-                            ${group.choices.map((c) => `
-                              <label class="cf-opt">
-                                <input type="radio" name="${group.key}" value="${c.value}" ${c.value === selected ? "checked" : ""} />
-                                <span>${c.value}<small>${c.price ? `+${formatMoney(c.price)}` : "Dahil"}</small></span>
-                              </label>`).join("")}
-                          </div>
-                        </fieldset>`;
+                                <fieldset class="cf-opt-group">
+                                  <legend class="cf-opt-label">${group.label}</legend>
+                                  <div class="cf-opt-choices">
+                                    ${group.choices.map((c) => `
+                                      <label class="cf-opt">
+                                        <input type="radio" name="${group.key}" value="${c.value}" ${c.value === selected ? "checked" : ""} />
+                                        <span>${c.value}<small>${c.price ? `+${formatMoney(c.price)}` : "Dahil"}</small></span>
+                                      </label>`).join("")}
+                                  </div>
+                                </fieldset>`;
                 }).join("");
             }
 
@@ -585,11 +585,11 @@
             const select = $("#pickupTime");
             if (!select) return;
             select.innerHTML = `
-            <option value="">Teslim alma saati seçiniz</option>
-            <option value="asap">En Kısa Sürede (~15 dk)</option>
-            <option value="30min">30 dakika sonra</option>
-            <option value="1hour">1 saat sonra</option>
-        `;
+                    <option value="">Teslim alma saati seçiniz</option>
+                    <option value="asap">En Kısa Sürede (~15 dk)</option>
+                    <option value="30min">30 dakika sonra</option>
+                    <option value="1hour">1 saat sonra</option>
+                `;
         }
 
         const validators = {
@@ -656,7 +656,7 @@
                 if (empty) {
                     deliveryEl.textContent = "—";
                 } else if (orderState.type === "delivery") {
-                    deliveryEl.textContent = formatMoney(DELIVERY_FEE);  
+                    deliveryEl.textContent = formatMoney(DELIVERY_FEE);
                 } else if (orderState.type) {
                     deliveryEl.textContent = "Ücretsiz";
                     deliveryEl.classList.add("cf-free");
@@ -770,12 +770,34 @@
                 Email: email,
                 PhoneNumber: phone,
                 AppUserId: null,
-                OrderDetails: Cart.items.map(l => ({
-                    ProductId: Number(l.productId),
-                    Quantity: Number(l.quantity),
-                    UnitPrice: Number(l.unitPrice),
-                    CustomizationDescription: l.options ? Object.entries(l.options).map(([k, v]) => `${k}: ${v}`).join(", ") : null
-                }))
+                OrderDetails: Cart.items.map(l => {
+                    const base = Number(l.basePrice ?? l.price ?? l.unitPrice);
+                    const totalUnit = Number(l.unitPrice);
+
+                    const extra = Number(l.additionalPrice ?? Math.max(0, totalUnit - base));
+
+                    let selectedText = null;
+                    if (l.selectedOptions) {
+                        selectedText = l.selectedOptions;
+                    } else if (l.options && Object.keys(l.options).length > 0) {
+                        selectedText = Object.entries(l.options)
+                            .map(([k, v]) => {
+                                const optionConfig = CUSTOM_OPTIONS.find(opt => opt.key === k);
+                                const turkishLabel = optionConfig ? optionConfig.label : k;
+
+                                return `${turkishLabel}: ${v}`;
+                            })
+                            .join(", ");
+                    }
+
+                    return {
+                        ProductId: Number(l.productId ?? l.id),
+                        Quantity: Number(l.quantity),
+                        UnitPrice: base,
+                        AdditionalPrice: extra,
+                        SelectedOptions: selectedText
+                    };
+                })
             };
 
             const checkoutBtn = $("#checkoutBtn");
@@ -830,27 +852,27 @@
 
             if ($("#recoSection")) $("#recoSection").classList.toggle("d-none", picks.length === 0);
             grid.innerHTML = picks.map((p) => `
-                    <div class="col-sm-6 col-md-4">
-                      <article class="cf-product-card">
-                        <div class="cf-product-img">
-                          <a href="${detailUrl(p.id)}" class="cf-product-img-link" aria-label="${p.name}">
-                            <img src="${p.image}" alt="${p.name}" loading="lazy" data-fallback="${p.category}" />
-                          </a>
-                          ${p.badge ? `<span class="cf-tag ${BADGES[p.badge]}">${p.badge}</span>` : ""}
-                        </div>
-                        <div class="cf-product-body">
-                          <span class="cf-cat-label mb-1">${categoryLabel(p.category)}</span>
-                          <h3><a href="${detailUrl(p.id)}">${p.name}</a></h3>
-                          <p>${p.description}</p>
-                          <div class="cf-product-foot">
-                            <span class="cf-price">${formatMoney(p.price)}</span>
-                            <button type="button" class="btn cf-add-btn" data-reco="${p.id}">
-                              <i class="bi bi-bag-plus"></i> Ekle
-                            </button>
-                          </div>
-                        </div>
-                      </article>
-                    </div>`).join("");
+                            <div class="col-sm-6 col-md-4">
+                              <article class="cf-product-card">
+                                <div class="cf-product-img">
+                                  <a href="${detailUrl(p.id)}" class="cf-product-img-link" aria-label="${p.name}">
+                                    <img src="${p.image}" alt="${p.name}" loading="lazy" data-fallback="${p.category}" />
+                                  </a>
+                                  ${p.badge ? `<span class="cf-tag ${BADGES[p.badge]}">${p.badge}</span>` : ""}
+                                </div>
+                                <div class="cf-product-body">
+                                  <span class="cf-cat-label mb-1">${categoryLabel(p.category)}</span>
+                                  <h3><a href="${detailUrl(p.id)}">${p.name}</a></h3>
+                                  <p>${p.description}</p>
+                                  <div class="cf-product-foot">
+                                    <span class="cf-price">${formatMoney(p.price)}</span>
+                                    <button type="button" class="btn cf-add-btn" data-reco="${p.id}">
+                                      <i class="bi bi-bag-plus"></i> Ekle
+                                    </button>
+                                  </div>
+                                </div>
+                              </article>
+                            </div>`).join("");
             applyFallbacks(grid);
         }
 
