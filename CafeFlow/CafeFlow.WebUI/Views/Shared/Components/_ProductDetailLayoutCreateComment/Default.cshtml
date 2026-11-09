@@ -1,0 +1,50 @@
+﻿@model CafeFlow.DTO.Comment.CreateCommentDto
+
+<div class="row justify-content-center mt-5 mb-4">
+    <div class="col-12 col-md-10 col-lg-8 col-xl-7">
+        <div class="cf-comment-form-card p-4 p-md-5 rounded-4 shadow-sm" style="background: #fff8f9; border: 1px solid #ffe3e8;">
+            <div class="d-flex align-items-center gap-2 mb-4">
+                <div class="d-flex align-items-center justify-content-center rounded-circle" style="width: 42px; height: 42px; background: #ffe4e9; color: #d46f8c;">
+                    <i class="bi bi-chat-heart fs-5"></i>
+                </div>
+                <div>
+                    <h5 class="mb-0 fw-bold" style="color: #4a2c2a;">Bu Lezzeti Değerlendir</h5>
+                    <small class="text-muted">Deneyimlerinizi ve tavsiyelerinizi paylaşın</small>
+                </div>
+            </div>
+
+            <form asp-controller="Comment" asp-action="Create" method="post">
+                <input type="hidden" asp-for="ProductId" />
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label small fw-semibold text-secondary">Adınız Soyadınız</label>
+                        <input type="text" asp-for="CustomerName" class="form-control form-control-lg fs-6 rounded-3 bg-white" placeholder="Örn: Selin Demir" required style="border-color: #ffd1dc;" />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label small fw-semibold text-secondary">Puanınız</label>
+                        <select asp-for="Rating" class="form-select form-select-lg fs-6 rounded-3 bg-white" style="border-color: #ffd1dc;">
+                            <option value="5">⭐⭐⭐⭐⭐ (5 / 5 - Harika)</option>
+                            <option value="4">⭐⭐⭐⭐ (4 / 5 - Çok İyi)</option>
+                            <option value="3">⭐⭐⭐ (3 / 5 - Ortalama)</option>
+                            <option value="2">⭐⭐ (2 / 5 - Geliştirilmeli)</option>
+                            <option value="1">⭐ (1 / 5 - Beğenmedim)</option>
+                        </select>
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label small fw-semibold text-secondary">Yorumunuz</label>
+                        <textarea asp-for="Content" class="form-control rounded-3 bg-white" rows="4" placeholder="Lezzet, sıcaklık ve sunum nasıldı?" required style="border-color: #ffd1dc;"></textarea>
+                    </div>
+
+                    <div class="col-12 text-end pt-2">
+                        <button type="submit" class="btn cf-btn-primary px-4 py-2 rounded-pill fw-semibold shadow-sm">
+                            <i class="bi bi-send-fill me-1"></i> Yorumu Yayınla
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

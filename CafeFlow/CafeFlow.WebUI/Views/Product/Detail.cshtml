@@ -34,6 +34,8 @@
 
     @await Component.InvokeAsync("_ProductDetailLayoutProductInfo", new { product = Model.Product })
 
+    @await Component.InvokeAsync("_ProductDetailLayoutCreateComment", new { productId = Model.Product.Id })
+
     @await Component.InvokeAsync("_ProductDetailLayoutInfoTabs")
 
     @await Component.InvokeAsync("_ProductDetailLayoutRelated")

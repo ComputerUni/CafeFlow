@@ -14,6 +14,7 @@ namespace CafeFlow.Business.Concrete
         public async Task CreateAsync(CreateCommentDto dto)
         {
             var comment = _mapper.Map<Comment>(dto);
+            comment.CustomerId = null;
             await _commentRepository.CreateAsync(comment);
         }
 

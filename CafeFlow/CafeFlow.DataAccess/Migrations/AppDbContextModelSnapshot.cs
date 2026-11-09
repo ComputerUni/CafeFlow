@@ -173,8 +173,12 @@ namespace CafeFlow.DataAccess.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("CustomerId")
+                    b.Property<int?>("CustomerId")
                         .HasColumnType("int");
+
+                    b.Property<string>("CustomerName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsApproved")
                         .HasColumnType("bit");
@@ -638,9 +642,7 @@ namespace CafeFlow.DataAccess.Migrations
                 {
                     b.HasOne("CafeFlow.Entity.Customer", "Customer")
                         .WithMany("Comments")
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CustomerId");
 
                     b.HasOne("CafeFlow.Entity.Product", "Product")
                         .WithMany("Comments")

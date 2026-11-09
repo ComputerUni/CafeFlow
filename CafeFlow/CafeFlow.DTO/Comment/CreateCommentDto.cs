@@ -8,6 +8,7 @@ namespace CafeFlow.DTO.Comment
     {
         public int CustomerId { get; set; }
         public int? ProductId { get; set; }
+        public string CustomerName { get; set; }
         public string Content { get; set; }
         public int Rating { get; set; }
     }

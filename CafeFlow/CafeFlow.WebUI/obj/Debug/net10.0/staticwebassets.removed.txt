@@ -1,3 +1,0 @@
-C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.WebUI\wwwroot\ui\products.html
-C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.WebUI\wwwroot\ui\cart.html
-C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.WebUI\wwwroot\ui\product-detail.html
