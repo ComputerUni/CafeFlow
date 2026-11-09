@@ -6,6 +6,7 @@ using CafeFlow.DTO.Order;
 using CafeFlow.DTO.OrderDetail;
 using CafeFlow.DTO.OrderStatusHistory;
 using CafeFlow.DTO.Product;
+using CafeFlow.DTO.ProductDetail;
 using CafeFlow.DTO.Table;
 using CafeFlow.Entity;
 
@@ -33,6 +34,9 @@ namespace CafeFlow.Business.Mappings
             CreateMap<Product, ProductListDto>().ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.Name));
             CreateMap<UpdateProductDto, Product>();
             CreateMap<CreateProductDto, Product>();
+            CreateMap<Product, ResultProductDetailDto>()
+                .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.Name))
+                .ReverseMap();
 
             CreateMap<Order, OrderListDto>().ForMember(dest => dest.CustomerName, opt => opt.MapFrom(src => src.Customer.FullName));
             CreateMap<UpdateOrderDto, Order>();

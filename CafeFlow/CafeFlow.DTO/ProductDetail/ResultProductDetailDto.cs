@@ -1,12 +1,11 @@
-﻿using CafeFlow.Entity;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using CafeFlow.DTO.Comment;
+using CafeFlow.Entity;
 
 namespace CafeFlow.DTO.ProductDetail
 {
     public class ResultProductDetailDto
     {
+        public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public string ImageUrl { get; set; }
@@ -14,10 +13,9 @@ namespace CafeFlow.DTO.ProductDetail
         public int Stock { get; set; }
         public bool IsActive { get; set; }
         public int CategoryId { get; set; }
+        public string CategoryName { get; set; }
         public bool IsFeatured { get; set; }
         public bool? IsCustomizable { get; set; }
-        public ICollection<ProductOption> ProductOptions { get; set; }
-        public ICollection<Favorite> Favorites { get; set; }
-        public ICollection<Comment> Comments { get; set; }
+        public ICollection<CommentListDto> Comments { get; set; }
     }
 }

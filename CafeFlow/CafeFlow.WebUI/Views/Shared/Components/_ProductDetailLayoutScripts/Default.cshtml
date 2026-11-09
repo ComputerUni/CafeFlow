@@ -1,4 +1,43 @@
-﻿<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+﻿@using System.Text.Json
+@model ProductDetailPageViewModel
+
+@{
+    var dynamicCategories = new List<object>
+    {
+        new{id="all", label="Tüm Menü", icon="bi-grid"}
+    };
+
+    foreach (var cat in Model.Categories)
+    {
+        string icon = "bi-cup-hot";
+        string n = cat.Name?.ToLower() ?? "";
+        if (n.Contains("soğuk") || n.Contains("içecek")) icon = "bi-cup-straw";
+        else if (n.Contains("tatlı") || n.Contains("pasta")) icon = "bi-cake2";
+        else if (n.Contains("atıştırma") || n.Contains("snack")) icon = "bi-egg-fried";
+
+        dynamicCategories.Add(new { id = cat.Id.ToString(), label = cat.Name, icon = icon });
+    }
+
+    var jsProducts = new[] {new
+    {
+         id = Model.Product.Id,
+        name = Model.Product.Name,
+        category = Model.Product.CategoryId.ToString(),
+        categoryName = Model.Product.CategoryName,
+        price = Model.Product.Price,
+        image = Model.Product.ImageUrl,
+        description = Model.Product.Description,
+        badge = Model.Product.IsFeatured ? "Öne Çıkan" : (string)null,
+        customizable = Model.Product.IsCustomizable ?? false
+    }};
+
+    var jsonCategories = JsonSerializer.Serialize(dynamicCategories);
+    var jsonProducts = JsonSerializer.Serialize(jsProducts);
+
+}
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     /* =========================================================
        CafeFlow — Product Details Page
@@ -23,127 +62,58 @@
            should move into one shared script, e.g. wwwroot/js/cafeflow-core.js. */
         const IMG = (id, w = 700) => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&q=80`;
 
-        const CATEGORIES = [
-            { id: "all", label: "All Products", icon: "bi-grid" },
-            { id: "hot", label: "Hot Coffees", icon: "bi-cup-hot" },
-            { id: "iced", label: "Iced Coffees", icon: "bi-cup-straw" },
-            { id: "signature", label: "Signature Drinks", icon: "bi-stars" },
-            { id: "cakes", label: "Cakes & Desserts", icon: "bi-cake2" },
-            { id: "bakery", label: "Bakery", icon: "bi-basket" },
-            { id: "snacks", label: "Snacks", icon: "bi-egg-fried" },
-        ];
+        const CATEGORIES = @Html.Raw(jsonCategories);
 
         const BADGES = {
-            "Best Seller": "cf-tag-best",
-            "New": "cf-tag-new",
-            "Popular": "cf-tag-popular",
-            "Chef's Choice": "cf-tag-chef",
+            "Öne Çıkan": "cf-tag-best"
         };
 
-        // Image fallback icon per category
         const FALLBACK_ICON = {
-            hot: "bi-cup-hot", iced: "bi-cup-straw", signature: "bi-cup-straw",
-            cakes: "bi-cake2", bakery: "bi-basket", snacks: "bi-egg-fried",
-            coffee: "bi-cup-hot", cake: "bi-cake2",
+            coffee: "bi-cup-hot",
+            drink: "bi-cup-straw",
+            cake: "bi-cake2"
         };
 
         /**
          * Central product catalogue. `popularity` drives "Most Popular" sorting,
          * `customizable` opens the options modal before adding to cart.
          */
-        const PRODUCTS = [
-            { id: 1, name: "Classic Cappuccino", category: "hot", price: 145, image: IMG("1572442388796-11668a67e53d"), description: "Rich double espresso under a deep layer of velvety milk foam.", badge: null, vegetarian: true, popularity: 88, customizable: true },
-            { id: 2, name: "Vanilla Latte", category: "hot", price: 160, image: IMG("1509042239860-f550ce710b93"), description: "Smooth espresso and steamed milk with Madagascar vanilla.", badge: "Best Seller", vegetarian: true, popularity: 95, customizable: true },
-            { id: 3, name: "Caramel Macchiato", category: "hot", price: 170, image: IMG("1485808191679-5f86510681a2"), description: "Vanilla milk marked with espresso and a buttery caramel drizzle.", badge: "Popular", vegetarian: true, popularity: 90, customizable: true },
-            { id: 4, name: "Iced Spanish Latte", category: "iced", price: 175, image: IMG("1461023058943-07fcbe16d735"), description: "Espresso over ice with creamy condensed milk sweetness.", badge: "Best Seller", vegetarian: true, popularity: 96, customizable: true },
-            { id: 5, name: "Iced Mocha", category: "iced", price: 180, image: IMG("1517701604599-bb29b565090c"), description: "Double espresso, Belgian chocolate and cold milk over ice.", badge: null, vegetarian: true, popularity: 82, customizable: true },
-            { id: 6, name: "Cold Brew", category: "iced", price: 155, image: IMG("1534778101976-62847782c213"), description: "Slow-steeped for 18 hours. Smooth, bold and naturally sweet.", badge: null, vegetarian: true, popularity: 74, customizable: false },
-            { id: 7, name: "Strawberry Cloud Latte", category: "signature", price: 205, image: IMG("1572490122747-3968b75cc699"), description: "Fresh strawberry milk, espresso and a cloud of pink cold foam.", badge: "Best Seller", vegetarian: true, popularity: 99, customizable: true },
-            { id: 8, name: "Rose Matcha", category: "signature", price: 210, image: IMG("1515823064-d6e0c04616a7"), description: "Ceremonial matcha with a delicate rose syrup and oat milk.", badge: "New", vegetarian: true, popularity: 85, customizable: true },
-            { id: 9, name: "Pink Berry Frappe", category: "signature", price: 215, image: IMG("1553530666-ba11a7da3888"), description: "Blended raspberry, strawberry and vanilla cream with whipped top.", badge: "Popular", vegetarian: true, popularity: 91, customizable: false },
-            { id: 10, name: "Pink Velvet Cake", category: "cakes", price: 225, image: IMG("1578985545062-69928b1d9587"), description: "Rose-tinted sponge layered with vanilla cream cheese frosting.", badge: "Chef's Choice", vegetarian: true, popularity: 93, customizable: false },
-            { id: 11, name: "Lotus Cheesecake", category: "cakes", price: 245, image: IMG("1533134242443-d4fd215305ad"), description: "Baked cheesecake on a Biscoff crumb with caramel drizzle.", badge: "Best Seller", vegetarian: true, popularity: 97, customizable: false },
-            { id: 12, name: "Strawberry Shortcake", category: "cakes", price: 230, image: IMG("1565958011703-44f9829ba187"), description: "Light chiffon, fresh strawberries and whipped mascarpone.", badge: "New", vegetarian: true, popularity: 80, customizable: false },
-            { id: 13, name: "Raspberry Macarons", category: "cakes", price: 180, image: IMG("1569864358642-9d1684040f43"), description: "Box of four almond macarons with tangy raspberry ganache.", badge: null, vegetarian: true, popularity: 76, customizable: false },
-            { id: 14, name: "Butter Croissant", category: "bakery", price: 95, image: IMG("1555507036-ab1f4038808a"), description: "Flaky, golden and laminated with French butter every morning.", badge: "Popular", vegetarian: true, popularity: 89, customizable: false },
-            { id: 15, name: "Almond Croissant", category: "bakery", price: 125, image: IMG("1623334044303-241021148842"), description: "Twice-baked with almond frangipane and toasted almond flakes.", badge: null, vegetarian: true, popularity: 78, customizable: false },
-            { id: 16, name: "Cinnamon Roll", category: "bakery", price: 115, image: IMG("1509365465985-25d11c17e812"), description: "Soft brioche swirl with cinnamon sugar and cream cheese glaze.", badge: "New", vegetarian: true, popularity: 72, customizable: false },
-            { id: 17, name: "Avocado Toast", category: "snacks", price: 235, image: IMG("1541519227354-08fa5d50c44d"), description: "Sourdough, smashed avocado, cherry tomatoes and chili flakes.", badge: "Chef's Choice", vegetarian: true, popularity: 84, customizable: false },
-            { id: 18, name: "Grilled Cheese Sandwich", category: "snacks", price: 210, image: IMG("1528735602780-2552fd46c7af"), description: "Cheddar and mozzarella melted on buttery toasted brioche.", badge: null, vegetarian: true, popularity: 70, customizable: false },
-            { id: 19, name: "Turkey & Brie Panini", category: "snacks", price: 255, image: IMG("1528736235302-52922df5c122"), description: "Smoked turkey, creamy brie and fig jam, pressed until golden.", badge: null, vegetarian: false, popularity: 77, customizable: false },
-            { id: 20, name: "Chicken Caesar Wrap", category: "snacks", price: 245, image: IMG("1626700051175-6818013e1d4f"), description: "Grilled chicken, crisp romaine, parmesan and house Caesar dressing.", badge: null, vegetarian: false, popularity: 73, customizable: false },
-        ];
+        const PRODUCTS = @Html.Raw(jsonProducts);
 
         /** Option groups for customizable drinks. `price` is added to the base price. */
         const CUSTOM_OPTIONS = [
             {
-                key: "size", label: "Size", choices: [
-                    { value: "Small", price: 0 },
-                    { value: "Medium", price: 15 },
-                    { value: "Large", price: 30 },
-                ], default: "Medium"
+                key: "size", label: "Boyut Seçimi", choices: [
+                    { value: "Küçük (Standart)", price: 0 },
+                    { value: "Orta (Medium)", price: 15 },
+                    { value: "Büyük (Large)", price: 25 },
+                ], default: "Küçük (Standart)"
             },
             {
-                key: "milk", label: "Milk", choices: [
-                    { value: "Regular", price: 0 },
-                    { value: "Oat", price: 15 },
-                    { value: "Almond", price: 15 },
-                ], default: "Regular"
+                key: "milk", label: "Süt Tercihi", choices: [
+                    { value: "Standart Yağlı", price: 0 },
+                    { value: "Yulaf Sütü", price: 15 },
+                    { value: "Badem Sütü", price: 15 },
+                    { value: "Laktozsuz", price: 10 },
+                ], default: "Standart Yağlı"
             },
             {
-                key: "extraShot", label: "Extra Espresso Shot", choices: [
-                    { value: "No", price: 0 },
-                    { value: "Yes", price: 20 },
-                ], default: "No"
+                key: "extraShot", label: "Ekstra Espresso Shot", choices: [
+                    { value: "İstemiyorum", price: 0 },
+                    { value: "+1 Shot Espresso", price: 20 },
+                ], default: "İstemiyorum"
             },
             {
-                key: "syrup", label: "Additional Syrup", choices: [
-                    { value: "None", price: 0 },
-                    { value: "Vanilla", price: 10 },
-                    { value: "Caramel", price: 10 },
-                ], default: "None"
+                key: "syrup", label: "Aroma Şurubu", choices: [
+                    { value: "Yok", price: 0 },
+                    { value: "Vanilya", price: 15 },
+                    { value: "Karamel", price: 15 },
+                    { value: "Fındık", price: 15 },
+                ], default: "Yok"
             },
         ];
 
         const findProduct = (id) => PRODUCTS.find((p) => p.id === id);
-
-        /* ---------- 2. PAGE CONTENT DATA ----------
-           Extra copy for the details page only. Prices and options always come from
-           the catalog above; nothing here affects pricing. */
-
-        // Display-only metadata for the existing option values
-        const SIZE_VOLUMES = { Small: "250 ml", Medium: "350 ml", Large: "450 ml" };
-        const MILK_LABELS = { Regular: "Regular Milk", Oat: "Oat Milk", Almond: "Almond Milk" };
-
-        const PRODUCT_CONTENT = {
-            1: { about: "Our cappuccino starts with a double shot of our house blend, pulled short and sweet, then crowned with silky, deep milk foam. Balanced, comforting and exactly what a slow morning needs.", ingredients: ["Espresso", "Milk", "Milk foam", "Cocoa dusting"], allergens: ["Milk"] },
-            2: { about: "A gentle classic: smooth espresso and steamed milk sweetened with real Madagascar vanilla. Soft, creamy and endlessly cozy.", ingredients: ["Espresso", "Milk", "Vanilla syrup"], allergens: ["Milk"] },
-            3: { about: "Vanilla-sweetened milk layered under a bold espresso shot, finished with a lattice of buttery caramel sauce. Stir it or sip it in layers.", ingredients: ["Espresso", "Milk", "Vanilla syrup", "Caramel sauce"], allergens: ["Milk"] },
-            4: { about: "Espresso poured over ice and creamy milk, sweetened with a ribbon of condensed milk for that famously smooth, caramel-like finish.", ingredients: ["Espresso", "Milk", "Condensed milk", "Ice"], allergens: ["Milk"] },
-            5: { about: "Double espresso shaken with Belgian chocolate sauce and cold milk, served over ice for a rich, refreshing chocolate-coffee moment.", ingredients: ["Espresso", "Milk", "Belgian chocolate sauce", "Ice"], allergens: ["Milk", "Soy"] },
-            6: { about: "Coarsely ground beans steeped in cold water for 18 hours, then filtered for a naturally sweet, low-acidity coffee with chocolate notes.", ingredients: ["Cold-brewed coffee", "Filtered water", "Ice"], allergens: [] },
-            7: { short: "A dreamy blend of espresso, creamy milk and sweet strawberry notes, topped with our signature cloud foam.", about: "Our most-loved signature: house-made strawberry milk, a shot of espresso and a fluffy pink cloud foam on top. It tastes like strawberries and cream with a gentle coffee hug.", ingredients: ["Espresso", "Milk", "Strawberry purée", "Cloud foam", "Natural flavoring"], allergens: ["Milk"] },
-            8: { about: "Ceremonial-grade matcha whisked smooth and paired with a delicate rose syrup and oat milk. Floral, earthy and beautifully calming.", ingredients: ["Matcha", "Oat milk", "Rose syrup", "Ice (on request)"], allergens: ["Oats (gluten)"] },
-            9: { about: "Raspberries, strawberries and vanilla cream blended until frosty, then finished with whipped cream and a sprinkle of berry dust.", ingredients: ["Raspberry", "Strawberry", "Vanilla cream", "Milk", "Whipped cream", "Ice"], allergens: ["Milk"] },
-            10: { about: "A tender, rose-tinted vanilla sponge layered with whipped cream cheese frosting and finished with a light dusting of crumbs. Baked fresh in our kitchen.", ingredients: ["Flour", "Eggs", "Butter", "Sugar", "Cream cheese", "Vanilla", "Natural coloring"], allergens: ["Gluten", "Eggs", "Milk"] },
-            11: { about: "Creamy baked cheesecake on a crunchy Biscoff biscuit base, topped with caramelized biscuit spread and a drizzle of caramel.", ingredients: ["Cream cheese", "Biscoff biscuits", "Butter", "Eggs", "Sugar", "Caramel"], allergens: ["Gluten", "Eggs", "Milk", "Soy"] },
-            12: { about: "Feather-light chiffon sponge layered with fresh strawberries and whipped mascarpone cream. Fresh, airy and not too sweet.", ingredients: ["Flour", "Eggs", "Sugar", "Strawberries", "Mascarpone", "Cream"], allergens: ["Gluten", "Eggs", "Milk"] },
-            13: { about: "Four delicate almond-meringue shells sandwiching a tangy raspberry white-chocolate ganache. A pretty little box to share (or not).", ingredients: ["Almond flour", "Egg whites", "Sugar", "Raspberry", "White chocolate", "Cream"], allergens: ["Nuts (almond)", "Eggs", "Milk", "Soy"] },
-            14: { about: "Laminated with French butter and baked every morning until deeply golden. Crisp, flaky layers outside and a soft, honeycomb crumb inside.", ingredients: ["Flour", "Butter", "Milk", "Yeast", "Sugar", "Salt", "Egg wash"], allergens: ["Gluten", "Milk", "Eggs"] },
-            15: { about: "Our butter croissant, filled with almond frangipane, twice-baked and topped with toasted almond flakes and powdered sugar.", ingredients: ["Croissant dough", "Almond frangipane", "Almond flakes", "Powdered sugar"], allergens: ["Gluten", "Milk", "Eggs", "Nuts (almond)"] },
-            16: { about: "A soft brioche swirl filled with cinnamon sugar and finished with a generous cream cheese glaze while still warm.", ingredients: ["Brioche dough", "Butter", "Cinnamon", "Brown sugar", "Cream cheese glaze"], allergens: ["Gluten", "Milk", "Eggs"] },
-            17: { about: "Toasted sourdough topped with smashed avocado, lemon, cherry tomatoes, chili flakes and a drizzle of olive oil.", ingredients: ["Sourdough bread", "Avocado", "Cherry tomatoes", "Lemon", "Chili flakes", "Olive oil"], allergens: ["Gluten"] },
-            18: { about: "Aged cheddar and mozzarella melted between slices of buttery toasted brioche. Simple, golden and very comforting.", ingredients: ["Brioche bread", "Cheddar", "Mozzarella", "Butter"], allergens: ["Gluten", "Milk", "Eggs"] },
-            19: { about: "Smoked turkey breast, creamy brie and a spoon of fig jam, pressed in ciabatta until crisp and melty.", ingredients: ["Ciabatta", "Smoked turkey", "Brie", "Fig jam", "Arugula"], allergens: ["Gluten", "Milk"] },
-            20: { about: "Grilled chicken, crisp romaine, shaved parmesan and our house Caesar dressing, wrapped in a soft tortilla.", ingredients: ["Tortilla", "Grilled chicken", "Romaine", "Parmesan", "Caesar dressing"], allergens: ["Gluten", "Milk", "Eggs", "Fish (anchovy)"] },
-        };
-
-        /** Sample reviews (static demo content). */
-        const SAMPLE_REVIEWS = [
-            { name: "Elif K.", rating: 5, date: "September 28, 2026", text: "Exactly as pretty as it looks, and it tastes even better. Already planning my next visit." },
-            { name: "Mert A.", rating: 5, date: "September 14, 2026", text: "Perfect balance, not too sweet. Ordered through the table QR and it arrived in minutes." },
-            { name: "Zeynep D.", rating: 4, date: "August 30, 2026", text: "Lovely and very fresh. I'd happily order it again with oat milk next time." },
-        ];
 
         /* ---------- 3. STORAGE, CART, FAVORITES ---------- */
         const STORAGE_KEYS = { cart: "cafeflow_cart", favorites: "cafeflow_favorites" };
@@ -175,6 +145,7 @@
          */
         const Cart = {
             items: storage.read(STORAGE_KEYS.cart, []),
+
             save() {
                 storage.write(STORAGE_KEYS.cart, this.items);
                 document.dispatchEvent(new CustomEvent("cart:changed"));
@@ -183,13 +154,12 @@
                 if (!options) return String(productId);
                 return [productId, ...Object.entries(options).map(([k, v]) => `${k}:${v}`)].join("|");
             },
-            add(product, { options = null, quantity = 1 } = {}) {
+            add(product, { options = null, unitPrice = product.price, quantity = 1 } = {}) {
                 const lineId = this.buildLineId(product.id, options);
                 const existing = this.items.find((l) => l.lineId === lineId);
                 if (existing) existing.quantity += quantity;
-                else this.items.push({ lineId, productId: product.id, name: product.name, image: product.image, unitPrice: priceWithOptions(product, options), quantity, options });
+                else this.items.push({ lineId, productId: product.id, name: product.name, image: product.image, unitPrice, quantity, options });
                 this.save();
-                return lineId;
             },
             setQuantity(lineId, quantity) {
                 const line = this.items.find((l) => l.lineId === lineId);
@@ -198,9 +168,12 @@
                 else line.quantity = quantity;
                 this.save();
             },
-            remove(lineId) { this.items = this.items.filter((l) => l.lineId !== lineId); this.save(); },
-            count() { return this.items.reduce((s, l) => s + l.quantity, 0); },
-            subtotal() { return this.items.reduce((s, l) => s + l.unitPrice * l.quantity, 0); },
+            remove(lineId) {
+                this.items = this.items.filter((l) => l.lineId !== lineId);
+                this.save();
+            },
+            count() { return this.items.reduce((sum, l) => sum + l.quantity, 0); },
+            subtotal() { return this.items.reduce((sum, l) => sum + l.unitPrice * l.quantity, 0); },
         };
 
         const Favorites = {
@@ -211,7 +184,6 @@
                 return this.ids.has(id);
             },
             has(id) { return this.ids.has(id); },
-            reload() { this.ids = new Set(storage.read(STORAGE_KEYS.favorites, [])); },
         };
 
         /* ---------- 4. UI HELPERS ---------- */
@@ -257,9 +229,9 @@
         const demoReviewCount = (p) => p.popularity * 3 + (p.id % 7) * 4;
 
         /* ---------- 5. PRODUCT RENDERING ---------- */
-        const productId = Number(new URLSearchParams(location.search).get("id"));
+        const productId = @Model.CurrentProductId;
         const product = findProduct(productId);
-        const content = product ? (PRODUCT_CONTENT[product.id] || {}) : {};
+        const content = product ? (PRODUCTS[product.id] || {}) : {};
 
         const state = {
             quantity: 1,
@@ -267,10 +239,22 @@
         };
 
         function renderNotFound() {
-            document.title = "Treat not found — CafeFlow";
-            $("#notFound").classList.remove("d-none");
-            $("#breadcrumb").insertAdjacentHTML("beforeend", `<i class="bi bi-chevron-right"></i><span aria-current="page">Not found</span>`);
-            $("#mobileBar").remove();
+            document.title = "Lezzet Bulunamadı — CafeFlow";
+
+            const notFoundEl = $("#notFound");
+            if (notFoundEl) {
+                notFoundEl.classList.remove("d-none");
+            }
+
+            const breadcrumb = $("#breadcrumb");
+            if (breadcrumb) {
+                breadcrumb.insertAdjacentHTML("beforeend", `<i class="bi bi-chevron-right"></i><span aria-current="page">Bulunamadı</span>`);
+            }
+
+            const mobileBar = $("#mobileBar");
+            if (mobileBar) {
+                mobileBar.remove();
+            }
         }
 
         function renderHeader() {
@@ -279,10 +263,10 @@
             const meta = document.querySelector('meta[name="description"]');
             if (meta) meta.content = product.description;
             $("#breadcrumb").insertAdjacentHTML("beforeend", `
-                          <i class="bi bi-chevron-right"></i>
-                          <a href="products.html?category=${product.category}">${cat.label}</a>
-                          <i class="bi bi-chevron-right"></i>
-                          <span aria-current="page">${product.name}</span>`);
+                              <i class="bi bi-chevron-right"></i>
+                              <a href="products.html?category=${product.category}">${cat.label}</a>
+                              <i class="bi bi-chevron-right"></i>
+                              <span aria-current="page">${product.name}</span>`);
         }
 
         /**
@@ -290,64 +274,35 @@
          * closer crops of the SAME photo (never unrelated pictures).
          */
         function galleryImages() {
+            if (!product || !product.image) {
+                return [{ label: "Full view", src: "", thumb: "" }];
+            }
             const base = product.image.split("?")[0];
             const views = [
                 { label: "Full view", params: "auto=format&fit=crop&w=1100&q=85" },
                 { label: "Close-up", params: "auto=format&fit=crop&crop=focalpoint&fp-x=0.5&fp-y=0.45&fp-z=1.6&w=1100&q=85" },
                 { label: "Top detail", params: "auto=format&fit=crop&crop=focalpoint&fp-x=0.5&fp-y=0.3&fp-z=2.2&w=1100&q=85" },
             ];
-            return views.map((v) => ({ label: v.label, src: `${base}?${v.params}`, thumb: `${base}?${v.params.replace("w=1100", "w=220")}` }));
+            return views.map((v) => ({
+                label: v.label,
+                src: product.image.includes("unsplash.com") ? `${base}?${v.params}` : product.image,
+                thumb: product.image.includes("unsplash.com") ? `${base}?${v.params.replace("w=1100", "w=220")}` : product.image
+            }));
         }
 
         function renderGallery() {
-            const images = galleryImages();
             const main = $("#galleryMain");
-            main.insertAdjacentHTML("afterbegin", `<img src="${images[0].src}" alt="${product.name}" id="mainImage" data-fallback="${product.category}" />`);
+            if (!main) return;
 
-            $("#galleryThumbs").innerHTML = images.map((img, i) => `
-                          <button type="button" class="cf-thumb${i === 0 ? " active" : ""}" data-index="${i}" aria-label="${img.label} of ${product.name}" aria-pressed="${i === 0}">
-                            <img src="${img.thumb}" alt="" data-fallback="${product.category}" loading="lazy" />
-                          </button>`).join("");
+            const images = galleryImages();
 
-            if (product.badge) {
-                const badge = $("#productBadge");
-                badge.textContent = product.badge;
-                badge.classList.add(BADGES[product.badge]);
-                badge.classList.remove("d-none");
+            const thumbs = $("#galleryThumbs");
+            if (thumbs && images.length > 1) {
+                thumbs.innerHTML = images.map((img, i) => `
+                <button type="button" class="cf-thumb${i === 0 ? " active" : ""}" data-index="${i}" aria-label="${img.label}">
+                    <img src="${img.thumb}" alt="" loading="lazy" />
+                </button>`).join("");
             }
-
-            // Thumbnail switching with a soft cross-fade
-            $("#galleryThumbs").addEventListener("click", (e) => {
-                const btn = e.target.closest(".cf-thumb");
-                if (!btn) return;
-                const img = $("#mainImage");
-                const next = images[Number(btn.dataset.index)];
-                $$(".cf-thumb").forEach((t) => { t.classList.toggle("active", t === btn); t.setAttribute("aria-pressed", t === btn); });
-                $("#galleryCaption").innerHTML = `<i class="bi bi-image"></i> ${next.label}`;
-                if (!img) return;
-                img.classList.add("is-fading");
-                setTimeout(() => {
-                    img.src = next.src;
-                    img.onload = () => img.classList.remove("is-fading");
-                    setTimeout(() => img.classList.remove("is-fading"), 600);
-                }, 200);
-            });
-
-            // Subtle hover zoom that follows the cursor (pointer devices only)
-            if (window.matchMedia("(hover: hover)").matches) {
-                main.addEventListener("mousemove", (e) => {
-                    if (e.target.closest(".cf-fav")) { main.classList.remove("is-zoomed"); return; }
-                    const r = main.getBoundingClientRect();
-                    main.style.setProperty("--zx", `${((e.clientX - r.left) / r.width) * 100}%`);
-                    main.style.setProperty("--zy", `${((e.clientY - r.top) / r.height) * 100}%`);
-                    main.classList.add("is-zoomed");
-                });
-                main.addEventListener("mouseleave", () => main.classList.remove("is-zoomed"));
-            } else {
-                $("#galleryCaption").innerHTML = `<i class="bi bi-image"></i> Full view`;
-            }
-            applyFallbacks(main);
-            applyFallbacks($("#galleryThumbs"));
         }
 
         function renderFavorite() {
@@ -376,9 +331,9 @@
         function renderTabs() {
             const rating = demoRating(product);
             $("#descContent").innerHTML = `
-                          <h3>About ${product.name}</h3>
-                          <p>${content.about || product.description}</p>
-                          ${product.customizable ? `<p class="mb-0">Make it yours with a choice of size, milk, an extra espresso shot or a touch of syrup. Your selections are saved with your order.</p>` : ""}`;
+                              <h3>About ${product.name}</h3>
+                              <p>${content.about || product.description}</p>
+                              ${product.customizable ? `<p class="mb-0">Make it yours with a choice of size, milk, an extra espresso shot or a touch of syrup. Your selections are saved with your order.</p>` : ""}`;
 
             const ingredients = content.ingredients || [];
             $("#ingredientList").innerHTML = ingredients.length
@@ -392,17 +347,17 @@
 
             $("#reviewScore").textContent = rating.toFixed(1);
             $("#reviewStars").innerHTML = starsHtml(rating);
-            $("#reviewList").innerHTML = SAMPLE_REVIEWS.map((r) => `
-                          <div class="col-md-4">
-                            <figure class="cf-review">
-                              <div class="cf-stars" aria-label="${r.rating} out of 5 stars">${starsHtml(r.rating)}</div>
-                              <blockquote>“${r.text}”</blockquote>
-                              <figcaption>
-                                <span class="cf-avatar">${r.name.split(" ").map((n) => n[0]).join("")}</span>
-                                <div><strong>${r.name}</strong><small class="cf-review-date">${r.date}</small></div>
-                              </figcaption>
-                            </figure>
-                          </div>`).join("");
+            $("#reviewList").innerHTML = PRODUCTS.map((r) => `
+                              <div class="col-md-4">
+                                <figure class="cf-review">
+                                  <div class="cf-stars" aria-label="${r.rating} out of 5 stars">${starsHtml(r.rating)}</div>
+                                  <blockquote>“${r.text}”</blockquote>
+                                  <figcaption>
+                                    <span class="cf-avatar">${r.name.split(" ").map((n) => n[0]).join("")}</span>
+                                    <div><strong>${r.name}</strong><small class="cf-review-date">${r.date}</small></div>
+                                  </figcaption>
+                                </figure>
+                              </div>`).join("");
         }
 
         /* ---------- 6. CUSTOMIZATION & LIVE PRICING ---------- */
@@ -411,51 +366,62 @@
         const priceTag = (price, zeroLabel = "Included") => (price ? `+${formatMoney(price)}` : zeroLabel);
 
         function renderCustomization() {
-            if (!product.customizable) return;
-            $("#customSections").classList.remove("d-none");
+            if (!product || !product.customizable) return;
+
+            $("#customSections")?.classList.remove("d-none");
             state.options = Object.fromEntries(CUSTOM_OPTIONS.map((g) => [g.key, g.default]));
 
-            // Size cards
-            $("#sizeOptions").innerHTML = optionGroup("size").choices.map((c) => `
-                          <label class="cf-size" data-size="${c.value}">
-                            <input type="radio" name="size" value="${c.value}" ${c.value === state.options.size ? "checked" : ""} />
-                            <span class="cf-size-card">
-                              <span class="cf-cup" aria-hidden="true"><i class="bi bi-cup-straw"></i></span>
-                              <span class="cf-size-name">${c.value}</span>
-                              <span class="cf-size-vol">${SIZE_VOLUMES[c.value] || ""}</span>
-                              <span class="cf-size-price">${priceTag(c.price, "Base price")}</span>
-                            </span>
-                          </label>`).join("");
+            // 1. Boyut Seçenekleri
+            const sizeGroup = optionGroup("size");
+            if (sizeGroup && $("#sizeOptions")) {
+                $("#sizeOptions").innerHTML = sizeGroup.choices.map((c) => `
+                <label class="cf-size" data-size="${c.value}">
+                    <input type="radio" name="size" value="${c.value}" ${c.value === state.options.size ? "checked" : ""} />
+                    <span class="cf-size-card">
+                        <span class="cf-cup" aria-hidden="true"><i class="bi bi-cup-straw"></i></span>
+                        <span class="cf-size-name">${c.value}</span>
+                        <span class="cf-size-price">${priceTag(c.price, "Standart")}</span>
+                    </span>
+                </label>`).join("");
+            }
 
-            // Milk pills
-            $("#milkOptions").innerHTML = optionGroup("milk").choices.map((c) => `
-                          <label class="cf-milk">
-                            <input type="radio" name="milk" value="${c.value}" ${c.value === state.options.milk ? "checked" : ""} />
-                            <span>${MILK_LABELS[c.value] || c.value} ${c.price ? `<small>+${formatMoney(c.price)}</small>` : ""}</span>
-                          </label>`).join("");
+            // 2. Süt Seçenekleri (MILK_LABELS kaldırıldı, doğrudan c.value kullanılıyor)
+            const milkGroup = optionGroup("milk");
+            if (milkGroup && $("#milkOptions")) {
+                $("#milkOptions").innerHTML = milkGroup.choices.map((c) => `
+                <label class="cf-milk">
+                    <input type="radio" name="milk" value="${c.value}" ${c.value === state.options.milk ? "checked" : ""} />
+                    <span>${c.value} ${c.price ? `<small>+${formatMoney(c.price)}</small>` : ""}</span>
+                </label>`).join("");
+            }
 
-            // Add-ons: extra shot (yes/no) + one syrup (choose one or none)
-            const shotPrice = extraFor("extraShot", "Yes");
-            const syrups = optionGroup("syrup").choices.filter((c) => c.value !== "None");
-            $("#addonOptions").innerHTML = `
-                          <label class="cf-addon">
-                            <input type="checkbox" name="extraShot" value="Yes" />
-                            <span class="cf-addon-card">
-                              <span class="cf-addon-icon"><i class="bi bi-lightning-charge"></i></span>
-                              <span class="cf-addon-text"><strong>Extra Espresso Shot</strong><small>+${formatMoney(shotPrice)}</small></span>
-                              <span class="cf-check"><i class="bi bi-check-lg"></i></span>
-                            </span>
-                          </label>
-                          <span class="cf-addon-group-label">Add a syrup <span class="text-lowercase fw-normal">(choose one)</span></span>
-                          ${syrups.map((c) => `
-                            <label class="cf-addon">
-                              <input type="checkbox" name="syrup" value="${c.value}" />
-                              <span class="cf-addon-card">
-                                <span class="cf-addon-icon"><i class="bi bi-droplet-half"></i></span>
-                                <span class="cf-addon-text"><strong>${c.value} Syrup</strong><small>+${formatMoney(c.price)}</small></span>
-                                <span class="cf-check"><i class="bi bi-check-lg"></i></span>
-                              </span>
-                            </label>`).join("")}`;
+            // 3. Ekstra Dokunuşlar (Extra Shot & Şurup)
+            const extraShotGroup = optionGroup("extraShot");
+            const shotPrice = (extraShotGroup?.choices.find((c) => c.value !== "İstemiyorum") || { price: 20 }).price;
+            const syrupGroup = optionGroup("syrup");
+            const syrups = syrupGroup ? syrupGroup.choices.filter((c) => c.value !== "Yok") : [];
+
+            if ($("#addonOptions")) {
+                $("#addonOptions").innerHTML = `
+                <label class="cf-addon">
+                    <input type="checkbox" name="extraShot" value="+1 Shot Espresso" />
+                    <span class="cf-addon-card">
+                        <span class="cf-addon-icon"><i class="bi bi-lightning-charge"></i></span>
+                        <span class="cf-addon-text"><strong>+1 Shot Espresso</strong><small>+${formatMoney(shotPrice)}</small></span>
+                        <span class="cf-check"><i class="bi bi-check-lg"></i></span>
+                    </span>
+                </label>
+                <span class="cf-addon-group-label w-100 mt-3 mb-2">Aroma Şurubu Tercihi <span class="text-lowercase fw-normal">(en fazla 1 adet)</span></span>
+                ${syrups.map((c) => `
+                    <label class="cf-addon">
+                        <input type="checkbox" name="syrup" value="${c.value}" />
+                        <span class="cf-addon-card">
+                            <span class="cf-addon-icon"><i class="bi bi-droplet-half"></i></span>
+                            <span class="cf-addon-text"><strong>${c.value} Şurubu</strong><small>+${formatMoney(c.price)}</small></span>
+                            <span class="cf-check"><i class="bi bi-check-lg"></i></span>
+                        </span>
+                    </label>`).join("")}`;
+            }
         }
 
         /** Reads the form into the shared option shape: { size, milk, extraShot, syrup }. */
@@ -478,13 +444,13 @@
             const total = unitPrice * state.quantity;
             const rows = [`<li><span>Base Price</span><span>${formatMoney(product.price)}</span></li>`];
 
-            if (state.options) {
-                const o = state.options;
-                rows.push(`<li><span>${o.size} Size <small class="text-muted">(${SIZE_VOLUMES[o.size]})</small></span><span>${priceTag(extraFor("size", o.size))}</span></li>`);
-                rows.push(`<li><span>${MILK_LABELS[o.milk]}</span><span>${priceTag(extraFor("milk", o.milk))}</span></li>`);
-                if (o.extraShot === "Yes") rows.push(`<li><span>Extra Espresso Shot</span><span>+${formatMoney(extraFor("extraShot", "Yes"))}</span></li>`);
-                if (o.syrup !== "None") rows.push(`<li><span>${o.syrup} Syrup</span><span>+${formatMoney(extraFor("syrup", o.syrup))}</span></li>`);
-            }
+            // if (state.options) {
+            //     const o = state.options;
+            //     rows.push(`<li><span>${o.size} Size <small class="text-muted">(${SIZE_VOLUMES[o.size]})</small></span><span>${priceTag(extraFor("size", o.size))}</span></li>`);
+            //     rows.push(`<li><span>${MILK_LABELS[o.milk]}</span><span>${priceTag(extraFor("milk", o.milk))}</span></li>`);
+            //     if (o.extraShot === "Yes") rows.push(`<li><span>Extra Espresso Shot</span><span>+${formatMoney(extraFor("extraShot", "Yes"))}</span></li>`);
+            //     if (o.syrup !== "None") rows.push(`<li><span>${o.syrup} Syrup</span><span>+${formatMoney(extraFor("syrup", o.syrup))}</span></li>`);
+            // }
             if (state.quantity > 1 || state.options) {
                 rows.push(`<li class="cf-bd-unit"><span>Price per item${state.quantity > 1 ? ` × ${state.quantity}` : ""}</span><span>${formatMoney(unitPrice)}</span></li>`);
             }
@@ -553,30 +519,30 @@
             $("#relatedGrid").innerHTML = relatedProducts().map((p) => {
                 const liked = Favorites.has(p.id);
                 return `
-                            <div class="col-12 col-sm-6 col-lg-3">
-                              <article class="cf-product-card">
-                                <div class="cf-product-img">
-                                  <a href="${detailUrl(p.id)}" class="cf-product-img-link" aria-label="View ${p.name} details">
-                                    <img src="${p.image}" alt="${p.name}" loading="lazy" data-fallback="${p.category}" />
-                                  </a>
-                                  ${p.badge ? `<span class="cf-tag ${BADGES[p.badge]}">${p.badge}</span>` : ""}
-                                  <button type="button" class="cf-fav${liked ? " liked" : ""}" data-fav="${p.id}" aria-pressed="${liked}" aria-label="${liked ? "Remove from" : "Add to"} favorites">
-                                    <i class="bi ${liked ? "bi-heart-fill" : "bi-heart"}"></i>
-                                  </button>
-                                </div>
-                                <div class="cf-product-body">
-                                  <div class="cf-product-meta"><span class="cf-cat-label">${category(p.category).label}</span></div>
-                                  <h3><a href="${detailUrl(p.id)}">${p.name}</a></h3>
-                                  <p>${p.description}</p>
-                                  <div class="cf-product-foot">
-                                    <span class="cf-price">${p.customizable ? "<small>from</small>" : ""}${formatMoney(p.price)}</span>
-                                    ${p.customizable
+                                <div class="col-12 col-sm-6 col-lg-3">
+                                  <article class="cf-product-card">
+                                    <div class="cf-product-img">
+                                      <a href="${detailUrl(p.id)}" class="cf-product-img-link" aria-label="View ${p.name} details">
+                                        <img src="${p.image}" alt="${p.name}" loading="lazy" data-fallback="${p.category}" />
+                                      </a>
+                                      ${p.badge ? `<span class="cf-tag ${BADGES[p.badge]}">${p.badge}</span>` : ""}
+                                      <button type="button" class="cf-fav${liked ? " liked" : ""}" data-fav="${p.id}" aria-pressed="${liked}" aria-label="${liked ? "Remove from" : "Add to"} favorites">
+                                        <i class="bi ${liked ? "bi-heart-fill" : "bi-heart"}"></i>
+                                      </button>
+                                    </div>
+                                    <div class="cf-product-body">
+                                      <div class="cf-product-meta"><span class="cf-cat-label">${category(p.category).label}</span></div>
+                                      <h3><a href="${detailUrl(p.id)}">${p.name}</a></h3>
+                                      <p>${p.description}</p>
+                                      <div class="cf-product-foot">
+                                        <span class="cf-price">${p.customizable ? "<small>from</small>" : ""}${formatMoney(p.price)}</span>
+                                        ${p.customizable
                         ? `<a href="${detailUrl(p.id)}" class="btn cf-add-btn"><i class="bi bi-sliders"></i> Customize</a>`
                         : `<button type="button" class="btn cf-add-btn" data-add="${p.id}"><i class="bi bi-bag-plus"></i> Add</button>`}
-                                  </div>
-                                </div>
-                              </article>
-                            </div>`;
+                                      </div>
+                                    </div>
+                                  </article>
+                                </div>`;
             }).join("");
             applyFallbacks($("#relatedGrid"));
         }
@@ -603,26 +569,26 @@
             $("#cartItems").innerHTML = Cart.items.map((line) => {
                 const p = findProduct(line.productId);
                 return `
-                            <li class="cf-cart-line" data-line="${line.lineId}">
-                              <a href="${detailUrl(line.productId)}" class="cf-cart-thumb">
-                                <img src="${line.image}" alt="${line.name}" data-fallback="${p ? p.category : "coffee"}" />
-                              </a>
-                              <div>
-                                <div class="cf-cart-line-top">
-                                  <h6>${line.name}</h6>
-                                  <button type="button" class="cf-cart-remove" data-action="remove" aria-label="Remove ${line.name}"><i class="bi bi-trash3"></i></button>
-                                </div>
-                                <div class="cf-cart-opts">${describeOptions(line.options) || `${formatMoney(line.unitPrice)} each`}</div>
-                                <div class="cf-cart-line-bottom">
-                                  <div class="cf-stepper">
-                                    <button type="button" data-action="dec" aria-label="Decrease ${line.name}"><i class="bi bi-dash"></i></button>
-                                    <span>${line.quantity}</span>
-                                    <button type="button" data-action="inc" aria-label="Increase ${line.name}"><i class="bi bi-plus"></i></button>
+                                <li class="cf-cart-line" data-line="${line.lineId}">
+                                  <a href="${detailUrl(line.productId)}" class="cf-cart-thumb">
+                                    <img src="${line.image}" alt="${line.name}" data-fallback="${p ? p.category : "coffee"}" />
+                                  </a>
+                                  <div>
+                                    <div class="cf-cart-line-top">
+                                      <h6>${line.name}</h6>
+                                      <button type="button" class="cf-cart-remove" data-action="remove" aria-label="Remove ${line.name}"><i class="bi bi-trash3"></i></button>
+                                    </div>
+                                    <div class="cf-cart-opts">${describeOptions(line.options) || `${formatMoney(line.unitPrice)} each`}</div>
+                                    <div class="cf-cart-line-bottom">
+                                      <div class="cf-stepper">
+                                        <button type="button" data-action="dec" aria-label="Decrease ${line.name}"><i class="bi bi-dash"></i></button>
+                                        <span>${line.quantity}</span>
+                                        <button type="button" data-action="inc" aria-label="Increase ${line.name}"><i class="bi bi-plus"></i></button>
+                                      </div>
+                                      <span class="cf-line-price">${formatMoney(line.unitPrice * line.quantity)}</span>
+                                    </div>
                                   </div>
-                                  <span class="cf-line-price">${formatMoney(line.unitPrice * line.quantity)}</span>
-                                </div>
-                              </div>
-                            </li>`;
+                                </li>`;
             }).join("");
             applyFallbacks($("#cartItems"));
         }

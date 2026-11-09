@@ -27,7 +27,6 @@ C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.WebUI\wwwroot\lib\jquery\LICE
 C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.WebUI\wwwroot\lib\bootstrap\dist\css\bootstrap.rtl.min.css
 C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.WebUI\wwwroot\lib\jquery-validation\dist\jquery.validate.js
 C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.WebUI\wwwroot\lib\bootstrap\dist\css\bootstrap.css
-C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.WebUI\wwwroot\ui\products.html
 C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.WebUI\wwwroot\favicon.ico
 C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.WebUI\wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.min.css
 C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.WebUI\wwwroot\lib\bootstrap\dist\css\bootstrap.rtl.css.map
@@ -35,7 +34,6 @@ C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.WebUI\wwwroot\lib\bootstrap\d
 C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.WebUI\wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.min.css.map
 C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.WebUI\wwwroot\lib\jquery\dist\jquery.js
 C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.WebUI\wwwroot\lib\jquery\dist\jquery.min.map
-C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.WebUI\wwwroot\ui\cart.html
 C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.WebUI\wwwroot\lib\bootstrap\dist\js\bootstrap.esm.js
 C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.WebUI\wwwroot\lib\bootstrap\dist\js\bootstrap.min.js.map
 C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.WebUI\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.rtl.min.css
@@ -47,7 +45,6 @@ C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.WebUI\wwwroot\lib\jquery-vali
 C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.WebUI\wwwroot\lib\jquery-validation\LICENSE.md
 C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.WebUI\wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.min.css
 C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.WebUI\wwwroot\lib\bootstrap\dist\css\bootstrap-utilities.min.css.map
-C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.WebUI\wwwroot\ui\product-detail.html
 C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.WebUI\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css.map
 C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.WebUI\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.rtl.css.map
 C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.WebUI\wwwroot\js\site.js
@@ -128,6 +125,3 @@ wwwroot\lib\jquery\dist\jquery.slim.js
 wwwroot\lib\jquery\dist\jquery.slim.min.js
 wwwroot\lib\jquery\dist\jquery.slim.min.map
 wwwroot\ui\admin-categories.html
-wwwroot\ui\cart.html
-wwwroot\ui\product-detail.html
-wwwroot\ui\products.html

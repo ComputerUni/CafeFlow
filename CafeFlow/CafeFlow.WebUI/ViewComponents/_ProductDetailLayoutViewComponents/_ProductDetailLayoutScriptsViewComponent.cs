@@ -1,12 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using CafeFlow.Business.Abstract;
+using CafeFlow.WebUI.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CafeFlow.WebUI.ViewComponents._ProductDetailLayoutViewComponents
 {
-    public class _ProductDetailLayoutScriptsViewComponent : ViewComponent
+    public class _ProductDetailLayoutScriptsViewComponent() : ViewComponent
     {
-        public IViewComponentResult Invoke()
+        public IViewComponentResult Invoke(ProductDetailPageViewModel model)
         {
-            return View();
+            return View(model);
         }
     }
 }

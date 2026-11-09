@@ -1,4 +1,6 @@
-﻿@{
+﻿@model ProductDetailPageViewModel
+
+@{
     Layout = "~/Views/Shared/_CustomerLayout.cshtml";
 }
 
@@ -9,24 +11,28 @@
     <div class="container">
         <nav aria-label="Breadcrumb">
             <div class="cf-breadcrumb" id="breadcrumb">
-                <a href="index.html"><i class="bi bi-house-heart"></i> Home</a>
+                <a href="/Default/Index"><i class="bi bi-house-heart"></i> Anasayfa</a>
                 <i class="bi bi-chevron-right"></i>
-                <a href="products.html">Our Menu</a>
+                <a href="/Menu/Index">Menü</a>
             </div>
         </nav>
-        <a href="products.html" class="cf-back-link" id="backLink"><span><i class="bi bi-arrow-left"></i></span> Back to Menu</a>
+        <a href="/Menu/Index" class="cf-back-link" id="backLink"><span><i class="bi bi-arrow-left"></i></span> Menüye Dön</a>
     </div>
 </div>
 
 <main>
-    <section class="cf-not-found container d-none" id="notFound">
-        <div class="cf-empty-art"><span><i class="bi bi-search-heart"></i></span></div>
-        <h1>We couldn't find that treat</h1>
-        <p>It may have left the menu, or the link might be incomplete.</p>
-        <a href="products.html" class="btn cf-btn-primary cf-btn-lg">Explore Our Menu <i class="bi bi-arrow-right"></i></a>
-    </section>
+    @if(Model.Product == null)
+    {
+        <section class="cf-not-found container d-none" id="notFound">
+            <div class="cf-empty-art"><span><i class="bi bi-search-heart"></i></span></div>
+            <h1>Aradığınız lezzeti bulamadık</h1>
+            <p>Bu ürün menümüzden ayrılmış olabilir veya bağlantı eksik olabilir.</p>
+            <a href="/Menu/Index" class="btn cf-btn-primary cf-btn-lg">Menümüzdeki Ürünleri Keşfedin <i class="bi bi-arrow-right"></i></a>
+        </section>
+    } 
 
-    @await Component.InvokeAsync("_ProductDetailLayoutProductInfo")
+
+    @await Component.InvokeAsync("_ProductDetailLayoutProductInfo", new { product = Model.Product })
 
     @await Component.InvokeAsync("_ProductDetailLayoutInfoTabs")
 
@@ -50,5 +56,5 @@
     <i class="bi bi-check-circle-fill"></i> <span id="cfToastText">Added to cart</span>
 </div>
 
-@await Component.InvokeAsync("_ProductDetailLayoutScripts")
+@await Component.InvokeAsync("_ProductDetailLayoutScripts", Model)
 
