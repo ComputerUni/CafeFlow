@@ -1,0 +1,106 @@
+﻿<!-- ============ PRODUCT ============ -->
+<section class="cf-detail-section d-none" id="productSection" aria-labelledby="productName">
+    <div class="container">
+        <div class="row g-5">
+
+            <!-- Gallery -->
+            <div class="col-lg-6">
+                <div class="cf-gallery">
+                    <div class="cf-gallery-main" id="galleryMain">
+                        <span class="cf-tag d-none" id="productBadge"></span>
+                        <button type="button" class="cf-fav" id="favBtn" aria-pressed="false" aria-label="Add to favorites">
+                            <i class="bi bi-heart"></i>
+                        </button>
+                        <span class="cf-gallery-caption" id="galleryCaption"><i class="bi bi-zoom-in"></i> Hover to zoom</span>
+                    </div>
+                    <div class="cf-thumbs" id="galleryThumbs" role="group" aria-label="Product images"></div>
+                </div>
+            </div>
+
+            <!-- Info & customization -->
+            <div class="col-lg-6">
+                <span class="cf-info-cat" id="productCategory"><i class="bi bi-stars"></i> Signature Drinks</span>
+                <h1 class="cf-info-title" id="productName">Product</h1>
+
+                <div class="cf-meta-row">
+                    <button type="button" class="cf-rating-link" id="ratingLink">
+                        <span class="d-inline-flex align-items-center gap-2" style="text-decoration:none;color:inherit">
+                            <span class="cf-stars" id="ratingStars"></span>
+                            <strong id="ratingValue">4.9</strong>/5
+                        </span>
+                        <span id="reviewCountLabel">(0 reviews)</span>
+                    </button>
+                    <span class="cf-demo-flag" title="Ratings and reviews on this page are sample content">Demo</span>
+                    <span class="cf-stock"><span class="cf-dot"></span> Available today</span>
+                </div>
+
+                <p class="cf-info-desc" id="productShortDesc"></p>
+
+                <div class="cf-price-hero">
+                    <small id="priceLabel">Starting from</small>
+                    <strong id="basePrice">₺0.00</strong>
+                    <span class="cf-price-note d-none" id="customNote"><i class="bi bi-sliders"></i> Customizable</span>
+                </div>
+
+                <form id="customizeForm" novalidate>
+                    <!-- Customization (only for customizable products) -->
+                    <div id="customSections" class="d-none">
+                        <fieldset class="cf-opt-section">
+                            <legend>Choose Your Size</legend>
+                            <div class="cf-size-grid" id="sizeOptions"></div>
+                        </fieldset>
+
+                        <fieldset class="cf-opt-section">
+                            <legend>Make It Your Way</legend>
+                            <p class="cf-opt-subtitle">Choose the milk that makes your cup perfect.</p>
+                            <div class="cf-milk-row" id="milkOptions"></div>
+                        </fieldset>
+
+                        <fieldset class="cf-opt-section">
+                            <legend>A Little Extra Happiness</legend>
+                            <p class="cf-opt-subtitle">Optional extras to make it extra special.</p>
+                            <div class="cf-addon-grid" id="addonOptions"></div>
+                        </fieldset>
+                    </div>
+
+                    <!-- Price breakdown -->
+                    <div class="cf-breakdown" aria-live="polite">
+                        <ul id="breakdownList"></ul>
+                        <div class="cf-bd-total">
+                            <span>Total</span>
+                            <strong id="totalPrice">₺0.00</strong>
+                        </div>
+                    </div>
+
+                    <!-- Quantity + add -->
+                    <div class="cf-buy-row">
+                        <div class="cf-stepper" role="group" aria-label="Quantity">
+                            <button type="button" id="qtyDec" aria-label="Decrease quantity"><i class="bi bi-dash"></i></button>
+                            <span id="qtyValue" aria-live="polite">1</span>
+                            <button type="button" id="qtyInc" aria-label="Increase quantity"><i class="bi bi-plus"></i></button>
+                        </div>
+                        <button type="submit" class="btn cf-btn-primary cf-btn-lg cf-add-main" id="addToCartBtn">
+                            <i class="bi bi-bag-heart"></i> Add to My Sweet Cart
+                        </button>
+                    </div>
+                    <a href="products.html" class="cf-continue-explore"><i class="bi bi-arrow-left"></i> Continue Exploring</a>
+                </form>
+
+                <div class="cf-assure">
+                    <div class="cf-assure-item">
+                        <i class="bi bi-fire"></i>
+                        <div><strong>Freshly Prepared</strong><small>Made when you order it.</small></div>
+                    </div>
+                    <div class="cf-assure-item">
+                        <i class="bi bi-heart"></i>
+                        <div><strong>Made With Love</strong><small>Handcrafted by our team.</small></div>
+                    </div>
+                    <div class="cf-assure-item">
+                        <i class="bi bi-bag-check"></i>
+                        <div><strong>Pickup, Delivery &amp; Dine-In</strong><small>Enjoy it your way.</small></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

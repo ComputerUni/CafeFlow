@@ -205,25 +205,20 @@
 
                 document.querySelectorAll(".cf-add-btn").forEach((btn) => {
                     btn.addEventListener("click", () => {
+                        const id = Number(btn.dataset.id);
                         const name = btn.dataset.name;
                         const price = parseFloat(btn.dataset.price);
-                        const existing = cart.get(name);
-                        if (existing) existing.qty += 1;
-                        else cart.set(name, { price, qty: 1 });
-                        renderCart();
+                        const image = btn.dataset.image || "";
 
-                        cartCount.classList.add("bump");
-                        setTimeout(() => cartCount.classList.remove("bump"), 300);
+                        window.addToCart(id, name, price, image);
 
                         const original = btn.innerHTML;
                         btn.classList.add("added");
-                        btn.innerHTML = '<i class="bi bi-check-lg"></i> Added';
+                        btn.innerHTML = '<i class="bi bi-check-lg"></i> Eklendi';
                         setTimeout(() => {
                             btn.classList.remove("added");
                             btn.innerHTML = original;
                         }, 1200);
-
-                        showToast(`${name} added to your cart`);
                     });
                 });
 

@@ -7,46 +7,47 @@
     (() => {
         "use strict";
 
-        /* ---------- 1. SABİT VERİLER & YARDIMCILAR ---------- */
         const IMG = (id, w = 700) => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&q=80`;
 
         const BADGES = {
             "Best Seller": "cf-tag-best",
         };
 
-        const FALLBACK_ICON = {
-            hot: "bi-cup-hot", iced: "bi-cup-straw", signature: "bi-cup-straw",
-            cakes: "bi-cake2", bakery: "bi-basket", snacks: "bi-egg-fried",
-            coffee: "bi-cup-hot", cake: "bi-cake2",
+         const FALLBACK_ICON = {
+            coffee: "bi-cup-hot",
+            drink: "bi-cup-straw",
+            cake: "bi-cake2"
         };
 
         const CUSTOM_OPTIONS = [
             {
-                key: "size", label: "Boyut", choices: [
-                    { value: "Small", price: 0 },
-                    { value: "Medium", price: 15 },
-                    { value: "Large", price: 30 },
-                ], default: "Medium"
+                key: "size", label: "Boyut Seçimi", choices: [
+                    { value: "Küçük (Standart)", price: 0 },
+                    { value: "Orta (Medium)", price: 15 },
+                    { value: "Büyük (Large)", price: 25 },
+                ], default: "Küçük (Standart)"
             },
             {
                 key: "milk", label: "Süt Tercihi", choices: [
-                    { value: "Regular", price: 0 },
-                    { value: "Oat", price: 15 },
-                    { value: "Almond", price: 15 },
-                ], default: "Regular"
+                    { value: "Standart Yağlı", price: 0 },
+                    { value: "Yulaf Sütü", price: 15 },
+                    { value: "Badem Sütü", price: 15 },
+                    { value: "Laktozsuz", price: 10 },
+                ], default: "Standart Yağlı"
             },
             {
-                key: "extraShot", label: "Ekstra Shot Espresso", choices: [
-                    { value: "No", price: 0 },
-                    { value: "Yes", price: 20 },
-                ], default: "No"
+                key: "extraShot", label: "Ekstra Espresso Shot", choices: [
+                    { value: "İstemiyorum", price: 0 },
+                    { value: "+1 Shot Espresso", price: 20 },
+                ], default: "İstemiyorum"
             },
             {
-                key: "syrup", label: "Şurup Tercihi", choices: [
-                    { value: "None", price: 0 },
-                    { value: "Vanilla", price: 10 },
-                    { value: "Caramel", price: 10 },
-                ], default: "None"
+                key: "syrup", label: "Aroma Şurubu", choices: [
+                    { value: "Yok", price: 0 },
+                    { value: "Vanilya", price: 15 },
+                    { value: "Karamel", price: 15 },
+                    { value: "Fındık", price: 15 },
+                ], default: "Yok"
             },
         ];
 
@@ -57,20 +58,7 @@
             return null;
         };
 
-        // /* ---------- 2. FİYATLANDIRMA & MASA REGISTRY ---------- */
-        // const PRICING = {
-        //     deliveryFee: 30,
-        //     freeDeliveryFrom: 600,
-        // };
 
-        // const TABLE_REGISTRY = {
-        //     "CF-T07-ROSE": { tableNumber: 7, area: "Bahçe Bölümü" },
-        //     "CF-T12-PEACH": { tableNumber: 12, area: "Cam Kenarı" },
-        // };
-
-        // const OPENING_HOURS = { 0: [9 * 60, 20 * 60], 6: [8 * 60 + 30, 22 * 60], default: [7 * 60 + 30, 21 * 60] };
-
-        /* ---------- 3. STORAGE & CART MODÜLÜ ---------- */
         const STORAGE_KEYS = {
             cart: "cafeflow_cart",
             favorites: "cafeflow_favorites",
@@ -184,7 +172,7 @@
             }
         };
 
-        /* ---------- 4. ARAYÜZ YARDIMCILARI ---------- */
+
         const $ = (sel, root = document) => root.querySelector(sel);
         const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
         const round2 = (n) => Math.round(n * 100) / 100;
@@ -252,13 +240,12 @@
             if (!options) return "";
             const tags = [];
             if (options.size) tags.push(`<span class="cf-opt-tag"><i class="bi bi-cup"></i> ${options.size}</span>`);
-            if (options.milk) tags.push(`<span class="cf-opt-tag"><i class="bi bi-droplet"></i> ${options.milk === "Regular" ? "Normal Süt" : options.milk + " Sütü"}</span>`);
+            if (options.milk) tags.push(`<span class="cf-opt-tag"><i class="bi bi-droplet"></i> ${options.milk === "Regular" ? "Normal Süt" : options.milk}</span>`);
             if (options.extraShot === "Yes") tags.push(`<span class="cf-opt-tag"><i class="bi bi-lightning-charge"></i> Ekstra Shot</span>`);
             if (options.syrup && options.syrup !== "None") tags.push(`<span class="cf-opt-tag"><i class="bi bi-stars"></i> ${options.syrup} Şurubu</span>`);
             return `<div class="cf-opt-tags">${tags.join("")}</div>`;
         }
 
-        /* ---------- 5. SEPET LİSTESİ RENDER ---------- */
         const cartList = $("#cartList");
         const emptyCart = $("#emptyCart");
         const cartCountEl = $("#cartCount");
@@ -280,7 +267,6 @@
             if ($("#itemsCount")) $("#itemsCount").textContent = count ? `(${count} ürün)` : "";
 
             cartList.innerHTML = Cart.items.map((line) => {
-                // Güvenli veri atamaları:
                 const safeLineId = line.lineId || String(line.productId || Math.random());
                 const name = line.name || "Lezzetli Ürün";
                 const image = line.image || "/images/default-coffee.jpg";
@@ -295,7 +281,6 @@
                                 <img src="${image}" alt="${name}" data-fallback="${category}" loading="lazy" />
                               </a>
                               <div class="cf-item-info">
-                                <span class="cf-cat-label">${categoryLabel(category)}</span>
                                 <h3 class="cf-item-name"><a href="${detailUrl(line.productId)}">${name}</a></h3>
                                 ${typeof optionTags === 'function' ? optionTags(line.options) : ''}
                                 <div class="cf-item-actions">
@@ -396,7 +381,6 @@
             });
         }
 
-        /* ---------- 6. ÖZELLEŞTİRME / EDIT MODAL ---------- */
         const customizeModalEl = $("#customizeModal");
         const customizeModal = customizeModalEl ? new bootstrap.Modal(customizeModalEl) : null;
         const customizeForm = $("#customizeForm");
@@ -425,17 +409,20 @@
             if (!customizeModal) return;
             const line = lineId ? Cart.get(lineId) : null;
             const current = line && line.options ? line.options : null;
+
             modalState.product = product;
             modalState.lineId = lineId;
             modalState.qty = line ? line.quantity : 1;
 
             if ($("#customizeTitle")) $("#customizeTitle").textContent = product.name;
-            if ($("#customizeDesc")) $("#customizeDesc").textContent = product.description;
+            if ($("#customizeDesc")) $("#customizeDesc").textContent = product.description || "";
             if ($("#customizeCategory")) $("#customizeCategory").textContent = categoryLabel(product.category);
+
             if ($("#customizeImage")) {
-                $("#customizeImage").innerHTML = `<img src="${product.image}" alt="${product.name}" data-fallback="${product.category}" />`;
+                $("#customizeImage").innerHTML = `<img src="${product.image}" alt="${product.name}" data-fallback="${product.category || 'coffee'}" />`;
                 applyFallbacks($("#customizeImage"));
             }
+
             if ($("#customizeSubmit")) {
                 $("#customizeSubmit").innerHTML = lineId
                     ? `<i class="bi bi-check2"></i> Değişiklikleri Kaydet`
@@ -444,18 +431,27 @@
 
             if ($("#customizeOptions")) {
                 $("#customizeOptions").innerHTML = CUSTOM_OPTIONS.map((group) => {
-                    const selected = current ? current[group.key] : group.default;
+                    const savedVal = current ? current[group.key] : group.default;
+
                     return `
-                                <fieldset class="cf-opt-group">
-                                  <legend class="cf-opt-label">${group.label}</legend>
-                                  <div class="cf-opt-choices">
-                                    ${group.choices.map((c) => `
-                                      <label class="cf-opt">
-                                        <input type="radio" name="${group.key}" value="${c.value}" ${c.value === selected ? "checked" : ""} />
+                    <fieldset class="cf-opt-group">
+                        <legend class="cf-opt-label">${group.label}</legend>
+                        <div class="cf-opt-choices">
+                            ${group.choices.map((c) => {
+                        const isChecked = (c.value === savedVal) ||
+                            (savedVal && savedVal.includes(c.value)) ||
+                            (!savedVal && c.value === group.default);
+
+                        return `
+                                    <label class="cf-opt">
+                                        <input type="radio" name="${group.key}" value="${c.value}" ${isChecked ? "checked" : ""} />
                                         <span>${c.value}<small>${c.price ? `+${formatMoney(c.price)}` : "Dahil"}</small></span>
-                                      </label>`).join("")}
-                                  </div>
-                                </fieldset>`;
+                                    </label>
+                                `;
+                    }).join("")}
+                        </div>
+                    </fieldset>
+                `;
                 }).join("");
             }
 

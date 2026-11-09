@@ -7,7 +7,7 @@
         new{id="all", label="Tüm Menü", icon="bi-grid"}
     };
 
-    foreach(var cat in Model.Categories)
+    foreach (var cat in Model.Categories)
     {
         string icon = "bi-cup-hot";
         string n = cat.Name?.ToLower() ?? "";
@@ -38,22 +38,9 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    /* =========================================================
-       CafeFlow — Products / Menu Page
-       Sections:
-       1. Data (categories, products, customization options)
-       2. Storage helpers (cart + favorites in localStorage)
-       3. Cart module (shared data structure for future pages)
-       4. UI helpers (money, images, toast)
-       5. Menu rendering, filtering, sorting
-       6. Customization modal
-       7. Cart drawer rendering
-       8. Page bootstrap (events, footer, etc.)
-       ========================================================= */
     (() => {
         "use strict";
 
-        /* ---------- 1. DATA ---------- */
         const IMG = (id, w = 700) => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&q=80`;
 
         const CATEGORIES = @Html.Raw(jsonCategories);
@@ -226,11 +213,11 @@
                 const count = cat.id === "all" ? PRODUCTS.length : PRODUCTS.filter((p) => p.category === cat.id).length;
                 const active = cat.id === state.category;
                 return `
-                                                                                <button type="button" class="cf-pill${active ? " active" : ""}" role="tab"
-                                                                                        aria-selected="${active}" data-category="${cat.id}">
-                                                                                  <i class="bi ${cat.icon}"></i>${cat.label}
-                                                                                  <span class="cf-pill-count">${count}</span>
-                                                                                </button>`;
+                                                                                    <button type="button" class="cf-pill${active ? " active" : ""}" role="tab"
+                                                                                            aria-selected="${active}" data-category="${cat.id}">
+                                                                                      <i class="bi ${cat.icon}"></i>${cat.label}
+                                                                                      <span class="cf-pill-count">${count}</span>
+                                                                                    </button>`;
             }).join("");
         }
 
@@ -258,36 +245,36 @@
             const badge = p.badge ? `<span class="cf-tag ${BADGES[p.badge]}">${p.badge}</span>` : "";
             const fromLabel = p.customizable ? "<small>from</small>" : "";
             const btnLabel = p.customizable
-                ? `<i class="bi bi-sliders"></i> Customize`
-                : `<i class="bi bi-bag-plus"></i> Add`;
+                ? `<i class="bi bi-sliders"></i> Özelleştir`
+                : `<i class="bi bi-bag-plus"></i> Ekle`;
 
             return `
-                                                                              <div class="col-12 col-sm-6 col-lg-4 col-xl-3 cf-grid-item" style="animation-delay:${Math.min(index, 12) * 40}ms">
-                                                                                <article class="cf-product-card">
-                                                                                  <div class="cf-product-img">
-                                                                                    <a href="${detailUrl(p.id)}" class="cf-product-img-link" aria-label="View ${p.name} details">
-                                                                                      <img src="${p.image}" alt="${p.name}" loading="lazy" data-fallback="${p.category}" />
-                                                                                    </a>
-                                                                                    ${badge}
-                                                                                    <button type="button" class="cf-fav${liked ? " liked" : ""}" data-fav="${p.id}"
-                                                                                            aria-pressed="${liked}" aria-label="${liked ? "Remove from" : "Add to"} favorites">
-                                                                                      <i class="bi ${liked ? "bi-heart-fill" : "bi-heart"}"></i>
-                                                                                    </button>
-                                                                                  </div>
-                                                                                  <div class="cf-product-body">
-                                                                                    <div class="cf-product-meta">
-                                                                                      <span class="cf-cat-label">${categoryLabel(p.category)}</span>
-                                                                                      ${p.vegetarian ? `<span class="cf-veg" title="Vegetarian"><i class="bi bi-flower2"></i> Veg</span>` : ""}
-                                                                                    </div>
-                                                                                    <h3><a href="${detailUrl(p.id)}">${p.name}</a></h3>
-                                                                                    <p>${p.description}</p>
-                                                                                    <div class="cf-product-foot">
-                                                                                      <span class="cf-price">${fromLabel}${formatMoney(p.price)}</span>
-                                                                                                  <button type="button" class="btn cf-add-btn" data-add="${p.id}" data-name="${p.name}" data-price="${p.price}" data-image="${p.image}">${btnLabel}</button>
-                                                                                    </div>
-                                                                                  </div>
-                                                                                </article>
-                                                                              </div>`;
+                                                                                  <div class="col-12 col-sm-6 col-lg-4 col-xl-3 cf-grid-item" style="animation-delay:${Math.min(index, 12) * 40}ms">
+                                                                                    <article class="cf-product-card">
+                                                                                      <div class="cf-product-img">
+                                                                                        <a href="${detailUrl(p.id)}" class="cf-product-img-link" aria-label="View ${p.name} details">
+                                                                                          <img src="${p.image}" alt="${p.name}" loading="lazy" data-fallback="${p.category}" />
+                                                                                        </a>
+                                                                                        ${badge}
+                                                                                        <button type="button" class="cf-fav${liked ? " liked" : ""}" data-fav="${p.id}"
+                                                                                                aria-pressed="${liked}" aria-label="${liked ? "Remove from" : "Add to"} favorites">
+                                                                                          <i class="bi ${liked ? "bi-heart-fill" : "bi-heart"}"></i>
+                                                                                        </button>
+                                                                                      </div>
+                                                                                      <div class="cf-product-body">
+                                                                                        <div class="cf-product-meta">
+                                                                                          <span class="cf-cat-label">${categoryLabel(p.category)}</span>
+                                                                                          ${p.vegetarian ? `<span class="cf-veg" title="Vegetarian"><i class="bi bi-flower2"></i> Veg</span>` : ""}
+                                                                                        </div>
+                                                                                        <h3><a href="${detailUrl(p.id)}">${p.name}</a></h3>
+                                                                                        <p>${p.description}</p>
+                                                                                        <div class="cf-product-foot">
+                                                                                          <span class="cf-price">${fromLabel}${formatMoney(p.price)}</span>
+                                                                                                      <button type="button" class="btn cf-add-btn" data-add="${p.id}" data-name="${p.name}" data-price="${p.price}" data-image="${p.image}">${btnLabel}</button>
+                                                                                        </div>
+                                                                                      </div>
+                                                                                    </article>
+                                                                                  </div>`;
         }
 
         function renderProducts() {
@@ -366,16 +353,16 @@
             applyFallbacks($("#customizeImage"));
 
             modalOptions.innerHTML = CUSTOM_OPTIONS.map((group) => `
-                                                                              <fieldset class="cf-opt-group">
-                                                                                <legend class="cf-opt-label">${group.label}</legend>
-                                                                                <div class="cf-opt-choices">
-                                                                                  ${group.choices.map((c) => `
-                                                                                    <label class="cf-opt">
-                                                                                      <input type="radio" name="${group.key}" value="${c.value}" ${c.value === group.default ? "checked" : ""} />
-                                                                                      <span>${c.value}<small>${c.price ? `+${formatMoney(c.price)}` : "Included"}</small></span>
-                                                                                    </label>`).join("")}
-                                                                                </div>
-                                                                              </fieldset>`).join("");
+                                                                                  <fieldset class="cf-opt-group">
+                                                                                    <legend class="cf-opt-label">${group.label}</legend>
+                                                                                    <div class="cf-opt-choices">
+                                                                                      ${group.choices.map((c) => `
+                                                                                        <label class="cf-opt">
+                                                                                          <input type="radio" name="${group.key}" value="${c.value}" ${c.value === group.default ? "checked" : ""} />
+                                                                                          <span>${c.value}<small>${c.price ? `+${formatMoney(c.price)}` : "Included"}</small></span>
+                                                                                        </label>`).join("")}
+                                                                                    </div>
+                                                                                  </fieldset>`).join("");
 
             updateModalTotal();
             modal.show();
@@ -410,28 +397,28 @@
                 const product = PRODUCTS.find((p) => p.id === line.productId);
                 const fallback = product ? product.category : "coffee";
                 return `
-                                                                                <li class="cf-cart-line" data-line="${line.lineId}">
-                                                                                  <a href="${detailUrl(line.productId)}" class="cf-cart-thumb">
-                                                                                    <img src="${line.image}" alt="${line.name}" data-fallback="${fallback}" />
-                                                                                  </a>
-                                                                                  <div>
-                                                                                    <div class="cf-cart-line-top">
-                                                                                      <h6>${line.name}</h6>
-                                                                                      <button type="button" class="cf-cart-remove" data-action="remove" aria-label="Remove ${line.name}">
-                                                                                        <i class="bi bi-trash3"></i>
-                                                                                      </button>
-                                                                                    </div>
-                                                                                    <div class="cf-cart-opts">${describeOptions(line.options) || `${formatMoney(line.unitPrice)} each`}</div>
-                                                                                    <div class="cf-cart-line-bottom">
-                                                                                      <div class="cf-stepper">
-                                                                                        <button type="button" data-action="dec" aria-label="Decrease ${line.name}"><i class="bi bi-dash"></i></button>
-                                                                                        <span>${line.quantity}</span>
-                                                                                        <button type="button" data-action="inc" aria-label="Increase ${line.name}"><i class="bi bi-plus"></i></button>
+                                                                                    <li class="cf-cart-line" data-line="${line.lineId}">
+                                                                                      <a href="${detailUrl(line.productId)}" class="cf-cart-thumb">
+                                                                                        <img src="${line.image}" alt="${line.name}" data-fallback="${fallback}" />
+                                                                                      </a>
+                                                                                      <div>
+                                                                                        <div class="cf-cart-line-top">
+                                                                                          <h6>${line.name}</h6>
+                                                                                          <button type="button" class="cf-cart-remove" data-action="remove" aria-label="Remove ${line.name}">
+                                                                                            <i class="bi bi-trash3"></i>
+                                                                                          </button>
+                                                                                        </div>
+                                                                                        <div class="cf-cart-opts">${describeOptions(line.options) || `${formatMoney(line.unitPrice)} each`}</div>
+                                                                                        <div class="cf-cart-line-bottom">
+                                                                                          <div class="cf-stepper">
+                                                                                            <button type="button" data-action="dec" aria-label="Decrease ${line.name}"><i class="bi bi-dash"></i></button>
+                                                                                            <span>${line.quantity}</span>
+                                                                                            <button type="button" data-action="inc" aria-label="Increase ${line.name}"><i class="bi bi-plus"></i></button>
+                                                                                          </div>
+                                                                                          <span class="cf-line-price">${formatMoney(line.unitPrice * line.quantity)}</span>
+                                                                                        </div>
                                                                                       </div>
-                                                                                      <span class="cf-line-price">${formatMoney(line.unitPrice * line.quantity)}</span>
-                                                                                    </div>
-                                                                                  </div>
-                                                                                </li>`;
+                                                                                    </li>`;
             }).join("");
             applyFallbacks(cartItemsEl);
         }
@@ -528,14 +515,21 @@
 
             const addBtn = e.target.closest("[data-add]");
             if (addBtn) {
-                const product = PRODUCTS.find((p) => p.id === Number(addBtn.dataset.add));
-                if (product.customizable) {
+                const productId = addBtn.dataset.add;
+                const product = PRODUCTS.find((p) => String(p.id) === String(productId));
+
+                if (!product) {
+                    console.error("Ürün bulunamadı:", productId);
+                    return;
+                }
+
+                if (product.customizable === true) {
                     openCustomizer(product);
                 } else {
                     Cart.add(product);
                     flashButton(addBtn);
                     bumpCartCounter();
-                    showToast(`${product.name} added to your cart`);
+                    showToast(`${product.name} sepete eklendi`);
                 }
             }
         });
