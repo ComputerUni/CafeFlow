@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CafeFlow.DTO.Category;
+using CafeFlow.DTO.Comment;
 using CafeFlow.DTO.Customer;
 using CafeFlow.DTO.Order;
 using CafeFlow.DTO.OrderDetail;
@@ -50,6 +51,10 @@ namespace CafeFlow.Business.Mappings
             CreateMap<CreateTableDto, Table>();
 
             CreateMap<OrderStatusHistory, OrderStatusHistoryListDto>();
+
+            CreateMap<Comment, CommentListDto>()
+                .ForMember(dest => dest.CustomerName, opt => opt.MapFrom(src => src.Customer.FullName))
+                .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product.Name));
         }
     }
 }

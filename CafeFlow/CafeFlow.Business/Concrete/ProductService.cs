@@ -2,7 +2,9 @@
 using CafeFlow.Business.Abstract;
 using CafeFlow.DataAccess.Repositories.Products;
 using CafeFlow.DTO.Product;
+using CafeFlow.DTO.ProductDetail;
 using CafeFlow.Entity;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -45,6 +47,12 @@ namespace CafeFlow.Business.Concrete
         {
             var products = await _productRepository.GetFeaturedProductsAsync();
             return _mapper.Map<List<ProductListDto>>(products);
+        }
+
+        public async Task<ResultProductDetailDto> GetProductWithCategoryByIdAsync(int id)
+        {
+            var product = await _productRepository.GetProductWithCategoryByIdAsync(id);
+            return _mapper.Map<ResultProductDetailDto>(product);
         }
 
         public async Task UpdateAsync(UpdateProductDto dto)

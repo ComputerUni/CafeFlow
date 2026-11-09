@@ -28,5 +28,10 @@ namespace CafeFlow.DataAccess.Repositories.Products
         {
             return await _context.Products.Include(x => x.Category).Where(x => x.IsFeatured).Take(9).ToListAsync();
         }
+
+        public async Task<Product> GetProductWithCategoryByIdAsync(int id)
+        {
+            return await _context.Products.Include(x => x.Category).Where(x => x.Id == id).FirstOrDefaultAsync();
+        }
     }
 }

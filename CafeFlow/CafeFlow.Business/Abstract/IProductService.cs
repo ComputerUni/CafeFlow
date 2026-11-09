@@ -1,4 +1,5 @@
 ﻿using CafeFlow.DTO.Product;
+using CafeFlow.DTO.ProductDetail;
 using CafeFlow.Entity;
 
 namespace CafeFlow.Business.Abstract
@@ -12,5 +13,6 @@ namespace CafeFlow.Business.Abstract
         Task CreateAsync(CreateProductDto dto);
         Task UpdateAsync(UpdateProductDto dto);
         Task DeleteAsync(int id);
+        Task<ResultProductDetailDto> GetProductWithCategoryByIdAsync(int id);
     }
 }
