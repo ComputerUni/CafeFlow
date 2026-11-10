@@ -10,5 +10,6 @@ namespace CafeFlow.DataAccess.Repositories.Categories
     public interface ICategoryRepository : IGenericRepository<Category>
     {
         Task<List<Category>> GetCategoriesWithProductAsync();
+        Task<List<Category>> GetCategoriesWithCountsAsync();
     }
 }

@@ -16,9 +16,12 @@ namespace CafeFlow.Business.Mappings
     {
         public MappingProfile()
         {
-            CreateMap<Category, CategoryListDto>().ForMember(dest => dest.ProductCount, opt => opt.MapFrom(src => src.Products != null ? src.Products.Count(p => !p.IsDeleted && p.IsActive) : 0));
+            CreateMap<Category, CategoryListDto>()
+                .ForMember(dest => dest.ProductCount, opt => opt.MapFrom(src => src.Products != null ? src.Products.Count(p => !p.IsDeleted && p.IsActive) : 0))
+                .ForMember(dest => dest.OrderCount, opt => opt.MapFrom(src => src.Products.SelectMany(p => p.OrderDetails).Select(od => od.OrderId).Distinct().Count()));
             CreateMap<UpdateCategoryDto, Category>();
             CreateMap<CreateCategoryDto, Category>();
+
             CreateMap<Order, OrderConfirmationDto>()
                 .ForMember(dest => dest.CustomerName, opt => opt.MapFrom(src => src.Customer.FullName))
                 .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.Customer.Phone))
@@ -29,7 +32,6 @@ namespace CafeFlow.Business.Mappings
                 .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product != null ? src.Product.Name : "Lezzetli Ürün"))
                 .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity))
                 .ForMember(dest => dest.UnitPrice, opt => opt.MapFrom(src => src.UnitPrice));
-
 
             CreateMap<Product, ProductListDto>().ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.Name));
             CreateMap<UpdateProductDto, Product>();

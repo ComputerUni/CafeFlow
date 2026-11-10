@@ -1,26 +1,27 @@
-﻿<script>
+﻿@using CafeFlow.DTO.Category
+@model List<CategoryListDto>
+
+<script>
     (() => {
         "use strict";
         const { toast, confirm } = window.AdminShell;
         const $ = (s, r = document) => r.querySelector(s);
         const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 
-        /* ---------- 1. DATA ----------
-           Product counts match the customer-site catalog (products.html).
-           Admin data lives under its own key and never touches the cart or catalog. */
         const STORAGE_KEY = "cafeflow_admin_categories";
-        const IMG = (id) => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=600&q=80`;
 
-        const SEED = [
-            { id: 1, code: "CAT-001", slug: "hot", name: "Hot Coffees", description: "Velvety lattes, bold espressos and comforting signature brews.", products: 3, order: 1, active: true, createdAt: "2026-01-12", icon: "bi-cup-hot", image: IMG("1509042239860-f550ce710b93") },
-            { id: 2, code: "CAT-002", slug: "iced", name: "Iced Coffees", description: "Chilled espresso drinks and slow-steeped cold brew over ice.", products: 3, order: 2, active: true, createdAt: "2026-01-12", icon: "bi-cup-straw", image: IMG("1461023058943-07fcbe16d735") },
-            { id: 3, code: "CAT-003", slug: "signature", name: "Signature Drinks", description: "Our pink house favorites: strawberry, rose and berry creations.", products: 3, order: 3, active: true, createdAt: "2026-02-03", icon: "bi-stars", image: IMG("1572490122747-3968b75cc699") },
-            { id: 4, code: "CAT-004", slug: "cakes", name: "Cakes & Desserts", description: "Cakes, cheesecakes and macarons baked fresh every morning.", products: 4, order: 4, active: true, createdAt: "2026-02-03", icon: "bi-cake2", image: IMG("1578985545062-69928b1d9587") },
-            { id: 5, code: "CAT-005", slug: "bakery", name: "Bakery", description: "Buttery croissants, cinnamon rolls and morning pastries.", products: 3, order: 5, active: true, createdAt: "2026-03-18", icon: "bi-basket", image: IMG("1555507036-ab1f4038808a") },
-            { id: 6, code: "CAT-006", slug: "snacks", name: "Snacks", description: "Toasts, sandwiches and light bites to enjoy any time of day.", products: 4, order: 6, active: true, createdAt: "2026-04-07", icon: "bi-egg-fried", image: IMG("1541519227354-08fa5d50c44d") },
-            { id: 7, code: "CAT-007", slug: "tea", name: "Tea & Infusions", description: "Loose-leaf teas, herbal infusions and matcha alternatives.", products: 0, order: 7, active: true, createdAt: "2026-08-20", icon: "bi-cup", image: IMG("1544787219-7f47ccb76574") },
-            { id: 8, code: "CAT-008", slug: "seasonal", name: "Seasonal Specials", description: "Limited-time drinks and treats inspired by the season.", products: 0, order: 8, active: false, createdAt: "2026-09-30", icon: "bi-flower1", image: IMG("1512568400610-62da28bc8a13") },
-        ];
+        const SEED = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+                    Model.Select(c => new
+                    {
+                        id = c.Id,
+                        name= c.Name,
+                        description = c.Description ?? "",
+                        products = c.ProductCount,
+                        orderCount = c.OrderCount,
+                        createdAt = c.CreatedAt.ToString("yyyy-MM-dd"),
+                        image = c.ImageUrl
+                    })
+            ));
 
         const store = {
             load() {
@@ -39,12 +40,12 @@
             },
         };
 
-        let categories = store.load();
+        let categories = SEED;
         const state = { search: "", status: "all", sort: "order", view: "table", page: 1, pageSize: 10 };
 
         /* ---------- 2. HELPERS ---------- */
         const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-        const fmtDate = (iso) => new Date(`${iso}T12:00:00`).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+        const fmtDate = (iso) => new Date(`${iso}T12:00:00`).toLocaleDateString("tr-TR", { day: "numeric", month: "short", year: "numeric" });
         const normalize = (s) => s.trim().replace(/\s+/g, " ").toLocaleLowerCase("en");
         const byId = (id) => categories.find((c) => c.id === id);
         const nextId = () => Math.max(0, ...categories.map((c) => c.id)) + 1;
@@ -118,11 +119,10 @@
                   <i class="bi bi-three-dots-vertical"></i>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end">
-                  <li><button class="dropdown-item" type="button" data-act="view" data-id="${c.id}"><i class="bi bi-eye"></i> View</button></li>
-                  <li><button class="dropdown-item" type="button" data-act="edit" data-id="${c.id}"><i class="bi bi-pencil"></i> Edit</button></li>
-                  <li><button class="dropdown-item" type="button" data-act="toggle" data-id="${c.id}"><i class="bi ${c.active ? "bi-pause-circle" : "bi-play-circle"}"></i> ${c.active ? "Deactivate" : "Activate"}</button></li>
+                  <li><button class="dropdown-item" type="button" data-act="view" data-id="${c.id}"><i class="bi bi-eye"></i> Görüntüle</button></li>
+                  <li><button class="dropdown-item" type="button" data-act="edit" data-id="${c.id}"><i class="bi bi-pencil"></i> Güncelle</button></li>
                   <li><hr class="dropdown-divider" /></li>
-                  <li><button class="dropdown-item text-danger" type="button" data-act="delete" data-id="${c.id}"><i class="bi bi-trash3"></i> Delete</button></li>
+                  <li><button class="dropdown-item text-danger" type="button" data-act="delete" data-id="${c.id}"><i class="bi bi-trash3"></i> Sil</button></li>
                 </ul>
               </div>`;
         }
@@ -147,8 +147,7 @@
                 </td>
                 <td class="cell-desc" data-label="Description"><span class="adm-desc">${esc(c.description) || '<span class="text-muted">—</span>'}</span></td>
                 <td class="num" data-label="Products"><span class="adm-pill-num">${c.products}</span></td>
-                <td class="num" data-label="Display Order"><span class="adm-order">${c.order}</span></td>
-                <td data-label="Status"><div class="adm-status-cell">${statusSwitch(c)}${statusBadge(c)}</div></td>
+                <td class="num" data-label="Display Order"><span class="adm-order">${c.orderCount}</span></td>
                 <td data-label="Created"><span class="adm-date">${fmtDate(c.createdAt)}</span></td>
                 <td class="end cell-actions" data-label="Actions">${actionMenu(c)}</td>
               </tr>`;
@@ -156,20 +155,18 @@
 
         function cardTemplate(c) {
             return `
-              <article class="cat-card${c.active ? "" : " is-inactive"}" data-row="${c.id}">
+                  <article class="cat-card" data-row="${c.id}">
                 <div class="cat-card-img">
                   ${c.image ? `<img src="${esc(c.image)}" alt="" loading="lazy" data-icon="${c.icon || "bi-tag"}" />` : `<i class="bi ${c.icon || "bi-tag"}"></i>`}
-                  ${statusBadge(c)}
-                  <span class="cat-card-order">#${c.order}</span>
+                  <span class="cat-card-order">#${c.orderCount}</span>
                 </div>
                 <div class="cat-card-body">
                   <div class="d-flex justify-content-between align-items-start gap-2">
                     <div><h3>${esc(c.name)}</h3><small class="code">${esc(c.code)}</small></div>
-                    ${statusSwitch(c)}
                   </div>
                   <p>${esc(c.description) || "No description yet."}</p>
                   <div class="cat-card-foot">
-                    <span class="cat-card-meta"><i class="bi bi-cup-straw"></i> <strong>${c.products}</strong> ${c.products === 1 ? "product" : "products"}</span>
+                    <span class="cat-card-meta"><i class="bi bi-cup-straw"></i> <strong>${c.products}</strong> ürün</span>
                     <div class="cat-card-actions">
                       <button type="button" class="adm-icon-btn" data-act="view" data-id="${c.id}" aria-label="View ${esc(c.name)}" title="View"><i class="bi bi-eye"></i></button>
                       <button type="button" class="adm-icon-btn" data-act="edit" data-id="${c.id}" aria-label="Edit ${esc(c.name)}" title="Edit"><i class="bi bi-pencil"></i></button>
@@ -187,8 +184,8 @@
             $("#pager").classList.toggle("d-none", show);
             if (!show) return;
 
-            const addBtn = `<button type="button" class="adm-btn adm-btn-primary" data-action="add-category"><i class="bi bi-plus-lg"></i> Add Category</button>`;
-            const clearBtn = `<button type="button" class="adm-btn adm-btn-light" data-action="clear-filters"><i class="bi bi-x-circle"></i> Clear filters</button>`;
+            const addBtn = `<button type="button" class="adm-btn adm-btn-primary" data-action="add-category"><i class="bi bi-plus-lg"></i> Kategori Ekle</button>`;
+            const clearBtn = `<button type="button" class="adm-btn adm-btn-light" data-action="clear-filters"><i class="bi bi-x-circle"></i> Filtreleri Temizle</button>`;
             let icon = "bi-tags", title = "No categories found", text = "Try adjusting your search or create your first category.", actions = addBtn;
 
             if (categories.length === 0) {
@@ -238,7 +235,7 @@
             renderPager(list.length);
             const pageItems = list.slice((state.page - 1) * state.pageSize, state.page * state.pageSize);
 
-            $("#resultCounter").innerHTML = `Showing <strong>${list.length}</strong> ${list.length === 1 ? "category" : "categories"}`;
+            $("#resultCounter").innerHTML = `<strong>${list.length}</strong> ${list.length === 1 ? "kategoriler" : "kategori"} gösteriliyor`;
             $("#categoryRows").innerHTML = pageItems.map(rowTemplate).join("");
             $("#gridView").innerHTML = pageItems.map(cardTemplate).join("");
             $("#tableView").classList.toggle("d-none", state.view !== "table" || list.length === 0);
@@ -287,21 +284,13 @@
             f.name.value = c ? c.name : "";
             f.desc.value = c ? c.description : "";
             f.order.value = c ? c.order : Math.max(0, ...categories.map((x) => x.order)) + 1;
-            f.active.checked = c ? c.active : true;
             f.url.value = c && c.image && !c.image.startsWith("data:") ? c.image : "";
             setPreview(c ? c.image : null);
             $("#fDescCount").textContent = f.desc.value.length;
-            updateActiveHint();
             modal.show();
         }
         modalEl.addEventListener("shown.bs.modal", () => f.name.focus());
 
-        function updateActiveHint() {
-            $("#fActiveHint").textContent = f.active.checked
-                ? "Active categories are visible on the customer menu."
-                : "Inactive categories and their products are hidden from customers.";
-        }
-        f.active.addEventListener("change", updateActiveHint);
         f.desc.addEventListener("input", () => ($("#fDescCount").textContent = f.desc.value.length));
 
         function showError(input, message) {
@@ -453,16 +442,13 @@
             applyImgFallback(hero);
             $("#viewTitle").textContent = c.name;
             $("#viewCode").textContent = c.code;
-            $("#viewStatus").innerHTML = statusBadge(c);
             $("#viewDesc").textContent = c.description || "No description yet.";
             $("#viewProducts").textContent = c.products;
-            $("#viewOrder").textContent = `#${c.order}`;
+            $("#viewOrder").textContent = c.orderCount ?? 0;
             $("#viewCreated").textContent = fmtDate(c.createdAt);
-            $("#viewToggle").innerHTML = c.active ? `<i class="bi bi-pause-circle"></i> Deactivate` : `<i class="bi bi-play-circle"></i> Activate`;
             viewModal.show();
         }
         $("#viewEdit").addEventListener("click", () => { viewModal.hide(); setTimeout(() => openForm(viewingId), 250); });
-        $("#viewToggle").addEventListener("click", () => { viewModal.hide(); setTimeout(() => requestToggle(viewingId), 250); });
 
         /* ---------- 7. STATUS & DELETE ---------- */
         function setActive(c, active) {
@@ -560,7 +546,6 @@
             }
         });
 
-        $("#statusFilter").addEventListener("change", (e) => { state.status = e.target.value; state.page = 1; render(); });
         $("#sortSelect").addEventListener("change", (e) => { state.sort = e.target.value; state.page = 1; render(); });
         $("#pageSize").addEventListener("change", (e) => { state.pageSize = Number(e.target.value); state.page = 1; render(); });
         $("#pages").addEventListener("click", (e) => {

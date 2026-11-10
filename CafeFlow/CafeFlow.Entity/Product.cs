@@ -20,5 +20,6 @@ namespace CafeFlow.Entity
         public ICollection<ProductOption> ProductOptions { get; set; }
         public ICollection<Favorite> Favorites { get; set; }
         public ICollection<Comment> Comments { get; set; }
+        public ICollection<OrderDetail> OrderDetails { get; set; }
     }
 }

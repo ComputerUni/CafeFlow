@@ -133,5 +133,7 @@
                 return { toast, confirm, closeMobileSidebar: () => setMobileOpen(false) };
             })();
     </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

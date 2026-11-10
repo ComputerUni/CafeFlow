@@ -14,26 +14,21 @@
             <div class="adm-toolbar">
                 <div class="adm-input-icon">
                     <i class="bi bi-search"></i>
-                    <input type="search" class="adm-input" id="searchInput" placeholder="Search categories..." aria-label="Search categories" autocomplete="off" />
+                    <input type="search" class="adm-input" id="searchInput" placeholder="Kategori ara..." aria-label="Search categories" autocomplete="off" />
                     <button type="button" class="adm-input-clear" id="searchClear" aria-label="Clear search"><i class="bi bi-x-lg"></i></button>
                 </div>
-                <select class="adm-select" id="statusFilter" aria-label="Filter by status">
-                    <option value="all">All Statuses</option>
-                    <option value="active">Active</option>
-                    <option value="inactive">Inactive</option>
-                </select>
-                <select class="adm-select" id="sortSelect" aria-label="Sort categories">
-                    <option value="order">Display Order</option>
-                    <option value="name-asc">Name: A to Z</option>
-                    <option value="name-desc">Name: Z to A</option>
-                    <option value="products">Most Products</option>
-                    <option value="newest">Newest First</option>
+                <select class="adm-select" id="sortSelect" aria-label="Kategorileri Sırala">
+                    <option value="order">Sıralama (Sıra No)</option>
+                    <option value="name-asc">İsim: A'dan Z'ye</option>
+                    <option value="name-desc">İsim: Z'den A'ya</option>
+                    <option value="products">En Çok Ürünü Olan</option>
+                    <option value="newest">En Yeni Eklenenler</option>
                 </select>
                 <div class="adm-segment" role="group" aria-label="View mode">
                     <button type="button" class="active" data-view="table" aria-pressed="true"><i class="bi bi-list-ul"></i> <span class="adm-hide-sm">Table</span></button>
                     <button type="button" data-view="grid" aria-pressed="false"><i class="bi bi-grid"></i> <span class="adm-hide-sm">Grid</span></button>
                 </div>
-                <span class="adm-counter" id="resultCounter" aria-live="polite">Showing <strong>0</strong> categories</span>
+                <span class="adm-counter" id="resultCounter" aria-live="polite"> <strong>0</strong> kategori gösteriliyor</span>
             </div>
 
             <!-- Table view -->
@@ -41,13 +36,12 @@
                 <table class="adm-table">
                     <thead>
                         <tr>
-                            <th scope="col">Category</th>
-                            <th scope="col">Description</th>
-                            <th scope="col" class="num">Products</th>
-                            <th scope="col" class="num">Display Order</th>
-                            <th scope="col">Status</th>
-                            <th scope="col">Created</th>
-                            <th scope="col" class="end"><span class="visually-hidden">Actions</span></th>
+                            <th scope="col">Kategori</th>
+                            <th scope="col">Açıklama</th>
+                            <th scope="col" class="num">Ürünler</th>
+                            <th scope="col" class="num">Sipariş Sayısı</th>
+                            <th scope="col">Oluşturma Tarihi</th>
+                            <th scope="col" class="end"><span class="visually-hidden">İşlemler</span></th>
                         </tr>
                     </thead>
                     <tbody id="categoryRows"></tbody>
@@ -68,7 +62,7 @@
             <!-- Pagination -->
             <div class="adm-pager" id="pager">
                 <div class="adm-pager-size">
-                    <label for="pageSize">Rows per page</label>
+                    <label for="pageSize">Sayfa başına</label>
                     <select class="adm-select" id="pageSize">
                         <option value="5">5</option>
                         <option value="10" selected>10</option>
@@ -84,8 +78,9 @@
 
 </div>
 
-<partial name="/Partials/_CategoryModalPartial" />
+<partial name="Partials/_CategoryModalPartial" />
+<partial name="Partials/_CategoryViewModalPartial" />
 
-<partial name="/Partials/_CategoryViewModalPartial" />
-
-@await Component.InvokeAsync("_AdminLayoutCategoryScripts")
+@section Scripts {
+    @await Component.InvokeAsync("_AdminLayoutCategoryScripts")
+}

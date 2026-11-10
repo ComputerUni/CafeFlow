@@ -1,12 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using CafeFlow.Business.Abstract;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CafeFlow.WebUI.Areas.Admin.ViewComponents._AdminLayoutCategoryViewComponents
 {
-    public class _AdminLayoutCategoryScriptsViewComponent : ViewComponent
+    public class _AdminLayoutCategoryScriptsViewComponent(ICategoryService _categoryService) : ViewComponent
     {
-        public IViewComponentResult Invoke()
+        public async Task<IViewComponentResult> InvokeAsync()
         {
-            return View();
+            var categories = await _categoryService.GetCategoriesWithCountsAsync();
+            return View(categories);
         }
     }
 }

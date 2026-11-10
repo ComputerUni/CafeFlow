@@ -1,1 +1,29 @@
-﻿
+﻿<div class="modal fade" id="viewModal" tabindex="-1" aria-labelledby="viewTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="cat-view-hero" id="viewHero">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"
+                        style="position: absolute; top: 12px; right: 12px; width: 32px; height: 32px; padding: 0; background-size: 12px; background-color: rgba(255, 255, 255, 0.9); border-radius: 50%; box-shadow: 0 2px 6px rgba(0,0,0,0.25); z-index: 5;">
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="d-flex justify-content-between align-items-start gap-2">
+                    <div>
+                        <h2 class="modal-title fs-4" id="viewTitle">Category</h2>
+                        <small class="text-muted font-monospace" id="viewCode"></small>
+                    </div>
+                </div>
+                <p class="text-muted mt-3 mb-0" id="viewDesc"></p>
+                <div class="cat-view-stats">
+                    <div><small>Ürünler</small><strong id="viewProducts">0</strong></div>
+                    <div><small>Siparişler</small><strong id="viewOrder">0</strong></div>
+                    <div><small>Oluşturulma</small><strong id="viewCreated">—</strong></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="adm-btn adm-btn-light me-auto" data-bs-dismiss="modal">Kapat</button>
+                <button type="button" class="adm-btn adm-btn-primary" id="viewEdit"><i class="bi bi-pencil"></i> Düzenle</button>
+            </div>
+        </div>
+    </div>
+</div>

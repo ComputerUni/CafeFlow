@@ -15,6 +15,12 @@ namespace CafeFlow.DataAccess.Repositories.Categories
         {
         }
 
+        public async Task<List<Category>> GetCategoriesWithCountsAsync()
+        {
+            return await _context.Categories.Where(c => !c.IsDeleted).OrderBy(c => c.CreatedAt).Include(c => c.Products).ThenInclude(p => p.OrderDetails).ToListAsync();
+                
+        }
+
         public async Task<List<Category>> GetCategoriesWithProductAsync()
         {
             return await _context.Categories.Where(c => !c.IsDeleted).Include(c => c.Products).OrderBy(c => c.Id).Take(4).ToListAsync();

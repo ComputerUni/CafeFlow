@@ -14,5 +14,6 @@ namespace CafeFlow.Business.Abstract
         Task UpdateAsync(UpdateCategoryDto dto);
         Task DeleteAsync(int id);
         Task<List<CategoryListDto>> GetCategoriesWithProductAsync();
+        Task<List<CategoryListDto>> GetCategoriesWithCountsAsync();
     }
 }
