@@ -1,0 +1,91 @@
+﻿@{
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="adm-main">
+
+    <main class="adm-content" id="main">
+
+        @await Component.InvokeAsync("_AdminLayoutCategoryPageHead")
+
+        @await Component.InvokeAsync("_AdminLayoutCategorySummaryKpiCards")
+
+        <section class="adm-card" aria-label="Categories">
+            <div class="adm-toolbar">
+                <div class="adm-input-icon">
+                    <i class="bi bi-search"></i>
+                    <input type="search" class="adm-input" id="searchInput" placeholder="Search categories..." aria-label="Search categories" autocomplete="off" />
+                    <button type="button" class="adm-input-clear" id="searchClear" aria-label="Clear search"><i class="bi bi-x-lg"></i></button>
+                </div>
+                <select class="adm-select" id="statusFilter" aria-label="Filter by status">
+                    <option value="all">All Statuses</option>
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                </select>
+                <select class="adm-select" id="sortSelect" aria-label="Sort categories">
+                    <option value="order">Display Order</option>
+                    <option value="name-asc">Name: A to Z</option>
+                    <option value="name-desc">Name: Z to A</option>
+                    <option value="products">Most Products</option>
+                    <option value="newest">Newest First</option>
+                </select>
+                <div class="adm-segment" role="group" aria-label="View mode">
+                    <button type="button" class="active" data-view="table" aria-pressed="true"><i class="bi bi-list-ul"></i> <span class="adm-hide-sm">Table</span></button>
+                    <button type="button" data-view="grid" aria-pressed="false"><i class="bi bi-grid"></i> <span class="adm-hide-sm">Grid</span></button>
+                </div>
+                <span class="adm-counter" id="resultCounter" aria-live="polite">Showing <strong>0</strong> categories</span>
+            </div>
+
+            <!-- Table view -->
+            <div class="adm-table-wrap" id="tableView">
+                <table class="adm-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Category</th>
+                            <th scope="col">Description</th>
+                            <th scope="col" class="num">Products</th>
+                            <th scope="col" class="num">Display Order</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Created</th>
+                            <th scope="col" class="end"><span class="visually-hidden">Actions</span></th>
+                        </tr>
+                    </thead>
+                    <tbody id="categoryRows"></tbody>
+                </table>
+            </div>
+
+            <!-- Grid view -->
+            <div class="cat-grid d-none" id="gridView"></div>
+
+            <!-- Empty state -->
+            <div class="adm-empty d-none" id="emptyState">
+                <div class="adm-empty-art"><i class="bi bi-tags" id="emptyIcon"></i></div>
+                <h3 id="emptyTitle">No categories found</h3>
+                <p id="emptyText">Try adjusting your search or create your first category.</p>
+                <div class="d-flex gap-2 justify-content-center flex-wrap" id="emptyActions"></div>
+            </div>
+
+            <!-- Pagination -->
+            <div class="adm-pager" id="pager">
+                <div class="adm-pager-size">
+                    <label for="pageSize">Rows per page</label>
+                    <select class="adm-select" id="pageSize">
+                        <option value="5">5</option>
+                        <option value="10" selected>10</option>
+                        <option value="20">20</option>
+                    </select>
+                </div>
+                <span id="pageInfo">1–8 of 8</span>
+                <nav class="adm-pages" id="pages" aria-label="Pagination"></nav>
+            </div>
+        </section>
+
+    </main>
+
+</div>
+
+<partial name="/Partials/_CategoryModalPartial" />
+
+<partial name="/Partials/_CategoryViewModalPartial" />
+
+@await Component.InvokeAsync("_AdminLayoutCategoryScripts")

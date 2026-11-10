@@ -1,0 +1,81 @@
+﻿<header class="adm-topbar">
+    <button type="button" class="adm-icon-btn bordered" id="sidebarToggle" aria-label="Toggle sidebar" aria-controls="admSidebar" aria-expanded="true">
+        <i class="bi bi-layout-sidebar"></i>
+    </button>
+    <nav class="adm-crumbs" aria-label="Breadcrumb">
+        <span class="adm-hide-sm">Management</span>
+        <i class="bi bi-chevron-right adm-hide-sm"></i>
+        <strong>Categories</strong>
+    </nav>
+
+    <div class="adm-topbar-right">
+        <label class="adm-search" for="globalSearch">
+            <i class="bi bi-search"></i>
+            <input type="search" id="globalSearch" placeholder="Search categories..." autocomplete="off" aria-label="Search" />
+            <kbd>/</kbd>
+        </label>
+
+        <!-- Quick actions -->
+        <div class="dropdown">
+            <button type="button" class="adm-icon-btn" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Quick actions" title="Quick actions">
+                <i class="bi bi-lightning-charge"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li><h6 class="dropdown-header">Quick actions</h6></li>
+                <li><button class="dropdown-item" type="button" data-action="add-category"><i class="bi bi-plus-circle"></i> Add Category</button></li>
+                <li><button class="dropdown-item" type="button" data-placeholder="Products"><i class="bi bi-cup-straw"></i> View Products</button></li>
+                <li><button class="dropdown-item" type="button" data-placeholder="Orders"><i class="bi bi-receipt"></i> View Orders</button></li>
+                <li><hr class="dropdown-divider" /></li>
+                <li><a class="dropdown-item" href="index.html" target="_blank" rel="noopener"><i class="bi bi-box-arrow-up-right"></i> Open customer site</a></li>
+            </ul>
+        </div>
+
+        <!-- Notifications -->
+        <div class="dropdown">
+            <button type="button" class="adm-icon-btn" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" aria-label="Notifications" title="Notifications" id="notifBtn">
+                <i class="bi bi-bell"></i>
+                <span class="adm-dot-badge" id="notifCount">3</span>
+            </button>
+            <div class="dropdown-menu dropdown-menu-end adm-notif-menu">
+                <div class="adm-notif-head">
+                    <strong>Notifications</strong>
+                    <button type="button" id="markAllRead">Mark all as read</button>
+                </div>
+                <div id="notifList">
+                    <div class="adm-notif unread">
+                        <span class="adm-notif-icon adm-tone-rose"><i class="bi bi-bag-check"></i></span>
+                        <div><p>New online order received</p><small>Order #CF-1048 · 2 min ago</small></div>
+                    </div>
+                    <div class="adm-notif unread">
+                        <span class="adm-notif-icon adm-tone-peach"><i class="bi bi-exclamation-triangle"></i></span>
+                        <div><p>Product stock running low</p><small>Almond Croissant · 18 min ago</small></div>
+                    </div>
+                    <div class="adm-notif unread">
+                        <span class="adm-notif-icon adm-tone-green"><i class="bi bi-tags"></i></span>
+                        <div><p>New category created</p><small>Seasonal Specials · 1 h ago</small></div>
+                    </div>
+                </div>
+                <a href="#" class="adm-notif-foot" data-placeholder="Notifications">View all notifications</a>
+            </div>
+        </div>
+
+        <!-- Profile -->
+        <div class="dropdown">
+            <button type="button" class="adm-user-btn" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Account menu">
+                <span class="adm-avatar">SA</span>
+                <span class="adm-user-meta">
+                    <strong>Selin Aydın</strong>
+                    <small>Cafe Manager</small>
+                </span>
+                <i class="bi bi-chevron-down small text-muted adm-hide-sm"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li><h6 class="dropdown-header">Signed in as admin</h6></li>
+                <li><button class="dropdown-item" type="button" data-placeholder="My Profile"><i class="bi bi-person"></i> My Profile</button></li>
+                <li><button class="dropdown-item" type="button" data-placeholder="Account Settings"><i class="bi bi-sliders"></i> Account Settings</button></li>
+                <li><hr class="dropdown-divider" /></li>
+                <li><button class="dropdown-item text-danger" type="button" data-action="logout"><i class="bi bi-box-arrow-right"></i> Logout</button></li>
+            </ul>
+        </div>
+    </div>
+</header>

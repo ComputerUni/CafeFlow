@@ -40,7 +40,7 @@ namespace CafeFlow.WebUI.Controllers
 
             if (await _userManager.IsInRoleAsync(user, "Admin"))
             {
-                return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
+                return RedirectToAction("Index", "Category", new { area = "Admin" });
             }
             else
             {

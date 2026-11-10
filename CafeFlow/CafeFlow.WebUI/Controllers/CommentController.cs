@@ -13,8 +13,11 @@ namespace CafeFlow.WebUI.Controllers
             {
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 var customer = await _customerService.GetByAppUserIdAsync(int.Parse(userId));
-                commentDto.CustomerId = customer.Id;
-
+                if(customer != null)
+                {
+                    commentDto.CustomerId = customer.Id;
+                }
+               
                 if (string.IsNullOrWhiteSpace(commentDto.CustomerName))
                 {
                     commentDto.CustomerName = User.Identity.Name;

@@ -1,0 +1,612 @@
+﻿<script>
+    (() => {
+        "use strict";
+        const { toast, confirm } = window.AdminShell;
+        const $ = (s, r = document) => r.querySelector(s);
+        const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+
+        /* ---------- 1. DATA ----------
+           Product counts match the customer-site catalog (products.html).
+           Admin data lives under its own key and never touches the cart or catalog. */
+        const STORAGE_KEY = "cafeflow_admin_categories";
+        const IMG = (id) => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=600&q=80`;
+
+        const SEED = [
+            { id: 1, code: "CAT-001", slug: "hot", name: "Hot Coffees", description: "Velvety lattes, bold espressos and comforting signature brews.", products: 3, order: 1, active: true, createdAt: "2026-01-12", icon: "bi-cup-hot", image: IMG("1509042239860-f550ce710b93") },
+            { id: 2, code: "CAT-002", slug: "iced", name: "Iced Coffees", description: "Chilled espresso drinks and slow-steeped cold brew over ice.", products: 3, order: 2, active: true, createdAt: "2026-01-12", icon: "bi-cup-straw", image: IMG("1461023058943-07fcbe16d735") },
+            { id: 3, code: "CAT-003", slug: "signature", name: "Signature Drinks", description: "Our pink house favorites: strawberry, rose and berry creations.", products: 3, order: 3, active: true, createdAt: "2026-02-03", icon: "bi-stars", image: IMG("1572490122747-3968b75cc699") },
+            { id: 4, code: "CAT-004", slug: "cakes", name: "Cakes & Desserts", description: "Cakes, cheesecakes and macarons baked fresh every morning.", products: 4, order: 4, active: true, createdAt: "2026-02-03", icon: "bi-cake2", image: IMG("1578985545062-69928b1d9587") },
+            { id: 5, code: "CAT-005", slug: "bakery", name: "Bakery", description: "Buttery croissants, cinnamon rolls and morning pastries.", products: 3, order: 5, active: true, createdAt: "2026-03-18", icon: "bi-basket", image: IMG("1555507036-ab1f4038808a") },
+            { id: 6, code: "CAT-006", slug: "snacks", name: "Snacks", description: "Toasts, sandwiches and light bites to enjoy any time of day.", products: 4, order: 6, active: true, createdAt: "2026-04-07", icon: "bi-egg-fried", image: IMG("1541519227354-08fa5d50c44d") },
+            { id: 7, code: "CAT-007", slug: "tea", name: "Tea & Infusions", description: "Loose-leaf teas, herbal infusions and matcha alternatives.", products: 0, order: 7, active: true, createdAt: "2026-08-20", icon: "bi-cup", image: IMG("1544787219-7f47ccb76574") },
+            { id: 8, code: "CAT-008", slug: "seasonal", name: "Seasonal Specials", description: "Limited-time drinks and treats inspired by the season.", products: 0, order: 8, active: false, createdAt: "2026-09-30", icon: "bi-flower1", image: IMG("1512568400610-62da28bc8a13") },
+        ];
+
+        const store = {
+            load() {
+                try {
+                    const raw = localStorage.getItem(STORAGE_KEY);
+                    const data = raw ? JSON.parse(raw) : null;
+                    return Array.isArray(data) ? data : structuredClone(SEED);
+                } catch { return structuredClone(SEED); }
+            },
+            save(list) {
+                try { localStorage.setItem(STORAGE_KEY, JSON.stringify(list)); return true; }
+                catch {
+                    toast("Couldn't save changes", "Browser storage is full or unavailable. Try a smaller image.", "error", 5000);
+                    return false;
+                }
+            },
+        };
+
+        let categories = store.load();
+        const state = { search: "", status: "all", sort: "order", view: "table", page: 1, pageSize: 10 };
+
+        /* ---------- 2. HELPERS ---------- */
+        const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+        const fmtDate = (iso) => new Date(`${iso}T12:00:00`).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+        const normalize = (s) => s.trim().replace(/\s+/g, " ").toLocaleLowerCase("en");
+        const byId = (id) => categories.find((c) => c.id === id);
+        const nextId = () => Math.max(0, ...categories.map((c) => c.id)) + 1;
+        const statusBadge = (c) => c.active
+            ? `<span class="adm-badge adm-badge-success">Active</span>`
+            : `<span class="adm-badge adm-badge-inactive">Inactive</span>`;
+
+        function thumb(c, cls = "adm-thumb") {
+            return c.image
+                ? `<span class="${cls}"><img src="${esc(c.image)}" alt="" loading="lazy" data-icon="${c.icon || "bi-tag"}" /></span>`
+                : `<span class="${cls}"><i class="bi ${c.icon || "bi-tag"}"></i></span>`;
+        }
+        // Broken image → icon fallback
+        function applyImgFallback(root) {
+            $$("img[data-icon]", root).forEach((img) => {
+                const swap = () => { const i = document.createElement("i"); i.className = `bi ${img.dataset.icon}`; img.replaceWith(i); };
+                if (img.complete && img.naturalWidth === 0) swap();
+                else img.addEventListener("error", swap, { once: true });
+            });
+        }
+
+        function persist() {
+            const ok = store.save(categories);
+            render();
+            return ok;
+        }
+
+        /* ---------- 3. QUERY ---------- */
+        function visibleCategories() {
+            const term = normalize(state.search);
+            let list = categories.filter((c) => {
+                if (state.status === "active" && !c.active) return false;
+                if (state.status === "inactive" && c.active) return false;
+                if (term && !`${c.name} ${c.description}`.toLocaleLowerCase("en").includes(term)) return false;
+                return true;
+            });
+            const sorters = {
+                order: (a, b) => a.order - b.order || a.name.localeCompare(b.name),
+                "name-asc": (a, b) => a.name.localeCompare(b.name),
+                "name-desc": (a, b) => b.name.localeCompare(a.name),
+                products: (a, b) => b.products - a.products || a.name.localeCompare(b.name),
+                newest: (a, b) => b.createdAt.localeCompare(a.createdAt) || b.id - a.id,
+            };
+            return [...list].sort(sorters[state.sort]);
+        }
+
+        /* ---------- 4. RENDER ---------- */
+        let lastStats = {};
+        function renderStats() {
+            const stats = {
+                statTotal: categories.length,
+                statActive: categories.filter((c) => c.active).length,
+                statInactive: categories.filter((c) => !c.active).length,
+                statProducts: categories.reduce((s, c) => s + c.products, 0),
+            };
+            Object.entries(stats).forEach(([id, value]) => {
+                const el = $(`#${id}`);
+                el.textContent = value;
+                if (lastStats[id] !== undefined && lastStats[id] !== value) {
+                    el.classList.remove("bump"); void el.offsetWidth; el.classList.add("bump");
+                }
+            });
+            lastStats = stats;
+            $("#navCategoryCount").textContent = stats.statTotal;
+        }
+
+        function actionMenu(c) {
+            return `
+              <div class="dropdown">
+                <button type="button" class="adm-kebab" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Actions for ${esc(c.name)}">
+                  <i class="bi bi-three-dots-vertical"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                  <li><button class="dropdown-item" type="button" data-act="view" data-id="${c.id}"><i class="bi bi-eye"></i> View</button></li>
+                  <li><button class="dropdown-item" type="button" data-act="edit" data-id="${c.id}"><i class="bi bi-pencil"></i> Edit</button></li>
+                  <li><button class="dropdown-item" type="button" data-act="toggle" data-id="${c.id}"><i class="bi ${c.active ? "bi-pause-circle" : "bi-play-circle"}"></i> ${c.active ? "Deactivate" : "Activate"}</button></li>
+                  <li><hr class="dropdown-divider" /></li>
+                  <li><button class="dropdown-item text-danger" type="button" data-act="delete" data-id="${c.id}"><i class="bi bi-trash3"></i> Delete</button></li>
+                </ul>
+              </div>`;
+        }
+
+        function statusSwitch(c) {
+            return `
+              <label class="adm-switch" title="${c.active ? "Deactivate" : "Activate"} category">
+                <input type="checkbox" data-act="switch" data-id="${c.id}" ${c.active ? "checked" : ""} />
+                <span class="adm-switch-track"></span>
+                <span class="visually-hidden">Toggle ${esc(c.name)} status</span>
+              </label>`;
+        }
+
+        function rowTemplate(c) {
+            return `
+              <tr data-row="${c.id}">
+                <td class="cell-main" data-label="Category">
+                  <div class="adm-entity">
+                    ${thumb(c)}
+                    <div><strong>${esc(c.name)}</strong><small>${esc(c.code)}</small></div>
+                  </div>
+                </td>
+                <td class="cell-desc" data-label="Description"><span class="adm-desc">${esc(c.description) || '<span class="text-muted">—</span>'}</span></td>
+                <td class="num" data-label="Products"><span class="adm-pill-num">${c.products}</span></td>
+                <td class="num" data-label="Display Order"><span class="adm-order">${c.order}</span></td>
+                <td data-label="Status"><div class="adm-status-cell">${statusSwitch(c)}${statusBadge(c)}</div></td>
+                <td data-label="Created"><span class="adm-date">${fmtDate(c.createdAt)}</span></td>
+                <td class="end cell-actions" data-label="Actions">${actionMenu(c)}</td>
+              </tr>`;
+        }
+
+        function cardTemplate(c) {
+            return `
+              <article class="cat-card${c.active ? "" : " is-inactive"}" data-row="${c.id}">
+                <div class="cat-card-img">
+                  ${c.image ? `<img src="${esc(c.image)}" alt="" loading="lazy" data-icon="${c.icon || "bi-tag"}" />` : `<i class="bi ${c.icon || "bi-tag"}"></i>`}
+                  ${statusBadge(c)}
+                  <span class="cat-card-order">#${c.order}</span>
+                </div>
+                <div class="cat-card-body">
+                  <div class="d-flex justify-content-between align-items-start gap-2">
+                    <div><h3>${esc(c.name)}</h3><small class="code">${esc(c.code)}</small></div>
+                    ${statusSwitch(c)}
+                  </div>
+                  <p>${esc(c.description) || "No description yet."}</p>
+                  <div class="cat-card-foot">
+                    <span class="cat-card-meta"><i class="bi bi-cup-straw"></i> <strong>${c.products}</strong> ${c.products === 1 ? "product" : "products"}</span>
+                    <div class="cat-card-actions">
+                      <button type="button" class="adm-icon-btn" data-act="view" data-id="${c.id}" aria-label="View ${esc(c.name)}" title="View"><i class="bi bi-eye"></i></button>
+                      <button type="button" class="adm-icon-btn" data-act="edit" data-id="${c.id}" aria-label="Edit ${esc(c.name)}" title="Edit"><i class="bi bi-pencil"></i></button>
+                      <button type="button" class="adm-icon-btn danger" data-act="delete" data-id="${c.id}" aria-label="Delete ${esc(c.name)}" title="Delete"><i class="bi bi-trash3"></i></button>
+                    </div>
+                  </div>
+                </div>
+              </article>`;
+        }
+
+        function renderEmpty(list) {
+            const empty = $("#emptyState");
+            const show = list.length === 0;
+            empty.classList.toggle("d-none", !show);
+            $("#pager").classList.toggle("d-none", show);
+            if (!show) return;
+
+            const addBtn = `<button type="button" class="adm-btn adm-btn-primary" data-action="add-category"><i class="bi bi-plus-lg"></i> Add Category</button>`;
+            const clearBtn = `<button type="button" class="adm-btn adm-btn-light" data-action="clear-filters"><i class="bi bi-x-circle"></i> Clear filters</button>`;
+            let icon = "bi-tags", title = "No categories found", text = "Try adjusting your search or create your first category.", actions = addBtn;
+
+            if (categories.length === 0) {
+                title = "No categories yet";
+                text = "Create your first category to start organizing the menu.";
+            } else if (state.search.trim()) {
+                icon = "bi-search";
+                title = "No search results";
+                text = `Nothing matches "${state.search.trim()}". Try a different word or clear the search.`;
+                actions = clearBtn + addBtn;
+            } else if (state.status !== "all") {
+                icon = "bi-funnel";
+                title = `No ${state.status} categories`;
+                text = "No categories match the selected filter.";
+                actions = clearBtn;
+            }
+            $("#emptyIcon").className = `bi ${icon}`;
+            $("#emptyTitle").textContent = title;
+            $("#emptyText").textContent = text;
+            $("#emptyActions").innerHTML = actions;
+        }
+
+        function renderPager(total) {
+            const pages = Math.max(1, Math.ceil(total / state.pageSize));
+            state.page = Math.min(Math.max(1, state.page), pages);
+            const start = total ? (state.page - 1) * state.pageSize + 1 : 0;
+            const end = Math.min(total, state.page * state.pageSize);
+            $("#pageInfo").textContent = `${start}–${end} of ${total}`;
+
+            // Compact page list: 1 … 4 5 6 … 12
+            const nums = [];
+            for (let p = 1; p <= pages; p++) {
+                if (p === 1 || p === pages || Math.abs(p - state.page) <= 1) nums.push(p);
+                else if (nums[nums.length - 1] !== "…") nums.push("…");
+            }
+            $("#pages").innerHTML = `
+              <button type="button" class="adm-page-btn" data-page="${state.page - 1}" ${state.page === 1 ? "disabled" : ""} aria-label="Previous page"><i class="bi bi-chevron-left"></i><span class="adm-hide-sm">Previous</span></button>
+              ${nums.map((n) => n === "…"
+                ? `<span class="adm-page-gap">…</span>`
+                : `<button type="button" class="adm-page-btn${n === state.page ? " active" : ""}" data-page="${n}" ${n === state.page ? 'aria-current="page"' : ""}>${n}</button>`).join("")}
+              <button type="button" class="adm-page-btn" data-page="${state.page + 1}" ${state.page === pages ? "disabled" : ""} aria-label="Next page"><span class="adm-hide-sm">Next</span><i class="bi bi-chevron-right"></i></button>`;
+        }
+
+        function render() {
+            renderStats();
+            const list = visibleCategories();
+            renderPager(list.length);
+            const pageItems = list.slice((state.page - 1) * state.pageSize, state.page * state.pageSize);
+
+            $("#resultCounter").innerHTML = `Showing <strong>${list.length}</strong> ${list.length === 1 ? "category" : "categories"}`;
+            $("#categoryRows").innerHTML = pageItems.map(rowTemplate).join("");
+            $("#gridView").innerHTML = pageItems.map(cardTemplate).join("");
+            $("#tableView").classList.toggle("d-none", state.view !== "table" || list.length === 0);
+            $("#gridView").classList.toggle("d-none", state.view !== "grid" || list.length === 0);
+            renderEmpty(list);
+            applyImgFallback($("#categoryRows"));
+            applyImgFallback($("#gridView"));
+        }
+
+        function flashRow(id) {
+            requestAnimationFrame(() => $$(`[data-row="${id}"]`).forEach((r) => {
+                r.classList.remove("row-flash"); void r.offsetWidth; r.classList.add("row-flash");
+            }));
+        }
+
+        /* ---------- 5. CREATE / EDIT MODAL ---------- */
+        const modalEl = $("#categoryModal");
+        const modal = new bootstrap.Modal(modalEl);
+        const form = $("#categoryForm");
+        const f = { name: $("#fName"), desc: $("#fDesc"), order: $("#fOrder"), active: $("#fActive"), url: $("#fUrl"), file: $("#fFile") };
+        let editingId = null;
+        let pendingImage = null; // data URL or remote URL currently previewed
+
+        function setPreview(src) {
+            pendingImage = src || null;
+            $("#imgPreview").innerHTML = src ? `<img src="${esc(src)}" alt="Category image preview" />` : `<i class="bi bi-image"></i>`;
+            $("#imgRemove").classList.toggle("d-none", !src);
+        }
+
+        function clearErrors() {
+            $$(".is-invalid", form).forEach((el) => el.classList.remove("is-invalid"));
+            $$(".adm-feedback.show", form).forEach((el) => el.classList.remove("show"));
+        }
+
+        function openForm(id = null) {
+            editingId = id;
+            clearErrors();
+            form.reset();
+            f.file.value = "";
+            const c = id ? byId(id) : null;
+            $("#categoryModalTitle").textContent = c ? "Edit Category" : "Create New Category";
+            $("#categoryModalSub").textContent = c ? `Update details for ${c.name}.` : "Add a new section to your cafe menu.";
+            $("#categoryModalIcon").className = c ? "bi bi-pencil" : "bi bi-tag";
+            $("#categorySubmit").innerHTML = c ? `<i class="bi bi-check2"></i> Save Changes` : `<i class="bi bi-check2"></i> Save Category`;
+
+            f.name.value = c ? c.name : "";
+            f.desc.value = c ? c.description : "";
+            f.order.value = c ? c.order : Math.max(0, ...categories.map((x) => x.order)) + 1;
+            f.active.checked = c ? c.active : true;
+            f.url.value = c && c.image && !c.image.startsWith("data:") ? c.image : "";
+            setPreview(c ? c.image : null);
+            $("#fDescCount").textContent = f.desc.value.length;
+            updateActiveHint();
+            modal.show();
+        }
+        modalEl.addEventListener("shown.bs.modal", () => f.name.focus());
+
+        function updateActiveHint() {
+            $("#fActiveHint").textContent = f.active.checked
+                ? "Active categories are visible on the customer menu."
+                : "Inactive categories and their products are hidden from customers.";
+        }
+        f.active.addEventListener("change", updateActiveHint);
+        f.desc.addEventListener("input", () => ($("#fDescCount").textContent = f.desc.value.length));
+
+        function showError(input, message) {
+            input.classList.add("is-invalid");
+            const fb = input.dataset.feedback ? $(`#${input.dataset.feedback}`) : input.nextElementSibling;
+            if (!fb || !fb.classList.contains("adm-feedback")) return;
+            if (message) fb.querySelector("span").textContent = message;
+            fb.classList.add("show");
+        }
+
+        function validate() {
+            clearErrors();
+            let ok = true;
+            const name = f.name.value.trim().replace(/\s+/g, " ");
+            if (!name) { showError(f.name, "Please enter a category name."); ok = false; }
+            else if (name.length < 2) { showError(f.name, "The name should be at least 2 characters."); ok = false; }
+            else {
+                const dup = categories.find((c) => c.id !== editingId && normalize(c.name) === normalize(name));
+                if (dup) { showError(f.name, `"${dup.name}" already exists. Please choose a different name.`); ok = false; }
+            }
+            const order = f.order.value === "" ? null : Number(f.order.value);
+            if (order !== null && (!Number.isInteger(order) || order < 1 || order > 999)) { showError(f.order); ok = false; }
+            if (!ok) form.querySelector(".is-invalid")?.focus();
+            return ok;
+        }
+
+        // Live re-validation of name
+        f.name.addEventListener("input", () => { if (f.name.classList.contains("is-invalid")) validate(); });
+
+        /* Image: local file → downscaled data URL (frontend preview only) */
+        function readImageFile(file) {
+            const err = $("#fFileError");
+            err.classList.remove("show");
+            if (!file) return;
+            if (!/^image\/(png|jpe?g|webp)$/.test(file.type)) {
+                err.querySelector("span").textContent = "Please choose a JPG, PNG or WebP image.";
+                err.classList.add("show");
+                return;
+            }
+            if (file.size > 5 * 1024 * 1024) {
+                err.querySelector("span").textContent = "That image is larger than 5 MB.";
+                err.classList.add("show");
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = () => {
+                const img = new Image();
+                img.onload = () => {
+                    // Downscale so the preview fits comfortably in localStorage
+                    const max = 480;
+                    const scale = Math.min(1, max / Math.max(img.width, img.height));
+                    const canvas = document.createElement("canvas");
+                    canvas.width = Math.round(img.width * scale);
+                    canvas.height = Math.round(img.height * scale);
+                    canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+                    setPreview(canvas.toDataURL("image/jpeg", 0.82));
+                    f.url.value = "";
+                    $("#fUrlError").classList.remove("show");
+                    f.url.classList.remove("is-invalid");
+                };
+                img.onerror = () => { err.querySelector("span").textContent = "We couldn't read that image."; err.classList.add("show"); };
+                img.src = reader.result;
+            };
+            reader.readAsDataURL(file);
+        }
+        f.file.addEventListener("change", () => readImageFile(f.file.files[0]));
+
+        const zone = $("#uploadZone");
+        ["dragenter", "dragover"].forEach((ev) => zone.addEventListener(ev, (e) => { e.preventDefault(); zone.classList.add("dragover"); }));
+        ["dragleave", "drop"].forEach((ev) => zone.addEventListener(ev, (e) => { e.preventDefault(); zone.classList.remove("dragover"); }));
+        zone.addEventListener("drop", (e) => readImageFile(e.dataTransfer.files[0]));
+        $("#imgRemove").addEventListener("click", () => { setPreview(null); f.file.value = ""; f.url.value = ""; });
+
+        /* Image: remote URL → verify it loads before using it */
+        function previewUrl() {
+            return new Promise((resolve) => {
+                const url = f.url.value.trim();
+                f.url.classList.remove("is-invalid");
+                $("#fUrlError").classList.remove("show");
+                if (!url) return resolve(true);
+                if (!/^https?:\/\/\S+$/i.test(url)) { showError(f.url, "Please enter a full link starting with https://"); return resolve(false); }
+                const test = new Image();
+                test.onload = () => { setPreview(url); resolve(true); };
+                test.onerror = () => { showError(f.url, "We couldn't load an image from that URL."); resolve(false); };
+                test.src = url;
+            });
+        }
+        $("#urlPreviewBtn").addEventListener("click", previewUrl);
+        f.url.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); previewUrl(); } });
+
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            if (!validate()) return;
+            if (f.url.value.trim() && f.url.value.trim() !== pendingImage) {
+                const submit = $("#categorySubmit");
+                submit.disabled = true;
+                const ok = await previewUrl();
+                submit.disabled = false;
+                if (!ok) return;
+            }
+
+            const data = {
+                name: f.name.value.trim().replace(/\s+/g, " "),
+                description: f.desc.value.trim(),
+                order: f.order.value === "" ? Math.max(0, ...categories.map((c) => c.order)) + 1 : Number(f.order.value),
+                active: f.active.checked,
+                image: pendingImage,
+            };
+
+            if (editingId) {
+                const c = byId(editingId);
+                Object.assign(c, data);
+                if (!persist()) return;
+                modal.hide();
+                flashRow(c.id);
+                toast("Category updated", `${c.name} has been saved.`);
+            } else {
+                const id = nextId();
+                const c = {
+                    id,
+                    code: `CAT-${String(id).padStart(3, "0")}`,
+                    slug: data.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, ""),
+                    products: 0,
+                    createdAt: new Date().toISOString().slice(0, 10),
+                    icon: "bi-tag",
+                    ...data,
+                };
+                categories.push(c);
+                if (!persist()) { categories = categories.filter((x) => x.id !== id); render(); return; }
+                modal.hide();
+                // Jump to the page that contains the new category
+                const idx = visibleCategories().findIndex((x) => x.id === id);
+                if (idx >= 0) { state.page = Math.floor(idx / state.pageSize) + 1; render(); }
+                flashRow(id);
+                toast("Category created", `${c.name} was added to your menu structure.`);
+            }
+        });
+
+        /* ---------- 6. VIEW MODAL ---------- */
+        const viewModal = new bootstrap.Modal($("#viewModal"));
+        let viewingId = null;
+        function openView(id) {
+            const c = byId(id);
+            if (!c) return;
+            viewingId = id;
+            const hero = $("#viewHero");
+            hero.querySelectorAll(":scope > img, :scope > i").forEach((n) => n.remove());
+            hero.insertAdjacentHTML("afterbegin", c.image ? `<img src="${esc(c.image)}" alt="" data-icon="${c.icon || "bi-tag"}" />` : `<i class="bi ${c.icon || "bi-tag"}"></i>`);
+            applyImgFallback(hero);
+            $("#viewTitle").textContent = c.name;
+            $("#viewCode").textContent = c.code;
+            $("#viewStatus").innerHTML = statusBadge(c);
+            $("#viewDesc").textContent = c.description || "No description yet.";
+            $("#viewProducts").textContent = c.products;
+            $("#viewOrder").textContent = `#${c.order}`;
+            $("#viewCreated").textContent = fmtDate(c.createdAt);
+            $("#viewToggle").innerHTML = c.active ? `<i class="bi bi-pause-circle"></i> Deactivate` : `<i class="bi bi-play-circle"></i> Activate`;
+            viewModal.show();
+        }
+        $("#viewEdit").addEventListener("click", () => { viewModal.hide(); setTimeout(() => openForm(viewingId), 250); });
+        $("#viewToggle").addEventListener("click", () => { viewModal.hide(); setTimeout(() => requestToggle(viewingId), 250); });
+
+        /* ---------- 7. STATUS & DELETE ---------- */
+        function setActive(c, active) {
+            c.active = active;
+            persist();
+            flashRow(c.id);
+            toast(active ? "Category activated" : "Category deactivated",
+                active ? `${c.name} is visible on the menu again.` : `${c.name} is now hidden from customers.`);
+        }
+
+        function requestToggle(id) {
+            const c = byId(id);
+            if (!c) return;
+            if (c.active && c.products > 0) {
+                confirm({
+                    tone: "warning",
+                    icon: "bi-eye-slash",
+                    title: `Deactivate ${c.name}?`,
+                    text: `This category has ${c.products} ${c.products === 1 ? "product" : "products"}. They may become hidden from the customer menu while it's inactive.`,
+                    okLabel: "Deactivate",
+                    onConfirm: () => setActive(c, false),
+                });
+                render(); // revert any switch that was flipped before confirming
+                return;
+            }
+            setActive(c, !c.active);
+        }
+
+        function requestDelete(id) {
+            const c = byId(id);
+            if (!c) return;
+            if (c.products > 0) {
+                confirm({
+                    tone: "warning",
+                    icon: "bi-shield-lock",
+                    title: "This category can't be deleted",
+                    text: `${c.name} still contains ${c.products} ${c.products === 1 ? "product" : "products"}.`,
+                    extra: `<div class="adm-callout warn"><i class="bi bi-info-circle"></i><span>Reassign these products to another category or remove them first. You can also deactivate the category to hide it from customers.</span></div>`,
+                    hideOk: true,
+                    cancelLabel: "Got it",
+                });
+                return;
+            }
+            confirm({
+                tone: "danger",
+                icon: "bi-trash3",
+                title: "Delete Category?",
+                text: "Are you sure you want to delete this category? This action cannot be undone.",
+                extra: `<div class="adm-callout info"><i class="bi bi-tag"></i><span><strong>${esc(c.name)}</strong> · ${esc(c.code)}</span></div>`,
+                okLabel: "Delete Category",
+                onConfirm: () => {
+                    categories = categories.filter((x) => x.id !== id);
+                    persist();
+                    toast("Category deleted", `${c.name} has been removed.`);
+                },
+            });
+        }
+
+        /* ---------- 8. EVENTS ---------- */
+        // Row / card actions (delegated)
+        document.addEventListener("click", (e) => {
+            const btn = e.target.closest("[data-act]");
+            if (btn && btn.dataset.act !== "switch") {
+                const id = Number(btn.dataset.id);
+                ({ view: openView, edit: openForm, delete: requestDelete, toggle: requestToggle })[btn.dataset.act]?.(id);
+                return;
+            }
+            const action = e.target.closest("[data-action]");
+            if (!action) return;
+            if (action.dataset.action === "add-category") { window.AdminShell.closeMobileSidebar(); openForm(); }
+            if (action.dataset.action === "clear-filters") clearFilters();
+        });
+        document.addEventListener("change", (e) => {
+            if (e.target.matches("[data-act='switch']")) requestToggle(Number(e.target.dataset.id));
+        });
+
+        // Search (toolbar + navbar global search stay in sync)
+        const searchInput = $("#searchInput");
+        const globalSearch = $("#globalSearch");
+        function setSearch(value, source) {
+            state.search = value;
+            state.page = 1;
+            if (source !== searchInput) searchInput.value = value;
+            if (source !== globalSearch) globalSearch.value = value;
+            $("#searchClear").classList.toggle("show", value.length > 0);
+            render();
+        }
+        searchInput.addEventListener("input", () => setSearch(searchInput.value, searchInput));
+        globalSearch.addEventListener("input", () => setSearch(globalSearch.value, globalSearch));
+        $("#searchClear").addEventListener("click", () => { setSearch("", null); searchInput.focus(); });
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "/" && !/input|textarea|select/i.test(document.activeElement.tagName) && !document.querySelector(".modal.show")) {
+                e.preventDefault();
+                (globalSearch.offsetParent ? globalSearch : searchInput).focus();
+            }
+        });
+
+        $("#statusFilter").addEventListener("change", (e) => { state.status = e.target.value; state.page = 1; render(); });
+        $("#sortSelect").addEventListener("change", (e) => { state.sort = e.target.value; state.page = 1; render(); });
+        $("#pageSize").addEventListener("change", (e) => { state.pageSize = Number(e.target.value); state.page = 1; render(); });
+        $("#pages").addEventListener("click", (e) => {
+            const b = e.target.closest("[data-page]");
+            if (!b || b.disabled) return;
+            state.page = Number(b.dataset.page);
+            render();
+            document.querySelector(".adm-card").scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+
+        $$(".adm-segment [data-view]").forEach((b) => b.addEventListener("click", () => {
+            state.view = b.dataset.view;
+            $$(".adm-segment [data-view]").forEach((x) => { x.classList.toggle("active", x === b); x.setAttribute("aria-pressed", x === b); });
+            try { localStorage.setItem("cafeflow_admin_category_view", state.view); } catch { /* ignore */ }
+            render();
+        }));
+
+        function clearFilters() {
+            state.status = "all";
+            $("#statusFilter").value = "all";
+            setSearch("", null);
+        }
+
+        $("#resetDemo").addEventListener("click", () => confirm({
+            tone: "info",
+            icon: "bi-arrow-counterclockwise",
+            title: "Reset demo data?",
+            text: "All category changes saved in this browser will be replaced with the original 8 sample categories.",
+            okLabel: "Reset data",
+            onConfirm: () => {
+                categories = structuredClone(SEED);
+                persist();
+                toast("Demo data restored", "The original sample categories are back.", "info");
+            },
+        }));
+
+        // Keep multiple admin tabs in sync
+        window.addEventListener("storage", (e) => {
+            if (e.key === STORAGE_KEY) { categories = store.load(); render(); }
+        });
+
+        /* ---------- 9. INIT ---------- */
+        try {
+            const savedView = localStorage.getItem("cafeflow_admin_category_view");
+            if (savedView === "grid") $(".adm-segment [data-view='grid']").click();
+        } catch { /* ignore */ }
+        render();
+    })();
+</script>

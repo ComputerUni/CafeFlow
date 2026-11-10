@@ -1,0 +1,137 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+@await Component.InvokeAsync("_AdminLayoutHead")
+
+<body class="adm">
+
+    @await Component.InvokeAsync("_AdminLayoutSidebar")
+
+    <div class="adm-main">
+
+        @await Component.InvokeAsync("_AdminLayoutTopbar")
+
+        @RenderBody()
+
+        @await Component.InvokeAsync("_AdminLayoutFooter")
+
+    </div>
+
+    <div class="modal fade adm-confirm" id="confirmModal" tabindex="-1" aria-labelledby="confirmTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" style="max-width:440px">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <span class="adm-modal-icon" id="confirmIcon"><i class="bi bi-trash3"></i></span>
+                    <h3 id="confirmTitle">Delete Category?</h3>
+                    <p id="confirmText">Are you sure you want to delete this category? This action cannot be undone.</p>
+                    <div id="confirmExtra"></div>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="adm-btn adm-btn-light" data-bs-dismiss="modal" id="confirmCancel">Cancel</button>
+                    <button type="button" class="adm-btn adm-btn-danger" id="confirmOk">Delete Category</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="adm-toasts" id="toasts" aria-live="polite" aria-atomic="false"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+            window.AdminShell = (() => {
+                "use strict";
+                const $ = (s, r = document) => r.querySelector(s);
+                const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+                const body = document.body;
+                const desktop = window.matchMedia("(min-width: 992px)");
+                const SIDEBAR_KEY = "cafeflow_admin_sidebar";
+
+                const toggleBtn = $("#sidebarToggle");
+                function setCollapsed(collapsed) {
+                    body.classList.toggle("adm-collapsed", collapsed);
+                    toggleBtn.setAttribute("aria-expanded", String(!collapsed));
+                    try { localStorage.setItem(SIDEBAR_KEY, collapsed ? "1" : "0"); } catch { /* ignore */ }
+                }
+                function setMobileOpen(open) {
+                    body.classList.toggle("adm-sidebar-open", open);
+                    toggleBtn.setAttribute("aria-expanded", String(open));
+                    if (open) $(".adm-nav-link.active")?.focus({ preventScroll: true });
+                }
+                toggleBtn.addEventListener("click", () => {
+                    if (desktop.matches) setCollapsed(!body.classList.contains("adm-collapsed"));
+                    else setMobileOpen(!body.classList.contains("adm-sidebar-open"));
+                });
+                $("#admBackdrop").addEventListener("click", () => setMobileOpen(false));
+                document.addEventListener("keydown", (e) => { if (e.key === "Escape" && body.classList.contains("adm-sidebar-open")) setMobileOpen(false); });
+                desktop.addEventListener("change", () => { setMobileOpen(false); toggleBtn.setAttribute("aria-expanded", String(!body.classList.contains("adm-collapsed"))); });
+                try { if (localStorage.getItem(SIDEBAR_KEY) === "1") setCollapsed(true); } catch { /* ignore */ }
+
+                const ICONS = { success: "bi-check2-circle", error: "bi-exclamation-octagon", info: "bi-info-circle" };
+                function toast(title, message = "", type = "success", duration = 3500) {
+                    const el = document.createElement("div");
+                    el.className = `adm-toast ${type}`;
+                    el.setAttribute("role", type === "error" ? "alert" : "status");
+                    el.style.setProperty("--t", `${duration}ms`);
+                    el.innerHTML = `
+                              <span class="adm-toast-icon"><i class="bi ${ICONS[type] || ICONS.info}"></i></span>
+                              <div><strong></strong>${message ? "<span></span>" : ""}</div>
+                              <button type="button" aria-label="Dismiss"><i class="bi bi-x-lg"></i></button>`;
+                    el.querySelector("strong").textContent = title;
+                    if (message) el.querySelector("div span").textContent = message;
+                    const close = () => { el.classList.add("hide"); setTimeout(() => el.remove(), 300); };
+                    el.querySelector("button").addEventListener("click", close);
+                    $("#toasts").appendChild(el);
+                    setTimeout(close, duration);
+                }
+
+                document.addEventListener("click", (e) => {
+                    const link = e.target.closest("[data-placeholder]");
+                    if (!link) return;
+                    e.preventDefault();
+                    setMobileOpen(false);
+                    toast(`${link.dataset.placeholder} is coming soon`, "This page hasn't been built yet.", "info");
+                });
+
+                $$("[data-action='logout']").forEach((b) => b.addEventListener("click", () =>
+                    toast("Logout is not connected yet", "Authentication will be added with the backend.", "info")));
+
+                $("#markAllRead")?.addEventListener("click", () => {
+                    $$(".adm-notif.unread").forEach((n) => n.classList.remove("unread"));
+                    $("#notifCount")?.remove();
+                });
+
+                const confirmModalEl = $("#confirmModal");
+                const confirmModal = confirmModalEl ? new bootstrap.Modal(confirmModalEl) : null;
+                let confirmHandler = null;
+
+                function confirm(opts) {
+                    const tone = opts.tone || "danger";
+                    const toneClass = { danger: "adm-tone-rose", warning: "adm-tone-peach", info: "adm-tone-blue" }[tone];
+                    $("#confirmIcon").className = `adm-modal-icon ${toneClass}`;
+                    $("#confirmIcon").innerHTML = `<i class="bi ${opts.icon || "bi-trash3"}"></i>`;
+                    $("#confirmTitle").textContent = opts.title;
+                    $("#confirmText").textContent = opts.text;
+                    $("#confirmExtra").innerHTML = opts.extra || "";
+                    const ok = $("#confirmOk");
+                    ok.textContent = opts.okLabel || "Confirm";
+                    ok.className = `adm-btn ${tone === "danger" ? "adm-btn-danger" : "adm-btn-primary"}`;
+                    ok.classList.toggle("d-none", Boolean(opts.hideOk));
+                    $("#confirmCancel").textContent = opts.cancelLabel || "Cancel";
+                    confirmHandler = opts.onConfirm || null;
+                    confirmModal.show();
+                }
+                $("#confirmOk")?.addEventListener("click", () => {
+                    const fn = confirmHandler;
+                    confirmHandler = null;
+                    confirmModal.hide();
+                    if (fn) fn();
+                });
+
+                const y = $("#year"); if (y) y.textContent = new Date().getFullYear();
+
+                return { toast, confirm, closeMobileSidebar: () => setMobileOpen(false) };
+            })();
+    </script>
+</body>
+</html>
