@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CafeFlow.WebUI.Controllers
 {
-    public class ProductController(IProductService _productService, ICommentService _commentService, ICategoryService _categoryService) : Controller
+    public class ProductController(IProductService _productService, ICommentService _commentService, ICategoryService _categoryService, ICustomerService _customerService) : Controller
     {
         public async Task<IActionResult> Detail(int id)
         {

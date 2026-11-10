@@ -327,16 +327,17 @@
 
         function renderInfo() {
             const cat = category(product.category);
-            const rating = demoRating(product);
+            const avgRating = @Model.AverageCount.ToString(System.Globalization.CultureInfo.InvariantCulture);
+            const totalReviews = @Model.TotalComments;
             $("#productCategory").innerHTML = `<i class="bi ${cat.icon}"></i> ${cat.label}`;
             $("#productName").textContent = product.name;
             $("#productShortDesc").textContent = content.short || product.description;
-            $("#ratingStars").innerHTML = starsHtml(rating);
-            $("#ratingValue").textContent = rating.toFixed(1);
+            $("#ratingStars").innerHTML = starsHtml(avgRating);
+            $("#ratingValue").textContent = avgRating.toFixed(1);
             $("#reviewCountLabel").textContent = `(${demoReviewCount(product)} reviews)`;
             $("#basePrice").textContent = formatMoney(product.price);
             $("#priceLabel").textContent = product.customizable ? "Starting from" : "Price";
-            $("#customNote").classList.toggle("d-none", !product.customizable);
+            $("#customNote")?.classList.toggle("d-none", !product.customizable);
         }
 
         function renderTabs() {

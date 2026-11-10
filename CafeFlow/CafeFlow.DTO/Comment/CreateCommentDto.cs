@@ -6,7 +6,7 @@ namespace CafeFlow.DTO.Comment
 {
     public class CreateCommentDto
     {
-        public int CustomerId { get; set; }
+        public int? CustomerId { get; set; }
         public int? ProductId { get; set; }
         public string CustomerName { get; set; }
         public string Content { get; set; }
