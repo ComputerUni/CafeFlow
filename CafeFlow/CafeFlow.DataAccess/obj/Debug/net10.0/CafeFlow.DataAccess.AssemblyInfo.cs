@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CafeFlow.DataAccess")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7a27640bfc71d106c6122d80f6b73424c44da4c7")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7325140e37da5dbcd42683ebdcd4630337c5bd52")]
 [assembly: System.Reflection.AssemblyProductAttribute("CafeFlow.DataAccess")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CafeFlow.DataAccess")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

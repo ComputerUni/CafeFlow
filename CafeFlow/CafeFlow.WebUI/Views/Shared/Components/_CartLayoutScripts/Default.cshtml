@@ -785,6 +785,13 @@
             const address = orderState.type === "delivery" ? ($("#address") ? $("#address").value.trim() : "") : null;
             const tableId = orderState.type === "dinein" && orderState.tableContext ? orderState.tableContext.tableNumber : null;
 
+            const pickupSelect = $("#pickupTime");
+            const pickupTimeVal = (orderState.type === "pickup" && pickupSelect && pickupSelect.value)
+                ? pickupSelect.options[pickupSelect.selectedIndex].text
+                : null;
+
+            const noteText = $("#orderNote") ? $("#orderNote").value.trim() : "";
+
             const dto = {
                 OrderType: orderTypeNum,
                 Address: address,
@@ -794,6 +801,8 @@
                 Email: email,
                 PhoneNumber: phone,
                 AppUserId: null,
+                OrderNote: noteText || null,
+                EstimatedPickupTime: pickupTimeVal,
                 OrderDetails: Cart.items.map(l => {
                     const base = Number(l.basePrice ?? l.price ?? l.unitPrice);
                     const totalUnit = Number(l.unitPrice);

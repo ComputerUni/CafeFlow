@@ -10,5 +10,7 @@ namespace CafeFlow.DataAccess.Repositories.Orders
     {
         Task<Order> GetByCodeWithDetailsAsync(string code);
         Task<List<Order>> GetMyOrders(int appUserId);
+        Task<List<Order>> GetOrdersWithCustomerAsync();
+        Task<Order> GetOrderDetailAsync(int id);
     }
 }

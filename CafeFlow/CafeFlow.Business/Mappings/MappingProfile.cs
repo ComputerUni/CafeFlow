@@ -28,6 +28,20 @@ namespace CafeFlow.Business.Mappings
                 .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Customer.Address))
                 .ForMember(dest => dest.OrderDetails, opt => opt.MapFrom(src => src.OrderDetails));
 
+            CreateMap<Order, AdminOrderDetailDto>()
+                .ForMember(dest => dest.CustomerName, opt => opt.MapFrom(src => src.Customer != null ? src.Customer.FullName : "Misafir Müşteri"))
+                .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.Customer != null ? src.Customer.Phone : "Telefon Yok"))
+                .ForMember(dest => dest.OrderItems, opt => opt.MapFrom(src => src.OrderDetails))
+                .ForMember(dest => dest.StatusHistories, opt => opt.MapFrom(src => src.OrderStatusHistories));
+
+            CreateMap<OrderDetail, AdminOrderItemDto>()
+                .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product != null ? src.Product.Name : "Silinmiş Ürün"))
+                .ForMember(dest => dest.ProductImageUrl, opt => opt.MapFrom(src => src.Product != null ? src.Product.ImageUrl : null));
+
+            CreateMap<OrderStatusHistory, AdminOrderStatusHistoryDto>()
+                .ForMember(dest => dest.ChangedAt, opt => opt.MapFrom(src => src.CreatedAt));
+
+
             CreateMap<OrderDetail, OrderDetailConfirmDto>()
                 .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product != null ? src.Product.Name : "Lezzetli Ürün"))
                 .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity))
@@ -40,8 +54,13 @@ namespace CafeFlow.Business.Mappings
                 .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.Name))
                 .ReverseMap();
 
-            CreateMap<Order, OrderListDto>().ForMember(dest => dest.CustomerName, opt => opt.MapFrom(src => src.Customer.FullName));
-            CreateMap<UpdateOrderDto, Order>();
+            CreateMap<Order, OrderListDto>()
+                .ForMember(dest => dest.CustomerName, opt => opt.MapFrom(src => src.Customer.FullName))
+                .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.Customer.Phone));
+
+            CreateMap<UpdateOrderDto, Order>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));
+
             CreateMap<CreateOrderDto, Order>();
 
             CreateMap<OrderDetail, OrderDetailListDto>().ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product.Name));

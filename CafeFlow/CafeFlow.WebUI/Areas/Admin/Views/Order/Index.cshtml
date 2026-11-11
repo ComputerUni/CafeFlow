@@ -12,9 +12,8 @@
     decimal totalRevenue = Model.Where(x => x.OrderStatus != OrderStatus.Cancelled).Sum(x => x.TotalAmount);
 }
 
-<div class="adm-content">
+<div class="adm-content" style="max-width:100%;">
 
-    <!-- 1. BAŞLIK VE SAYFA YENİLEME -->
     <div class="adm-page-head">
         <div>
             <h1 class="adm-page-title">Sipariş Listesi</h1>
@@ -27,7 +26,6 @@
         </div>
     </div>
 
-    <!-- 2. ÖZET İSTATİSTİK KARTLARI -->
     <div class="adm-stats">
         <div class="adm-stat">
             <div class="adm-stat-icon adm-tone-rose">
@@ -70,7 +68,6 @@
         </div>
     </div>
 
-    <!-- 3. SİPARİŞ TABLOSU -->
     <div class="adm-card">
         <div class="adm-table-wrap">
             @if (Model.Any())
@@ -92,14 +89,12 @@
                         @foreach (var item in Model)
                         {
                             <tr>
-                                <!-- Sipariş Kodu -->
                                 <td data-label="Sipariş Kodu">
                                     <span class="adm-pill-num font-monospace fw-bold text-dark">
                                         #@item.OrderCode
                                     </span>
                                 </td>
 
-                                <!-- Müşteri Adı ve Telefon -->
                                 <td class="cell-main" data-label="Müşteri">
                                     <div class="adm-entity">
                                         <div class="adm-avatar">
@@ -112,7 +107,6 @@
                                     </div>
                                 </td>
 
-                                <!-- Sipariş Türü -->
                                 <td data-label="Tür">
                                     @if (item.OrderType == OrderType.Online)
                                     {
@@ -134,7 +128,6 @@
                                     }
                                 </td>
 
-                                <!-- Masa veya Adres Bilgisi -->
                                 <td class="cell-desc" data-label="Detay">
                                     @if (item.OrderType == OrderType.Table)
                                     {
@@ -150,12 +143,10 @@
                                     }
                                 </td>
 
-                                <!-- Toplam Tutar -->
                                 <td class="num" data-label="Tutar">
                                     <strong class="text-dark">₺@item.TotalAmount.ToString("N2")</strong>
                                 </td>
 
-                                <!-- Durum Rozeti (Senin Enum Değerlerin) -->
                                 <td data-label="Durum">
                                     @switch (item.OrderStatus)
                                     {
@@ -180,12 +171,10 @@
                                     }
                                 </td>
 
-                                <!-- Sipariş Tarihi -->
                                 <td data-label="Tarih">
                                     <span class="adm-date">@item.CreatedAt.ToString("dd MMM yyyy, HH:mm")</span>
                                 </td>
 
-                                <!-- Detay Butonu -->
                                 <td class="end cell-actions" data-label="İşlem">
                                     <a href="/Admin/Order/Detail/@item.Id" class="adm-btn adm-btn-light adm-btn-sm" title="Detay">
                                         <i class="bi bi-eye"></i> İncele

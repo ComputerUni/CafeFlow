@@ -12,6 +12,8 @@ namespace CafeFlow.DTO.Order
         public string CustomerName { get; set; }
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
+        public string? OrderNote { get; set; }
+        public string? EstimatedPickupTime { get; set; }
         public int? AppUserId { get; set; }
         public List<CreateOrderDetailDto> OrderDetails { get; set; }
     }

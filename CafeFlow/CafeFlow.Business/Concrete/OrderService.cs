@@ -80,6 +80,8 @@ namespace CafeFlow.Business.Concrete
             order.OrderCode = "CF" + "-" + DateTime.Now.Year + "-" + new Random().Next(10000000, 99999999);
             order.OrderStatus = OrderStatus.Received;
             order.TotalAmount = createOrderDto.TotalAmount + shippingStrategy.CalculateOrderShipping(createOrderDto.TotalAmount);
+            order.OrderNote = createOrderDto.OrderNote;
+            order.EstimatedPickupTime = createOrderDto.EstimatedPickupTime;
 
             var orderDetailList = new List<OrderDetail>();
 
@@ -116,7 +118,7 @@ namespace CafeFlow.Business.Concrete
 
         public async Task<List<OrderListDto>> GetAllAsync()
         {
-            var order = await _orderRepository.GetAllAsync();
+            var order = await _orderRepository.GetOrdersWithCustomerAsync();
             return _mapper.Map<List<OrderListDto>>(order);
         }
 
@@ -131,6 +133,13 @@ namespace CafeFlow.Business.Concrete
         {
             var myOrders = await _orderRepository.GetMyOrders(appUserId);
             return _mapper.Map<List<OrderConfirmationDto>>(myOrders);
+        }
+
+        public async Task<AdminOrderDetailDto> GetOrderDetailAsync(int id)
+        {
+            var order = await _orderRepository.GetOrderDetailAsync(id);
+            if (order == null) return null;
+            return _mapper.Map<AdminOrderDetailDto>(order);
         }
 
         public async Task UpdateOrderAsync(int id)

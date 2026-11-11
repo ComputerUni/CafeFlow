@@ -13,6 +13,8 @@ namespace CafeFlow.DTO.Order
         public OrderType OrderType { get; set; }
         public OrderStatus OrderStatus { get; set; } 
         public decimal TotalAmount { get; set; }
+        public string? OrderNote { get; set; }
+        public string? EstimatedPickupTime { get; set; }
         public int CustomerId { get; set; }
         public string CustomerName { get; set; }
         public string PhoneNumber { get; set; } 

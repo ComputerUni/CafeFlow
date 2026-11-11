@@ -17,6 +17,8 @@ namespace CafeFlow.Entity
         public int? TableId  { get; set; }
         public Table? Table  { get; set; }
         public decimal TotalAmount { get; set; }
+        public string? OrderNote { get; set; }
+        public string? EstimatedPickupTime { get; set; }
         public ICollection<OrderDetail> OrderDetails { get; set; }
         public ICollection<OrderStatusHistory> OrderStatusHistories { get; set; }
         public ICollection<Notification> Notifications { get; set; }

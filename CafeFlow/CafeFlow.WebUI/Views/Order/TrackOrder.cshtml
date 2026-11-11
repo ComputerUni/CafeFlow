@@ -1,4 +1,5 @@
-﻿@using CafeFlow.DTO.Order
+﻿@using CafeFlow.Business.Extensions
+@using CafeFlow.DTO.Order
 @using CafeFlow.Entity.Enums
 @model OrderConfirmationDto
 
@@ -101,7 +102,6 @@
         color: #fff;
     }
 
-    /* Durum Zaman Çizelgesi (State Pattern) */
     .cf-timeline {
         display: flex;
         justify-content: space-between;
@@ -260,14 +260,12 @@
                             </div>
                             <div>
                                 <span class="cf-badge-type">
-                                    <i class="bi bi-geo-alt-fill me-1"></i> @Model.OrderType
+                                    <i class="bi bi-geo-alt-fill me-1"></i> @Model.OrderType.GetDisplayName()
                                 </span>
                             </div>
                         </div>
 
-                        <!-- 4 Aşamalı Durum Çizgisi -->
                         <div class="cf-timeline">
-                            <!-- 0: Alındı -->
                             <div class="cf-timeline-step @(currentStatus > 1 ? "completed" : currentStatus == 1 ? "active" : "")">
                                 <div class="cf-timeline-icon">
                                     <i class="bi bi-receipt"></i>
@@ -275,7 +273,6 @@
                                 <p class="cf-timeline-label">Alındı</p>
                             </div>
 
-                            <!-- 1: Hazırlanıyor -->
                             <div class="cf-timeline-step @(currentStatus > 2 ? "completed" : currentStatus == 2 ? "active" : "")">
                                 <div class="cf-timeline-icon">
                                     <i class="bi bi-cup-hot-fill"></i>
@@ -283,7 +280,6 @@
                                 <p class="cf-timeline-label">Hazırlanıyor</p>
                             </div>
 
-                            <!-- 2: Hazır / Yolda -->
                             <div class="cf-timeline-step @(currentStatus > 3 ? "completed" : currentStatus == 3 ? "active" : "")">
                                 <div class="cf-timeline-icon">
                                     <i class="bi bi-box2-heart-fill"></i>
@@ -291,7 +287,6 @@
                                 <p class="cf-timeline-label">Hazır</p>
                             </div>
 
-                            <!-- 3: Teslim Edildi -->
                             <div class="cf-timeline-step @(currentStatus >= 4 ? "completed" : "")">
                                 <div class="cf-timeline-icon">
                                     <i class="bi bi-check2-circle"></i>
@@ -300,7 +295,6 @@
                             </div>
                         </div>
 
-                        <!-- Detay Özeti -->
                         <div class="cf-order-info-box">
                             <div class="cf-info-row">
                                 <span class="cf-info-label">Sipariş Tarihi</span>

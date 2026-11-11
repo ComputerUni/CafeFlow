@@ -322,11 +322,17 @@ namespace CafeFlow.DataAccess.Migrations
                     b.Property<int>("CustomerId")
                         .HasColumnType("int");
 
+                    b.Property<string>("EstimatedPickupTime")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
                     b.Property<string>("OrderCode")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OrderNote")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("OrderStatus")
@@ -718,7 +724,7 @@ namespace CafeFlow.DataAccess.Migrations
                         .IsRequired();
 
                     b.HasOne("CafeFlow.Entity.Product", "Product")
-                        .WithMany()
+                        .WithMany("OrderDetails")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -845,6 +851,8 @@ namespace CafeFlow.DataAccess.Migrations
                     b.Navigation("Comments");
 
                     b.Navigation("Favorites");
+
+                    b.Navigation("OrderDetails");
 
                     b.Navigation("ProductOptions");
                 });

@@ -1,0 +1,259 @@
+﻿@using CafeFlow.Business.Extensions
+@using CafeFlow.DTO.Order
+@using CafeFlow.Entity.Enums
+@model AdminOrderDetailDto
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = $"Sipariş #{Model.OrderCode}";
+}
+
+<div class="adm-content" style="max-width: 100%;">
+
+    <div class="adm-page-head">
+        <div>
+            <div class="adm-crumbs mb-2">
+                <a href="/Admin/Order/Index">Siparişler</a>
+                <i class="bi bi-chevron-right"></i>
+                <span class="font-monospace fw-bold">#@Model.OrderCode</span>
+            </div>
+            <h1 class="adm-page-title">Sipariş Detayı</h1>
+            <p class="adm-page-sub">@Model.CreatedAt.ToString("dd MMMM yyyy, HH:mm") tarihinde oluşturuldu.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="/Admin/Order/Index" class="adm-btn adm-btn-light">
+                <i class="bi bi-arrow-left"></i> Listeye Dön
+            </a>
+        </div>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="adm-callout info mb-4">
+            <i class="bi bi-check-circle-fill"></i>
+            <div>@TempData["SuccessMessage"]</div>
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="adm-callout warn mb-4">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            <div>@TempData["ErrorMessage"]</div>
+        </div>
+    }
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+
+            @if (!string.IsNullOrEmpty(Model.OrderNote) || !string.IsNullOrEmpty(Model.EstimatedPickupTime))
+            {
+                <div class="adm-card p-4 mb-4" style="background: #fffcf9; border-color: #f7e6d4;">
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <i class="bi bi-chat-square-quote-fill text-danger fs-5"></i>
+                        <strong class="fs-6 text-dark">Sipariş Notları ve Tercihler</strong>
+                    </div>
+
+                    <div class="d-flex flex-column gap-2">
+                        @if (!string.IsNullOrEmpty(Model.EstimatedPickupTime))
+                        {
+                            <div>
+                                <span class="text-muted fw-medium">Teslim Alma Tercihi:</span>
+                                <span class="adm-badge adm-badge-warning ms-1">@Model.EstimatedPickupTime</span>
+                            </div>
+                        }
+
+                        @if (!string.IsNullOrEmpty(Model.OrderNote))
+                        {
+                            <div>
+                                <span class="text-muted fw-medium">Baristaya Not:</span>
+                                <p class="mb-0 mt-1 text-dark p-2 rounded" style="background: rgba(0,0,0,0.03); font-style: italic;">
+                                    “@Model.OrderNote”
+                                </p>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+
+            <div class="adm-card mb-4">
+                <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
+                    <strong class="fs-6">Sipariş İçeriği (@Model.OrderItems.Sum(x => x.Quantity) Adet)</strong>
+                </div>
+                <div class="adm-table-wrap">
+                    <table class="adm-table">
+                        <thead>
+                            <tr>
+                                <th>Ürün Adı & Seçenekler</th>
+                                <th class="num">Birim Fiyat</th>
+                                <th class="num">Adet</th>
+                                <th class="num">Ekstralar</th>
+                                <th class="end">Ara Toplam</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.OrderItems)
+                            {
+                                <tr>
+                                    <td class="cell-main">
+                                        <div class="adm-entity">
+                                            <span class="adm-thumb">
+                                                @if (!string.IsNullOrEmpty(item.ProductImageUrl))
+                                                {
+                                                    <img src="@item.ProductImageUrl" alt="@item.ProductName" />
+                                                }
+                                                else
+                                                {
+                                                    <i class="bi bi-cup-hot"></i>
+                                                }
+                                            </span>
+                                            <div>
+                                                <strong class="text-dark">@item.ProductName</strong>
+                                                @if (!string.IsNullOrEmpty(item.SelectedOptions))
+                                                {
+                                                    <small class="text-muted d-block mt-1">
+                                                        <i class="bi bi-sliders2"></i> @item.SelectedOptions
+                                                    </small>
+                                                }
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="num">₺@item.UnitPrice.ToString("N2")</td>
+                                    <td class="num">
+                                        <span class="adm-pill-num">@item.Quantity</span>
+                                    </td>
+                                    <td class="num text-muted">
+                                        @(item.AdditionalPrice > 0 ? $"+₺{item.AdditionalPrice:N2}" : "—")
+                                    </td>
+                                    <td class="end">
+                                        <strong class="text-dark">₺@item.TotalLinePrice.ToString("N2")</strong>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            @if (Model.StatusHistories != null && Model.StatusHistories.Any())
+            {
+                <div class="adm-card p-4">
+                    <strong class="fs-6 d-block mb-3 text-dark">Durum Geçmişi ve Hareketler</strong>
+                    <div class="d-flex flex-column gap-2">
+                        @foreach (var history in Model.StatusHistories)
+                        {
+                            <div class="d-flex align-items-center justify-content-between border-bottom pb-2">
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="adm-badge adm-badge-neutral">@history.FromStatus.GetDisplayName()</span>
+                                    <i class="bi bi-arrow-right text-muted"></i>
+                                    <span class="adm-badge adm-badge-info">@history.ToStatus.GetDisplayName()</span>
+                                </div>
+                                <span class="text-muted small">@history.ChangedAt.ToString("dd MMM yyyy, HH:mm:ss")</span>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+
+        </div>
+
+        <div class="col-lg-4">
+
+            <div class="adm-card p-4 mb-4">
+                <h3 class="fs-6 fw-bold mb-3 text-dark">Sipariş Durumu İşlemi</h3>
+
+                <form method="post" action="/Admin/Order/Detail">
+                    <input type="hidden" name="Id" value="@Model.Id" />
+
+                    <div class="mb-3">
+                        <label class="adm-label">Mevcut Durum</label>
+                        <div>
+                            @switch (Model.OrderStatus)
+                            {
+                                case OrderStatus.Received:
+                                    <span class="adm-badge adm-badge-warning">Alındı</span>
+                                    break;
+                                case OrderStatus.Preparing:
+                                    <span class="adm-badge adm-badge-info">Hazırlanıyor</span>
+                                    break;
+                                case OrderStatus.Ready:
+                                    <span class="adm-badge adm-badge-neutral">Hazır</span>
+                                    break;
+                                case OrderStatus.Delivered:
+                                    <span class="adm-badge adm-badge-success">Teslim Edildi</span>
+                                    break;
+                                case OrderStatus.Cancelled:
+                                    <span class="adm-badge adm-badge-inactive">İptal Edildi</span>
+                                    break;
+                            }
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="adm-label" for="orderStatus">Yeni Durum Belirleyin</label>
+                        <select id="orderStatus" name="OrderStatus" class="adm-select w-100">
+                            <option value="@OrderStatus.Received" selected="@(Model.OrderStatus == OrderStatus.Received)">Alındı</option>
+                            <option value="@OrderStatus.Preparing" selected="@(Model.OrderStatus == OrderStatus.Preparing)">Hazırlanıyor</option>
+                            <option value="@OrderStatus.Ready" selected="@(Model.OrderStatus == OrderStatus.Ready)">Hazır</option>
+                            <option value="@OrderStatus.Delivered" selected="@(Model.OrderStatus == OrderStatus.Delivered)">Teslim Edildi</option>
+                            <option value="@OrderStatus.Cancelled" selected="@(Model.OrderStatus == OrderStatus.Cancelled)">İptal Et</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="adm-btn adm-btn-primary w-100">
+                        <i class="bi bi-arrow-repeat"></i> Durumu Güncelle
+                    </button>
+                </form>
+            </div>
+
+            <div class="adm-card p-4 mb-4">
+                <h3 class="fs-6 fw-bold mb-3 text-dark">Müşteri Bilgileri</h3>
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <div class="adm-avatar" style="width: 44px; height: 44px; font-size: 1rem;">
+                        @(string.IsNullOrWhiteSpace(Model.CustomerName) ? "M" : Model.CustomerName.Substring(0, 1).ToUpper())
+                    </div>
+                    <div>
+                        <strong>@(string.IsNullOrEmpty(Model.CustomerName) ? "Misafir Müşteri" : Model.CustomerName)</strong>
+                        <small class="text-muted d-block">@(string.IsNullOrEmpty(Model.PhoneNumber) ? "Telefon Kayıtlı Değil" : Model.PhoneNumber)</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="adm-card p-4">
+                <h3 class="fs-6 fw-bold mb-3 text-dark">Teslimat & Tutar</h3>
+
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">Sipariş Türü:</span>
+                    <strong>
+                        @if (Model.OrderType == OrderType.Online)
+                        {
+                            <span><i class="bi bi-bicycle"></i> Adrese Teslimat</span>
+                        }
+                        else if (Model.OrderType == OrderType.Table)
+                        {
+                            <span><i class="bi bi-qr-code"></i> Masadan (Masa @Model.TableId)</span>
+                        }
+                        else
+                        {
+                            <span><i class="bi bi-bag"></i> Gel-Al</span>
+                        }
+                    </strong>
+                </div>
+
+                @if (!string.IsNullOrEmpty(Model.Address))
+                {
+                    <div class="mb-3">
+                        <span class="text-muted d-block">Teslimat Adresi:</span>
+                        <small class="text-dark">@Model.Address</small>
+                    </div>
+                }
+
+                <div class="border-top pt-3 d-flex justify-content-between align-items-center">
+                    <span class="fs-6 text-muted">Toplam Ciro Tutarı:</span>
+                    <strong class="fs-4 text-dark">₺@Model.TotalAmount.ToString("N2")</strong>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>

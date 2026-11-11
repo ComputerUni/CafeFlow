@@ -1,10 +1,6 @@
-﻿using CafeFlow.DataAccess.Repositories.GenericRepositories;
-using CafeFlow.DataAccess.Repositories.Notifications;
+﻿using CafeFlow.DataAccess.Repositories.Notifications;
 using CafeFlow.Entity;
 using CafeFlow.Entity.Enums;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace CafeFlow.Business.DesignPatterns.Observer
 {
