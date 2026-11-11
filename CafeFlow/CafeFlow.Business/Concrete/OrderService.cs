@@ -114,6 +114,12 @@ namespace CafeFlow.Business.Concrete
 
         }
 
+        public async Task<List<OrderListDto>> GetAllAsync()
+        {
+            var order = await _orderRepository.GetAllAsync();
+            return _mapper.Map<List<OrderListDto>>(order);
+        }
+
         public async Task<OrderConfirmationDto> GetByCodeAsync(string code)
         {
             var order = await _orderRepository.GetByCodeWithDetailsAsync(code);

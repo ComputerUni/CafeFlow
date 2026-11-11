@@ -9,5 +9,6 @@ namespace CafeFlow.Business.Abstract
         Task UpdateOrderAsync(int id);
         Task<OrderConfirmationDto> GetByCodeAsync(string code);
         Task<List<OrderConfirmationDto>> GetMyOrders(int appUserId);
+        Task<List<OrderListDto>> GetAllAsync();
     }
 }
