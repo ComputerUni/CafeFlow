@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "1y0q2qt9njI=",
+  "dgSpecHash": "tuZydmmexz4=",
   "success": true,
   "projectFilePath": "C:\\Users\\BURHAN\\Desktop\\CafeFlow\\CafeFlow\\CafeFlow.WebUI\\CafeFlow.WebUI.csproj",
   "expectedPackageFiles": [
@@ -50,10 +50,11 @@
     "C:\\Users\\BURHAN\\.nuget\\packages\\system.composition.runtime\\9.0.0\\system.composition.runtime.9.0.0.nupkg.sha512",
     "C:\\Users\\BURHAN\\.nuget\\packages\\system.composition.typedparts\\9.0.0\\system.composition.typedparts.9.0.0.nupkg.sha512",
     "C:\\Users\\BURHAN\\.nuget\\packages\\system.configuration.configurationmanager\\9.0.11\\system.configuration.configurationmanager.9.0.11.nupkg.sha512",
-    "C:\\Users\\BURHAN\\.nuget\\packages\\system.identitymodel.tokens.jwt\\7.7.1\\system.identitymodel.tokens.jwt.7.7.1.nupkg.sha512",
+    "C:\\Users\\BURHAN\\.nuget\\packages\\system.identitymodel.tokens.jwt\\8.3.1\\system.identitymodel.tokens.jwt.8.3.1.nupkg.sha512",
     "C:\\Users\\BURHAN\\.nuget\\packages\\system.memory.data\\8.0.1\\system.memory.data.8.0.1.nupkg.sha512",
     "C:\\Users\\BURHAN\\.nuget\\packages\\system.security.cryptography.pkcs\\10.0.14\\system.security.cryptography.pkcs.10.0.14.nupkg.sha512",
-    "C:\\Users\\BURHAN\\.nuget\\packages\\system.security.cryptography.protecteddata\\9.0.11\\system.security.cryptography.protecteddata.9.0.11.nupkg.sha512"
+    "C:\\Users\\BURHAN\\.nuget\\packages\\system.security.cryptography.protecteddata\\9.0.11\\system.security.cryptography.protecteddata.9.0.11.nupkg.sha512",
+    "C:\\Users\\BURHAN\\.nuget\\packages\\twilio\\8.2.0\\twilio.8.2.0.nupkg.sha512"
   ],
   "logs": []
 }

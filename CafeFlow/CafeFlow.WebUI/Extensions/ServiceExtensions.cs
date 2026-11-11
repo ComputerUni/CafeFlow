@@ -1,4 +1,5 @@
-﻿using CafeFlow.Business.Abstract;
+﻿using CafeFlow.Business;
+using CafeFlow.Business.Abstract;
 using CafeFlow.Business.Concrete;
 using CafeFlow.Business.DesignPatterns.ChainOfResponsibility;
 using CafeFlow.Business.DesignPatterns.Observer;
@@ -15,14 +16,16 @@ namespace CafeFlow.WebUI.Extensions
 {
     public static class ServiceExtensions
     {
-        public static void AddBusinessServices(this IServiceCollection services)
+        public static void AddBusinessServices(this IServiceCollection services, IConfiguration configuration)
         {
+            services.Configure<TwilioSettings>(configuration.GetSection("TwilioSettings"));
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<ITableService, TableService>();
             services.AddScoped<ICommentService, CommentService>();
             services.AddScoped<ICustomerService, CustomerService>();
+            services.AddScoped<ISmsService, SmsService>();
         }
 
         public static void AddRepositories(this IServiceCollection services)
@@ -42,6 +45,7 @@ namespace CafeFlow.WebUI.Extensions
             services.AddScoped<IOrderObserver, KitchenObserver>();
             services.AddScoped<IOrderObserver, CashierObserver>();
             services.AddScoped<IOrderObserver, NotificationObserver>();
+            services.AddScoped<IOrderObserver, SmsObserver>();
 
             services.AddScoped<OrderObserverObject>();
 

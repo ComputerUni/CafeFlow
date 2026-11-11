@@ -242,3 +242,4 @@ C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.WebUI\bin\Debug\net10.0\AutoM
 C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.WebUI\bin\Debug\net10.0\CafeFlow.DTO.dll
 C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.WebUI\bin\Debug\net10.0\CafeFlow.DTO.pdb
 C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.WebUI\obj\Debug\net10.0\compressed\wyen57wqjv-{0}-qd4sy9imsc-qd4sy9imsc.gz
+C:\Users\BURHAN\Desktop\CafeFlow\CafeFlow\CafeFlow.WebUI\bin\Debug\net10.0\Twilio.dll

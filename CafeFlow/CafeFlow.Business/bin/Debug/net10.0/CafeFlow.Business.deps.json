@@ -11,7 +11,8 @@
           "AutoMapper": "16.2.0",
           "CafeFlow.DTO": "1.0.0",
           "CafeFlow.DataAccess": "1.0.0",
-          "System.Security.Cryptography.Pkcs": "10.0.14"
+          "System.Security.Cryptography.Pkcs": "10.0.14",
+          "Twilio": "8.2.0"
         },
         "runtime": {
           "CafeFlow.Business.dll": {}
@@ -107,7 +108,7 @@
           "Microsoft.IdentityModel.Protocols.OpenIdConnect": "7.7.1",
           "Microsoft.SqlServer.Server": "1.0.0",
           "System.Configuration.ConfigurationManager": "9.0.11",
-          "System.IdentityModel.Tokens.Jwt": "7.7.1",
+          "System.IdentityModel.Tokens.Jwt": "8.3.1",
           "System.Security.Cryptography.Pkcs": "10.0.14"
         },
         "runtime": {
@@ -551,7 +552,7 @@
       "Microsoft.IdentityModel.Protocols.OpenIdConnect/7.7.1": {
         "dependencies": {
           "Microsoft.IdentityModel.Protocols": "7.7.1",
-          "System.IdentityModel.Tokens.Jwt": "7.7.1"
+          "System.IdentityModel.Tokens.Jwt": "8.3.1"
         },
         "runtime": {
           "lib/net8.0/Microsoft.IdentityModel.Protocols.OpenIdConnect.dll": {
@@ -577,6 +578,14 @@
           "lib/netstandard2.0/Microsoft.SqlServer.Server.dll": {
             "assemblyVersion": "1.0.0.0",
             "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "Newtonsoft.Json/13.0.1": {
+        "runtime": {
+          "lib/netstandard2.0/Newtonsoft.Json.dll": {
+            "assemblyVersion": "13.0.0.0",
+            "fileVersion": "13.0.1.25517"
           }
         }
       },
@@ -626,15 +635,15 @@
           }
         }
       },
-      "System.IdentityModel.Tokens.Jwt/7.7.1": {
+      "System.IdentityModel.Tokens.Jwt/8.3.1": {
         "dependencies": {
           "Microsoft.IdentityModel.JsonWebTokens": "8.14.0",
           "Microsoft.IdentityModel.Tokens": "8.14.0"
         },
         "runtime": {
-          "lib/net8.0/System.IdentityModel.Tokens.Jwt.dll": {
-            "assemblyVersion": "7.7.1.0",
-            "fileVersion": "7.7.1.50719"
+          "lib/net9.0/System.IdentityModel.Tokens.Jwt.dll": {
+            "assemblyVersion": "8.3.1.0",
+            "fileVersion": "8.3.1.60117"
           }
         }
       },
@@ -667,6 +676,19 @@
           "lib/net9.0/System.Security.Cryptography.ProtectedData.dll": {
             "assemblyVersion": "9.0.0.0",
             "fileVersion": "9.0.1125.51716"
+          }
+        }
+      },
+      "Twilio/8.2.0": {
+        "dependencies": {
+          "Microsoft.IdentityModel.Tokens": "8.14.0",
+          "Newtonsoft.Json": "13.0.1",
+          "System.IdentityModel.Tokens.Jwt": "8.3.1"
+        },
+        "runtime": {
+          "lib/net8.0/Twilio.dll": {
+            "assemblyVersion": "8.2.0.0",
+            "fileVersion": "8.2.0.0"
           }
         }
       },
@@ -995,6 +1017,13 @@
       "path": "microsoft.sqlserver.server/1.0.0",
       "hashPath": "microsoft.sqlserver.server.1.0.0.nupkg.sha512"
     },
+    "Newtonsoft.Json/13.0.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-ppPFpBcvxdsfUonNcvITKqLl3bqxWbDCZIzDWHzjpdAHRFfZe0Dw9HmA0+za13IdyrgJwpkDTDA9fHaxOrt20A==",
+      "path": "newtonsoft.json/13.0.1",
+      "hashPath": "newtonsoft.json.13.0.1.nupkg.sha512"
+    },
     "System.ClientModel/1.8.0": {
       "type": "package",
       "serviceable": true,
@@ -1016,12 +1045,12 @@
       "path": "system.diagnostics.eventlog/9.0.11",
       "hashPath": "system.diagnostics.eventlog.9.0.11.nupkg.sha512"
     },
-    "System.IdentityModel.Tokens.Jwt/7.7.1": {
+    "System.IdentityModel.Tokens.Jwt/8.3.1": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-rQkO1YbAjLwnDJSMpRhRtrc6XwIcEOcUvoEcge+evurpzSZM3UNK+MZfD3sKyTlYsvknZ6eJjSBfnmXqwOsT9Q==",
-      "path": "system.identitymodel.tokens.jwt/7.7.1",
-      "hashPath": "system.identitymodel.tokens.jwt.7.7.1.nupkg.sha512"
+      "sha512": "sha512-SxdCv+SmnKOhUvryKvrpWJnkuVHj3hU8pUwj7R8zthi73TlBUlMyavon9qfuJsjnqY+L7jusp3Zo0fWFX6mwtw==",
+      "path": "system.identitymodel.tokens.jwt/8.3.1",
+      "hashPath": "system.identitymodel.tokens.jwt.8.3.1.nupkg.sha512"
     },
     "System.Memory.Data/8.0.1": {
       "type": "package",
@@ -1043,6 +1072,13 @@
       "sha512": "sha512-s8yUYuYYu+PAwvBdhLG1KyrGrk9gkYeuPxfAsXsTqqWyepwSyEw8hAaflW4nO98NG52YpYI1am2+9o+79h2RtQ==",
       "path": "system.security.cryptography.protecteddata/9.0.11",
       "hashPath": "system.security.cryptography.protecteddata.9.0.11.nupkg.sha512"
+    },
+    "Twilio/8.2.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-yyz37Egd0zxerb490LghNjmClv7KPJCFJ2w8H7zsu1Gn71PXYlKZz2J7nFMNWGqJLP5u99XEGtURGKL3SGa+fQ==",
+      "path": "twilio/8.2.0",
+      "hashPath": "twilio.8.2.0.nupkg.sha512"
     },
     "CafeFlow.DataAccess/1.0.0": {
       "type": "project",

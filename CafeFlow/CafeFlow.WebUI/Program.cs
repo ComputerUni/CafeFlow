@@ -15,7 +15,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddIdentity<AppUser, AppRole>().AddEntityFrameworkStores<AppDbContext>();
 builder.Services.AddAutoMapper(cfg => { }, typeof(MappingProfile));
 
-builder.Services.AddBusinessServices();
+builder.Services.AddBusinessServices(builder.Configuration);
 builder.Services.AddRepositories();
 builder.Services.AddDesignPatterns();
 

@@ -372,7 +372,7 @@
           "Microsoft.IdentityModel.Protocols.OpenIdConnect": "7.7.1",
           "Microsoft.SqlServer.Server": "1.0.0",
           "System.Configuration.ConfigurationManager": "9.0.11",
-          "System.IdentityModel.Tokens.Jwt": "7.7.1"
+          "System.IdentityModel.Tokens.Jwt": "8.3.1"
         },
         "runtime": {
           "lib/net9.0/Microsoft.Data.SqlClient.dll": {
@@ -643,7 +643,7 @@
       "Microsoft.IdentityModel.Protocols.OpenIdConnect/7.7.1": {
         "dependencies": {
           "Microsoft.IdentityModel.Protocols": "7.7.1",
-          "System.IdentityModel.Tokens.Jwt": "7.7.1"
+          "System.IdentityModel.Tokens.Jwt": "8.3.1"
         },
         "runtime": {
           "lib/net8.0/Microsoft.IdentityModel.Protocols.OpenIdConnect.dll": {
@@ -788,15 +788,15 @@
           }
         }
       },
-      "System.IdentityModel.Tokens.Jwt/7.7.1": {
+      "System.IdentityModel.Tokens.Jwt/8.3.1": {
         "dependencies": {
           "Microsoft.IdentityModel.JsonWebTokens": "8.14.0",
           "Microsoft.IdentityModel.Tokens": "8.14.0"
         },
         "runtime": {
-          "lib/net8.0/System.IdentityModel.Tokens.Jwt.dll": {
-            "assemblyVersion": "7.7.1.0",
-            "fileVersion": "7.7.1.50719"
+          "lib/net9.0/System.IdentityModel.Tokens.Jwt.dll": {
+            "assemblyVersion": "8.3.1.0",
+            "fileVersion": "8.3.1.60117"
           }
         }
       },
@@ -816,11 +816,25 @@
           }
         }
       },
+      "Twilio/8.2.0": {
+        "dependencies": {
+          "Microsoft.IdentityModel.Tokens": "8.14.0",
+          "Newtonsoft.Json": "13.0.4",
+          "System.IdentityModel.Tokens.Jwt": "8.3.1"
+        },
+        "runtime": {
+          "lib/net8.0/Twilio.dll": {
+            "assemblyVersion": "8.2.0.0",
+            "fileVersion": "8.2.0.0"
+          }
+        }
+      },
       "CafeFlow.Business/1.0.0": {
         "dependencies": {
           "AutoMapper": "16.2.0",
           "CafeFlow.DTO": "1.0.0",
-          "CafeFlow.DataAccess": "1.0.0"
+          "CafeFlow.DataAccess": "1.0.0",
+          "Twilio": "8.2.0"
         },
         "runtime": {
           "CafeFlow.Business.dll": {
@@ -1174,12 +1188,12 @@
       "path": "system.configuration.configurationmanager/9.0.11",
       "hashPath": "system.configuration.configurationmanager.9.0.11.nupkg.sha512"
     },
-    "System.IdentityModel.Tokens.Jwt/7.7.1": {
+    "System.IdentityModel.Tokens.Jwt/8.3.1": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-rQkO1YbAjLwnDJSMpRhRtrc6XwIcEOcUvoEcge+evurpzSZM3UNK+MZfD3sKyTlYsvknZ6eJjSBfnmXqwOsT9Q==",
-      "path": "system.identitymodel.tokens.jwt/7.7.1",
-      "hashPath": "system.identitymodel.tokens.jwt.7.7.1.nupkg.sha512"
+      "sha512": "sha512-SxdCv+SmnKOhUvryKvrpWJnkuVHj3hU8pUwj7R8zthi73TlBUlMyavon9qfuJsjnqY+L7jusp3Zo0fWFX6mwtw==",
+      "path": "system.identitymodel.tokens.jwt/8.3.1",
+      "hashPath": "system.identitymodel.tokens.jwt.8.3.1.nupkg.sha512"
     },
     "System.Memory.Data/8.0.1": {
       "type": "package",
@@ -1194,6 +1208,13 @@
       "sha512": "sha512-s8yUYuYYu+PAwvBdhLG1KyrGrk9gkYeuPxfAsXsTqqWyepwSyEw8hAaflW4nO98NG52YpYI1am2+9o+79h2RtQ==",
       "path": "system.security.cryptography.protecteddata/9.0.11",
       "hashPath": "system.security.cryptography.protecteddata.9.0.11.nupkg.sha512"
+    },
+    "Twilio/8.2.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-yyz37Egd0zxerb490LghNjmClv7KPJCFJ2w8H7zsu1Gn71PXYlKZz2J7nFMNWGqJLP5u99XEGtURGKL3SGa+fQ==",
+      "path": "twilio/8.2.0",
+      "hashPath": "twilio.8.2.0.nupkg.sha512"
     },
     "CafeFlow.Business/1.0.0": {
       "type": "project",

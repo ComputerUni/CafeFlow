@@ -866,7 +866,7 @@
       "Newtonsoft.Json/13.0.4": {
         "type": "package",
         "compile": {
-          "lib/net6.0/_._": {
+          "lib/net6.0/Newtonsoft.Json.dll": {
             "related": ".xml"
           }
         },
@@ -1037,19 +1037,19 @@
           "buildTransitive/net8.0/_._": {}
         }
       },
-      "System.IdentityModel.Tokens.Jwt/7.7.1": {
+      "System.IdentityModel.Tokens.Jwt/8.3.1": {
         "type": "package",
         "dependencies": {
-          "Microsoft.IdentityModel.JsonWebTokens": "7.7.1",
-          "Microsoft.IdentityModel.Tokens": "7.7.1"
+          "Microsoft.IdentityModel.JsonWebTokens": "8.3.1",
+          "Microsoft.IdentityModel.Tokens": "8.3.1"
         },
         "compile": {
-          "lib/net8.0/System.IdentityModel.Tokens.Jwt.dll": {
+          "lib/net9.0/System.IdentityModel.Tokens.Jwt.dll": {
             "related": ".xml"
           }
         },
         "runtime": {
-          "lib/net8.0/System.IdentityModel.Tokens.Jwt.dll": {
+          "lib/net9.0/System.IdentityModel.Tokens.Jwt.dll": {
             "related": ".xml"
           }
         }
@@ -1108,6 +1108,24 @@
           "buildTransitive/net8.0/_._": {}
         }
       },
+      "Twilio/8.2.0": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.IdentityModel.Tokens": "8.3.1",
+          "Newtonsoft.Json": "13.0.1",
+          "System.IdentityModel.Tokens.Jwt": "8.3.1"
+        },
+        "compile": {
+          "lib/net8.0/Twilio.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net8.0/Twilio.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "CafeFlow.Business/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v10.0",
@@ -1115,7 +1133,8 @@
           "AutoMapper": "16.2.0",
           "CafeFlow.DTO": "1.0.0",
           "CafeFlow.DataAccess": "1.0.0",
-          "System.Security.Cryptography.Pkcs": "10.0.14"
+          "System.Security.Cryptography.Pkcs": "10.0.14",
+          "Twilio": "8.2.0"
         },
         "compile": {
           "bin/placeholder/CafeFlow.Business.dll": {}
@@ -3150,15 +3169,14 @@
         "useSharedDesignerContext.txt"
       ]
     },
-    "System.IdentityModel.Tokens.Jwt/7.7.1": {
-      "sha512": "rQkO1YbAjLwnDJSMpRhRtrc6XwIcEOcUvoEcge+evurpzSZM3UNK+MZfD3sKyTlYsvknZ6eJjSBfnmXqwOsT9Q==",
+    "System.IdentityModel.Tokens.Jwt/8.3.1": {
+      "sha512": "SxdCv+SmnKOhUvryKvrpWJnkuVHj3hU8pUwj7R8zthi73TlBUlMyavon9qfuJsjnqY+L7jusp3Zo0fWFX6mwtw==",
       "type": "package",
-      "path": "system.identitymodel.tokens.jwt/7.7.1",
+      "path": "system.identitymodel.tokens.jwt/8.3.1",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
-        "lib/net461/System.IdentityModel.Tokens.Jwt.dll",
-        "lib/net461/System.IdentityModel.Tokens.Jwt.xml",
+        "README.md",
         "lib/net462/System.IdentityModel.Tokens.Jwt.dll",
         "lib/net462/System.IdentityModel.Tokens.Jwt.xml",
         "lib/net472/System.IdentityModel.Tokens.Jwt.dll",
@@ -3167,9 +3185,11 @@
         "lib/net6.0/System.IdentityModel.Tokens.Jwt.xml",
         "lib/net8.0/System.IdentityModel.Tokens.Jwt.dll",
         "lib/net8.0/System.IdentityModel.Tokens.Jwt.xml",
+        "lib/net9.0/System.IdentityModel.Tokens.Jwt.dll",
+        "lib/net9.0/System.IdentityModel.Tokens.Jwt.xml",
         "lib/netstandard2.0/System.IdentityModel.Tokens.Jwt.dll",
         "lib/netstandard2.0/System.IdentityModel.Tokens.Jwt.xml",
-        "system.identitymodel.tokens.jwt.7.7.1.nupkg.sha512",
+        "system.identitymodel.tokens.jwt.8.3.1.nupkg.sha512",
         "system.identitymodel.tokens.jwt.nuspec"
       ]
     },
@@ -3271,6 +3291,26 @@
         "system.security.cryptography.protecteddata.9.0.11.nupkg.sha512",
         "system.security.cryptography.protecteddata.nuspec",
         "useSharedDesignerContext.txt"
+      ]
+    },
+    "Twilio/8.2.0": {
+      "sha512": "yyz37Egd0zxerb490LghNjmClv7KPJCFJ2w8H7zsu1Gn71PXYlKZz2J7nFMNWGqJLP5u99XEGtURGKL3SGa+fQ==",
+      "type": "package",
+      "path": "twilio/8.2.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "lib/net35/Twilio.dll",
+        "lib/net35/Twilio.xml",
+        "lib/net462/Twilio.dll",
+        "lib/net462/Twilio.xml",
+        "lib/net8.0/Twilio.dll",
+        "lib/net8.0/Twilio.xml",
+        "lib/netstandard2.0/Twilio.dll",
+        "lib/netstandard2.0/Twilio.xml",
+        "twilio.8.2.0.nupkg.sha512",
+        "twilio.nuspec"
       ]
     },
     "CafeFlow.Business/1.0.0": {
