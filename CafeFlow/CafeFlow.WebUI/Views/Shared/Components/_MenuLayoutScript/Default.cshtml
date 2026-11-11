@@ -27,6 +27,7 @@
         price = p.Price,
         image = p.ImageUrl,
         description = p.Description,
+        stock = p.Stock,
         badge = p.IsFeatured ? "Öne Çıkan" : null,
         customizable = p.CategoryName != null && (p.CategoryName.ToLower().Contains("kahve"))
     }).ToList();
@@ -183,12 +184,28 @@
         const toastEl = $("#cfToast");
         const toastText = $("#cfToastText");
         let toastTimer;
-        function showToast(message) {
+
+        function showToast(message, isError = false) {
+            if (!toastEl || !toastText) return;
+
             toastText.textContent = message;
+
+            if (isError) {
+                toastEl.style.backgroundColor = "#dc3545";
+                toastEl.style.color = "#ffffff";
+            } else {
+                toastEl.style.backgroundColor = "";
+                toastEl.style.color = "";
+            }
+
             toastEl.classList.add("show");
             clearTimeout(toastTimer);
-            toastTimer = setTimeout(() => toastEl.classList.remove("show"), 2400);
+            toastTimer = setTimeout(() => {
+                toastEl.classList.remove("show");
+            }, 3500);
         }
+
+        window.showToast = showToast;
 
         /* ---------- 5. MENU RENDERING, FILTERING, SORTING ---------- */
         const state = {
@@ -243,7 +260,7 @@
         function productCardTemplate(p, index) {
             const liked = Favorites.has(p.id);
             const badge = p.badge ? `<span class="cf-tag ${BADGES[p.badge]}">${p.badge}</span>` : "";
-            const fromLabel = p.customizable ? "<small>from</small>" : "";
+            const fromLabel = p.customizable ? "<small>'den başlayan </small>" : "";
             const btnLabel = p.customizable
                 ? `<i class="bi bi-sliders"></i> Özelleştir`
                 : `<i class="bi bi-bag-plus"></i> Ekle`;
@@ -376,9 +393,11 @@
 
         const describeOptions = (options) => {
             if (!options) return "";
-            const parts = [options.size, options.milk !== "Regular" ? `${options.milk} milk` : "Regular milk"];
-            if (options.extraShot === "Yes") parts.push("Extra shot");
-            if (options.syrup && options.syrup !== "None") parts.push(`${options.syrup} syrup`);
+            const parts = [];
+            if (options.size) parts.push(options.size);
+            if (options.milk && options.milk !== "Standart Yağlı") parts.push(options.milk);
+            if (options.extraShot && options.extraShot !== "İstemiyorum") parts.push(options.extraShot);
+            if (options.syrup && options.syrup !== "Yok") parts.push(`${options.syrup} Şurubu`);
             return parts.join(" · ");
         };
 
@@ -432,7 +451,7 @@
             if (!btn) return;
             const original = btn.innerHTML;
             btn.classList.add("added");
-            btn.innerHTML = '<i class="bi bi-check-lg"></i> Added';
+            btn.innerHTML = '<i class="bi bi-check-lg"></i> Eklendi';
             btn.disabled = true;
             setTimeout(() => {
                 btn.classList.remove("added");
@@ -544,7 +563,7 @@
             Cart.add(modalProduct, { options, unitPrice, quantity: modalQty });
             modal.hide();
             bumpCartCounter();
-            showToast(`${modalQty > 1 ? modalQty + " × " : ""}${modalProduct.name} added to your cart`);
+            showToast(`${modalQty > 1 ? modalQty + " × " : ""}${modalProduct.name} sepete eklendi`);
         });
 
         // Cart drawer: quantity + remove (event delegation)

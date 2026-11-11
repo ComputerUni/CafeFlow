@@ -209,32 +209,74 @@
             action: $("#cfToastAction"),
             timer: null,
             onAction: null,
-            show(message, { error = false, actionLabel = null, onAction = null, duration = 2600 } = {}) {
-                if (!this.el) return;
-                this.text.textContent = message;
-                this.el.classList.toggle("error", error);
-                if (this.icon) this.icon.className = `bi ${error ? "bi-exclamation-circle-fill" : "bi-check-circle-fill"}`;
-                this.onAction = onAction;
-                if (this.action) {
-                    this.action.textContent = actionLabel || "";
-                    this.action.classList.toggle("show", Boolean(actionLabel));
+
+            init() {
+                if (!this.el || !document.body.contains(this.el)) {
+                    let box = document.getElementById("cfToast");
+                    if (!box) {
+                        box = document.createElement("div");
+                        box.id = "cfToast";
+                        box.style.cssText = `
+                        position: fixed;
+                        top: 24px;
+                        right: 24px;
+                        z-index: 9999999;
+                        background: #dc3545;
+                        color: #ffffff;
+                        padding: 14px 22px;
+                        border-radius: 10px;
+                        box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+                        display: none;
+                        align-items: center;
+                        gap: 12px;
+                        font-size: 15px;
+                        font-weight: 500;
+                        font-family: inherit;
+                        transition: opacity 0.3s ease, transform 0.3s ease;
+                        transform: translateY(-10px);
+                    `;
+                        box.innerHTML = `<i class="bi bi-exclamation-circle-fill fs-5" id="cfToastIcon"></i> <span id="cfToastText"></span>`;
+                        document.body.appendChild(box);
+                    }
+                    this.el = box;
+                    this.text = box.querySelector("#cfToastText");
+                    this.icon = box.querySelector("#cfToastIcon");
                 }
-                this.el.classList.add("show");
-                clearTimeout(this.timer);
-                this.timer = setTimeout(() => this.hide(), actionLabel ? 5000 : duration);
             },
+
+            show(message, { error = false, actionLabel = null, onAction = null, duration = 3500 } = {}) {
+                this.init(); 
+
+                if (this.text) this.text.textContent = message;
+
+                if (error) {
+                    this.el.style.backgroundColor = "#dc3545"; 
+                    if (this.icon) this.icon.className = "bi bi-exclamation-circle-fill fs-5";
+                } else {
+                    this.el.style.backgroundColor = "#198754"; 
+                    if (this.icon) this.icon.className = "bi bi-check-circle-fill fs-5";
+                }
+
+                this.el.style.display = "flex";
+                requestAnimationFrame(() => {
+                    this.el.style.opacity = "1";
+                    this.el.style.transform = "translateY(0)";
+                });
+
+                clearTimeout(this.timer);
+                this.timer = setTimeout(() => this.hide(), duration);
+            },
+
             hide() {
                 if (!this.el) return;
-                this.el.classList.remove("show");
+                this.el.style.opacity = "0";
+                this.el.style.transform = "translateY(-10px)";
+                setTimeout(() => {
+                    if (this.el) this.el.style.display = "none";
+                }, 300);
                 this.onAction = null;
             },
         };
-        if (toast.action) {
-            toast.action.addEventListener("click", () => {
-                if (toast.onAction) toast.onAction();
-                toast.hide();
-            });
-        }
 
         function optionTags(options) {
             if (!options) return "";
@@ -480,7 +522,6 @@
         if ($("#modalQtyInc")) $("#modalQtyInc").addEventListener("click", () => { modalState.qty = Math.min(modalState.qty + 1, 50); updateModalTotal(); });
         if (modalQtyDec) modalQtyDec.addEventListener("click", () => { modalState.qty = Math.max(modalState.qty - 1, 1); updateModalTotal(); });
 
-        /* ---------- 7. SİPARİŞ TÜRÜ & BİLGİLERİ ---------- */
         const detailsForm = $("#detailsForm");
         const typeInputs = $$('input[name="orderType"]');
         const draft = storage.read(STORAGE_KEYS.orderDraft, {}, sessionStorage);
@@ -713,32 +754,19 @@
         }
 
 
-        /* ---------- 9. SİPARİŞİ TAMAMLAMA (CHECKOUT) ---------- */
         function validateOrder() {
             if (Cart.items.length === 0) {
                 toast.show("Sepetiniz boş.", { error: true });
                 return false;
             }
+
             if (!orderState.type) {
                 if ($("#orderTypePanel")) $("#orderTypePanel").scrollIntoView({ behavior: "smooth", block: "start" });
                 toast.show("Lütfen teslimat türünü seçiniz.", { error: true });
                 return false;
             }
-            if (orderState.type === "dinein" && !orderState.tableContext) {
-                if ($("#orderTypePanel")) $("#orderTypePanel").scrollIntoView({ behavior: "smooth", block: "start" });
-                toast.show("Masadan sipariş için QR okutmanız gerekmektedir.", { error: true });
-                return false;
-            }
-            if (detailsForm) {
-                const fields = $$("[data-required]", detailsForm);
-                const invalid = fields.filter((el) => !validateField(el));
-                if (invalid.length) {
-                    invalid[0].scrollIntoView({ behavior: "smooth", block: "center" });
-                    setTimeout(() => invalid[0].focus({ preventScroll: true }), 350);
-                    toast.show("Lütfen eksik alanları doldurunuz.", { error: true });
-                    return false;
-                }
-            }
+
+
             return true;
         }
 
@@ -810,23 +838,22 @@
                 });
 
                 const res = await response.json();
-                if (res.success) {
-                    Cart.clear();
 
-                    storage.remove(STORAGE_KEYS.orderDraft, sessionStorage);
-                    storage.remove(STORAGE_KEYS.tableContext, sessionStorage);
-                    orderState.tableContext = null;
-                    orderState.type = null;
-                    if (detailsForm) detailsForm.reset();
-                    if ($("#orderNote")) $("#orderNote").value = "";
-                    window.location.href = `/Cart/Confirmation/${res.orderCode}`;
-                } else {
+                if (!response.ok || !res.success) {
                     toast.show(res.message || "Sipariş oluşturulamadı.", { error: true });
+
                     if (checkoutBtn) {
                         checkoutBtn.disabled = false;
                         checkoutBtn.innerHTML = `<i class="bi bi-lock"></i> Siparişi Onayla`;
                     }
+                    return;
                 }
+
+                Cart.clear();
+                storage.remove(STORAGE_KEYS.orderDraft, sessionStorage);
+                storage.remove(STORAGE_KEYS.tableContext, sessionStorage);
+                window.location.href = `/Cart/Confirmation/${res.orderCode}`;
+
             } catch (err) {
                 toast.show("Sunucu ile bağlantı kurulamadı.", { error: true });
                 if (checkoutBtn) {

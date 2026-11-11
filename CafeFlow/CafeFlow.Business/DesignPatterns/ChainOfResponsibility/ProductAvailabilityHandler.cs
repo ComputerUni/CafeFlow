@@ -22,12 +22,17 @@ namespace CafeFlow.Business.DesignPatterns.ChainOfResponsibility
                 throw new Exception("Ürün mevcut değil veya aktif değil.");
             }
 
-            if(product.Stock < request.Quantity)
+            if (product.Stock <= 0)
             {
-                throw new Exception("Yeterli miktarda ürün stoğu yok.");
+                throw new Exception($"'{product.Name}' tükendi, stokta kalmadı.");
             }
 
-            if(NextHandler != null)
+            if (product.Stock < request.Quantity)
+            {
+                throw new Exception($"'{product.Name}' için yeterli stok bulunmuyor. (Mevcut stok: {product.Stock})");
+            }
+
+            if (NextHandler != null)
             {
                 await NextHandler.Validate(request);
             }

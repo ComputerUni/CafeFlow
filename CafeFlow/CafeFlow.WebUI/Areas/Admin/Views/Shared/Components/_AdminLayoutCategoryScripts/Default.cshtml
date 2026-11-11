@@ -255,7 +255,7 @@
         const modalEl = $("#categoryModal");
         const modal = new bootstrap.Modal(modalEl);
         const form = $("#categoryForm");
-        const f = { name: $("#fName"), desc: $("#fDesc"), order: $("#fOrder"), active: $("#fActive"), url: $("#fUrl"), file: $("#fFile") };
+        const f = { name: $("#fName"), desc: $("#fDesc"), url: $("#fUrl"), file: $("#fFile") };
         let editingId = null;
         let pendingImage = null; // data URL or remote URL currently previewed
 
@@ -283,7 +283,6 @@
 
             f.name.value = c ? c.name : "";
             f.desc.value = c ? c.description : "";
-            f.order.value = c ? c.order : Math.max(0, ...categories.map((x) => x.order)) + 1;
             f.url.value = c && c.image && !c.image.startsWith("data:") ? c.image : "";
             setPreview(c ? c.image : null);
             $("#fDescCount").textContent = f.desc.value.length;
@@ -311,8 +310,6 @@
                 const dup = categories.find((c) => c.id !== editingId && normalize(c.name) === normalize(name));
                 if (dup) { showError(f.name, `"${dup.name}" already exists. Please choose a different name.`); ok = false; }
             }
-            const order = f.order.value === "" ? null : Number(f.order.value);
-            if (order !== null && (!Number.isInteger(order) || order < 1 || order > 999)) { showError(f.order); ok = false; }
             if (!ok) form.querySelector(".is-invalid")?.focus();
             return ok;
         }
@@ -382,8 +379,9 @@
         f.url.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); previewUrl(); } });
 
         form.addEventListener("submit", async (e) => {
-            e.preventDefault();
+            e.preventDefault(); 
             if (!validate()) return;
+
             if (f.url.value.trim() && f.url.value.trim() !== pendingImage) {
                 const submit = $("#categorySubmit");
                 submit.disabled = true;
@@ -391,42 +389,8 @@
                 submit.disabled = false;
                 if (!ok) return;
             }
-
-            const data = {
-                name: f.name.value.trim().replace(/\s+/g, " "),
-                description: f.desc.value.trim(),
-                order: f.order.value === "" ? Math.max(0, ...categories.map((c) => c.order)) + 1 : Number(f.order.value),
-                active: f.active.checked,
-                image: pendingImage,
-            };
-
-            if (editingId) {
-                const c = byId(editingId);
-                Object.assign(c, data);
-                if (!persist()) return;
-                modal.hide();
-                flashRow(c.id);
-                toast("Category updated", `${c.name} has been saved.`);
-            } else {
-                const id = nextId();
-                const c = {
-                    id,
-                    code: `CAT-${String(id).padStart(3, "0")}`,
-                    slug: data.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, ""),
-                    products: 0,
-                    createdAt: new Date().toISOString().slice(0, 10),
-                    icon: "bi-tag",
-                    ...data,
-                };
-                categories.push(c);
-                if (!persist()) { categories = categories.filter((x) => x.id !== id); render(); return; }
-                modal.hide();
-                // Jump to the page that contains the new category
-                const idx = visibleCategories().findIndex((x) => x.id === id);
-                if (idx >= 0) { state.page = Math.floor(idx / state.pageSize) + 1; render(); }
-                flashRow(id);
-                toast("Category created", `${c.name} was added to your menu structure.`);
-            }
+            toast("Kategori Kaydedildi", "Yeni kategori menüye eklendi.");
+            form.submit();
         });
 
         /* ---------- 6. VIEW MODAL ---------- */

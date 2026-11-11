@@ -20,6 +20,28 @@ namespace CafeFlow.Business.Concrete
     {
         public async Task<string> CreateOrderAsync(CreateOrderDto createOrderDto)
         {
+            var availabilityHandler = new ProductAvailabilityHandler(_productRepository);
+            var minimumAmountHandler = new MinimumAmountHandler();
+            var deliveryHandler = new DeliveryInfoHandler();
+
+            availabilityHandler.SetNextHandler(minimumAmountHandler);
+            minimumAmountHandler.SetNextHandler(deliveryHandler);
+
+            foreach (var detail in createOrderDto.OrderDetails)
+            {
+                var validationRequest = new OrderValidationRequest
+                {
+                    ProductId = detail.ProductId,
+                    Quantity = detail.Quantity,
+                    OrderType = createOrderDto.OrderType,
+                    Address = createOrderDto.Address,
+                    TableId = createOrderDto.TableId,
+                    TotalAmount = createOrderDto.TotalAmount
+                };
+
+                await _orderValidatonHandler.Validate(validationRequest);
+            }
+
             Customer customer;
 
             if (createOrderDto.AppUserId.HasValue)
@@ -36,21 +58,6 @@ namespace CafeFlow.Business.Concrete
                     Address = createOrderDto.Address
                 };
                 await _customerRepository.CreateAsync(customer);
-            }
-
-            foreach (var detail in createOrderDto.OrderDetails)
-            {
-                var validationRequest = new OrderValidationRequest
-                {
-                    ProductId = detail.ProductId,
-                    Quantity = detail.Quantity,
-                    OrderType = createOrderDto.OrderType,
-                    Address = createOrderDto.Address,
-                    TableId = createOrderDto.TableId,
-                    TotalAmount = createOrderDto.TotalAmount
-                };
-
-                await _orderValidatonHandler.Validate(validationRequest);
             }
 
             IOrderFactory orderFactory = createOrderDto.OrderType switch
@@ -80,6 +87,10 @@ namespace CafeFlow.Business.Concrete
             {
                 var product = await _productRepository.GetByIdAsync(d.ProductId);
                 var basePrice = product.Price;
+
+                product.Stock -= d.Quantity;
+                if (product.Stock < 0) product.Stock = 0;
+                await _productRepository.UpdateAsync(product);
 
                 var additional = d.UnitPrice > basePrice ? (d.UnitPrice - basePrice) : d.AdditionalPrice;
 

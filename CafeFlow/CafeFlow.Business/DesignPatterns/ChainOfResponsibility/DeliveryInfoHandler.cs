@@ -21,6 +21,11 @@ namespace CafeFlow.Business.DesignPatterns.ChainOfResponsibility
                 }
             }
 
+            if (NextHandler != null)
+            {
+                await NextHandler.Validate(request);
+            }
+
         }
     }
 }

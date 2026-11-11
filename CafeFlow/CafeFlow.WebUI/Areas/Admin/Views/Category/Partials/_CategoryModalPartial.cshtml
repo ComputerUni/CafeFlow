@@ -1,62 +1,66 @@
-﻿<div class="modal fade" id="categoryModal" tabindex="-1" aria-labelledby="categoryModalTitle" aria-hidden="true">
+﻿@using CafeFlow.DTO.Category
+@model CreateCategoryDto
+
+<div class="modal fade" id="categoryModal" tabindex="-1" aria-labelledby="categoryModalTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
-        <form class="modal-content" id="categoryForm" novalidate>
+        <form class="modal-content" id="categoryForm" asp-area="Admin" asp-controller="Category" asp-action="Create" method="post">
             <div class="modal-header">
                 <div class="d-flex gap-3 align-items-center">
                     <span class="adm-modal-icon adm-tone-rose"><i class="bi bi-tag" id="categoryModalIcon"></i></span>
                     <div>
-                        <h2 class="modal-title" id="categoryModalTitle">Create New Category</h2>
-                        <p id="categoryModalSub">Add a new section to your cafe menu.</p>
+                        <h2 class="modal-title" id="categoryModalTitle">Yeni Kategori</h2>
+                        <p id="categoryModalSub">Kafe menüsüne yeni bir kategori ekleyin.</p>
                     </div>
                 </div>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
             </div>
             <div class="modal-body">
                 <div class="row g-3">
-                    <div class="col-md-8">
-                        <label class="adm-label" for="fName">Category Name <span class="req">*</span></label>
-                        <input type="text" class="adm-input" id="fName" maxlength="40" placeholder="e.g. Tea & Infusions" required />
-                        <div class="adm-feedback" id="fNameError"><i class="bi bi-exclamation-circle"></i> <span>Please enter a category name.</span></div>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="adm-label" for="fOrder">Display Order</label>
-                        <input type="number" class="adm-input" id="fOrder" min="1" max="999" step="1" placeholder="1" />
-                        <div class="adm-feedback"><i class="bi bi-exclamation-circle"></i> <span>Use a whole number from 1 to 999.</span></div>
-                    </div>
                     <div class="col-12">
-                        <label class="adm-label" for="fDesc">Category Description <span class="opt">(optional)</span></label>
-                        <textarea class="adm-textarea" id="fDesc" maxlength="160" rows="3" placeholder="A short line customers will see on the menu"></textarea>
-                        <div class="adm-hint d-flex justify-content-between"><span>Keep it short and friendly.</span><span><span id="fDescCount">0</span>/160</span></div>
+                        <label class="adm-label" for="fName">Kategori Adı <span class="req">*</span></label>
+                        <input asp-for="Name" type="text" class="adm-input" id="fName" maxlength="40" placeholder="Örn: Sıcak Kahveler" required />
+                        <div class="adm-feedback" id="fNameError"><i class="bi bi-exclamation-circle"></i> <span>Lütfen bir kategori adı girin.</span></div>
                     </div>
 
                     <div class="col-12">
-                        <span class="adm-label">Category Image <span class="opt">(optional)</span></span>
+                        <label class="adm-label" for="fDesc">Kategori Açıklaması <span class="opt">(isteğe bağlı)</span></label>
+                        <textarea asp-for="Description" class="adm-textarea" id="fDesc" maxlength="160" rows="3" placeholder="Müşterilerin menüde göreceği kısa bir açıklama"></textarea>
+                        <div class="adm-hint d-flex justify-content-between">
+                            <span>Kısa ve anlaşılır tutun.</span>
+                            <span><span id="fDescCount">0</span>/160</span>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <span class="adm-label">Kategori Görseli <span class="opt">(isteğe bağlı)</span></span>
                         <div class="adm-upload" id="uploadZone">
                             <div class="adm-upload-preview" id="imgPreview"><i class="bi bi-image"></i></div>
                             <div class="adm-upload-body">
-                                <strong>Upload an image</strong>
-                                <small>JPG, PNG or WebP, up to 5 MB.</small>
+                                <strong>Görsel Yükle</strong>
+                                <small>JPG, PNG veya WebP, en fazla 5 MB.</small>
                                 <div class="adm-upload-actions">
-                                    <label class="adm-btn adm-btn-light adm-btn-sm mb-0" for="fFile"><i class="bi bi-upload"></i> Choose file</label>
+                                    <label class="adm-btn adm-btn-light adm-btn-sm mb-0" for="fFile"><i class="bi bi-upload"></i> Dosya Seç</label>
                                     <input type="file" id="fFile" accept="image/png,image/jpeg,image/webp" class="visually-hidden" />
-                                    <button type="button" class="adm-btn adm-btn-ghost adm-btn-sm d-none" id="imgRemove"><i class="bi bi-x-lg"></i> Remove</button>
+                                    <button type="button" class="adm-btn adm-btn-ghost adm-btn-sm d-none" id="imgRemove"><i class="bi bi-x-lg"></i> Kaldır</button>
                                 </div>
                             </div>
                         </div>
                         <div class="adm-feedback" id="fFileError"><i class="bi bi-exclamation-circle"></i> <span></span></div>
-                        <div class="adm-or">or</div>
-                        <label class="adm-label" for="fUrl">Image URL</label>
+
+                        <div class="adm-or">veya</div>
+
+                        <label class="adm-label" for="fUrl">Görsel Bağlantısı (URL)</label>
                         <div class="d-flex gap-2">
-                            <input type="url" class="adm-input" id="fUrl" data-feedback="fUrlError" placeholder="https://images.example.com/category.jpg" />
-                            <button type="button" class="adm-btn adm-btn-light" id="urlPreviewBtn">Preview</button>
+                            <input asp-for="ImageUrl" type="url" class="adm-input" id="fUrl" data-feedback="fUrlError" placeholder="https://images.ornek.com/kategori.jpg" />
+                            <button type="button" class="adm-btn adm-btn-light" id="urlPreviewBtn">Önizle</button>
                         </div>
-                        <div class="adm-feedback" id="fUrlError"><i class="bi bi-exclamation-circle"></i> <span>We couldn't load an image from that URL.</span></div>
+                        <div class="adm-feedback" id="fUrlError"><i class="bi bi-exclamation-circle"></i> <span>Bu bağlantıdan görsel yüklenemedi.</span></div>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="adm-btn adm-btn-light" data-bs-dismiss="modal">Cancel</button>
-                <button type="submit" class="adm-btn adm-btn-primary" id="categorySubmit"><i class="bi bi-check2"></i> Save Category</button>
+                <button type="button" class="adm-btn adm-btn-light" data-bs-dismiss="modal">Vazgeç</button>
+                <button type="submit" class="adm-btn adm-btn-primary" id="categorySubmit"><i class="bi bi-check2"></i> Kategoriyi Kaydet</button>
             </div>
         </form>
     </div>
