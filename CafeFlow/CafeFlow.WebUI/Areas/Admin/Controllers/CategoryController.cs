@@ -16,7 +16,20 @@ namespace CafeFlow.WebUI.Areas.Admin.Controllers
         public async Task<IActionResult> Create(CreateCategoryDto dto)
         {
             await _categoryService.CreateAsync(dto);
-            return RedirectToAction("Index");
+            return Ok();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Update(UpdateCategoryDto dto)
+        {
+            await _categoryService.UpdateAsync(dto);
+            return Ok();
+        }
+
+        public async Task<IActionResult> Delete(int id)
+        {
+            await _categoryService.DeleteAsync(id);
+            return Ok();
         }
     }
 }

@@ -40,7 +40,7 @@
             },
         };
 
-        let categories = SEED;
+        let categories = structuredClone(SEED);
         const state = { search: "", status: "all", sort: "order", view: "table", page: 1, pageSize: 10 };
 
         /* ---------- 2. HELPERS ---------- */
@@ -389,8 +389,25 @@
                 submit.disabled = false;
                 if (!ok) return;
             }
-            toast("Kategori Kaydedildi", "Yeni kategori menüye eklendi.");
-            form.submit();
+            const url = editingId
+                ? `/Admin/Category/Update`
+                : `/Admin/Category/Create`;
+
+            const body = new FormData();
+            if (editingId) body.append("Id", editingId);
+            body.append("Name", f.name.value.trim());
+            body.append("Description", f.desc.value.trim());
+            body.append("ImageUrl", pendingImage && !pendingImage.startsWith("data:") ? pendingImage : "");
+
+            const res = await fetch(url, { method: "POST", body });
+
+            if (res.ok) {
+                modal.hide();
+                toast(editingId ? "Kategori Güncellendi" : "Kategori Kaydedildi", "");
+                location.reload(); 
+            } else {
+                toast("Hata", "İşlem başarısız.", "error");
+            }
         });
 
         /* ---------- 6. VIEW MODAL ---------- */
@@ -448,25 +465,31 @@
                 confirm({
                     tone: "warning",
                     icon: "bi-shield-lock",
-                    title: "This category can't be deleted",
-                    text: `${c.name} still contains ${c.products} ${c.products === 1 ? "product" : "products"}.`,
-                    extra: `<div class="adm-callout warn"><i class="bi bi-info-circle"></i><span>Reassign these products to another category or remove them first. You can also deactivate the category to hide it from customers.</span></div>`,
+                    title: "Bu kategori silinemez",
+                    text: `${c.name} kategorisinde ${c.products} ürün bulunuyor.`,
+                    extra: `<div class="adm-callout warn"><i class="bi bi-info-circle"></i><span>Önce ürünleri başka bir kategoriye taşıyın veya silin.</span></div>`,
                     hideOk: true,
-                    cancelLabel: "Got it",
+                    cancelLabel: "Tamam",
                 });
                 return;
             }
             confirm({
                 tone: "danger",
                 icon: "bi-trash3",
-                title: "Delete Category?",
-                text: "Are you sure you want to delete this category? This action cannot be undone.",
-                extra: `<div class="adm-callout info"><i class="bi bi-tag"></i><span><strong>${esc(c.name)}</strong> · ${esc(c.code)}</span></div>`,
-                okLabel: "Delete Category",
-                onConfirm: () => {
-                    categories = categories.filter((x) => x.id !== id);
-                    persist();
-                    toast("Category deleted", `${c.name} has been removed.`);
+                title: "Kategori Silinsin mi?",
+                text: "Bu işlem geri alınamaz.",
+                extra: `<div class="adm-callout info"><i class="bi bi-tag"></i><span><strong>${esc(c.name)}</strong></span></div>`,
+                okLabel: "Sil",
+                onConfirm: async () => {
+                    const res = await fetch(`/Admin/Category/Delete?id=${id}`, { method: "POST" });
+                    if(res.ok) {
+                        categories = categories.filter((x) => x.id !== id);
+                        render();
+                        toast("Kategori silindi", `${c.name} kaldırıldı.`);
+                    }
+                    else {
+                        toast("Hata", "Silinemedi.", "error");
+                    }
                 },
             });
         }
