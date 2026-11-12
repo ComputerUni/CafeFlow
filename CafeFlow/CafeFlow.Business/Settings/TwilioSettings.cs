@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace CafeFlow.Business
+namespace CafeFlow.Business.Settings
 {
     public class TwilioSettings
     {

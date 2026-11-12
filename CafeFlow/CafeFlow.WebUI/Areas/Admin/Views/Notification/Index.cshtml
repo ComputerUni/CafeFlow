@@ -1,0 +1,173 @@
+﻿@model List<CafeFlow.DTO.Notification.NotificationListDto>
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Bildirimler";
+    var unreadCount = Model.Count(x => !x.IsRead);
+}
+
+<div class="adm-content mw-100">
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+        <div>
+            <h1 class="h4 mb-1 fw-bold">Bildirimler</h1>
+            <p class="text-muted small mb-0">Sipariş durumu değişikliklerinden oluşan sistem bildirimlerini yönetin.</p>
+        </div>
+        <div class="d-flex flex-wrap align-items-center gap-2">
+            <div class="btn-group btn-group-sm" role="group" aria-label="Durum Filtresi">
+                <button type="button" class="btn btn-dark filter-btn active" data-filter="all">
+                    Tümü (@Model.Count)
+                </button>
+                <button type="button" class="btn btn-outline-secondary filter-btn" data-filter="unread">
+                    Okunmamış (@unreadCount)
+                </button>
+                <button type="button" class="btn btn-outline-secondary filter-btn" data-filter="read">
+                    Okunmuş (@(Model.Count - unreadCount))
+                </button>
+            </div>
+            <div class="input-group input-group-sm" style="width: 240px;">
+                <span class="input-group-text bg-white border-end-0">
+                    <i class="bi bi-search text-muted"></i>
+                </span>
+                <input type="text" id="notificationSearch" class="form-control border-start-0 ps-0" placeholder="Mesaj veya sipariş # ara..." />
+            </div>
+        </div>
+    </div>
+
+    <div class="adm-card">
+        <div class="table-responsive">
+            <table class="table adm-table align-middle mb-0" id="notificationsTable">
+                <thead>
+                    <tr>
+                        <th style="width: 70px;">#</th>
+                        <th style="width: 120px;">Sipariş</th>
+                        <th style="width: 140px;">Hedef</th>
+                        <th>Bildirim Mesajı</th>
+                        <th style="width: 130px;">Durum</th>
+                        <th class="text-end" style="width: 160px;">İşlem</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Any())
+                    {
+                        foreach (var item in Model.OrderByDescending(x => x.Id))
+                        {
+                            var statusKey = item.IsRead ? "read" : "unread";
+
+                            <tr class="notification-row"
+                                data-status="@statusKey"
+                                style="@(!item.IsRead ? "background-color: #fff9fa;" : "")">
+                                <td class="text-muted fw-semibold">#@item.Id</td>
+                                <td>
+                                    <span class="badge bg-light text-dark border fw-semibold">
+                                        <i class="bi bi-receipt me-1 text-muted"></i>#@item.OrderId
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge rounded-pill fw-medium px-2 py-1"
+                                          style="background-color: #fdf2f4; color: #b85d6f; border: 1px solid #f5d0d8;">
+                                        @item.NotificationTarget.ToString()
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        @if (!item.IsRead)
+                                        {
+                                            <span class="rounded-circle flex-shrink-0"
+                                                  style="width: 8px; height: 8px; background-color: #dc3545;"
+                                                  title="Okunmadı"></span>
+                                        }
+                                        <span class="@(!item.IsRead ? "fw-semibold text-dark" : "text-muted")">
+                                            @item.Message
+                                        </span>
+                                    </div>
+                                </td>
+                                <td>
+                                    @if (item.IsRead)
+                                    {
+                                        <span class="badge bg-success-subtle text-success border border-success-subtle">
+                                            <i class="bi bi-check2-all me-1"></i>Okundu
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle">
+                                            <i class="bi bi-dot me-1"></i>Okunmadı
+                                        </span>
+                                    }
+                                </td>
+                                <td class="text-end">
+                                    @if (item.IsRead)
+                                    {
+                                        <button type="button" class="btn btn-sm btn-light text-muted border d-inline-flex align-items-center gap-1" disabled>
+                                            <i class="bi bi-check2-all"></i>
+                                            <span>Okundu</span>
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <form method="post" asp-action="ChangeStatus" asp-controller="Notification" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@item.Id" />
+                                            <button type="submit" class="btn btn-sm btn-success d-inline-flex align-items-center gap-1">
+                                                <i class="bi bi-check2"></i>
+                                                <span>Okundu Yap</span>
+                                            </button>
+                                        </form>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    }
+                    <tr id="emptyNotificationRow" class="@(Model.Any() ? "d-none" : "")">
+                        <td colspan="6" class="text-center py-5 text-muted">
+                            <i class="bi bi-bell-slash fs-3 d-block mb-2"></i>
+                            Gösterilecek bildirim bulunamadı.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (() => {
+            const searchInput = document.getElementById("notificationSearch");
+            const filterBtns = document.querySelectorAll(".filter-btn");
+            const rows = document.querySelectorAll("#notificationsTable tbody tr.notification-row");
+            const emptyRow = document.getElementById("emptyNotificationRow");
+            let activeFilter = "all";
+
+            function applyFilters() {
+                const term = (searchInput ? searchInput.value : "").trim().toLocaleLowerCase("tr-TR");
+                let visible = 0;
+
+                rows.forEach((row) => {
+                    const matchesStatus = activeFilter === "all" || row.dataset.status === activeFilter;
+                    const matchesSearch = !term || row.textContent.toLocaleLowerCase("tr-TR").includes(term);
+                    const show = matchesStatus && matchesSearch;
+                    row.classList.toggle("d-none", !show);
+                    if (show) visible++;
+                });
+
+                if (emptyRow) emptyRow.classList.toggle("d-none", visible > 0);
+            }
+
+            filterBtns.forEach((btn) => {
+                btn.addEventListener("click", () => {
+                    filterBtns.forEach((b) => {
+                        b.classList.remove("active", "btn-dark");
+                        b.classList.add("btn-outline-secondary");
+                    });
+                    btn.classList.add("active", "btn-dark");
+                    btn.classList.remove("btn-outline-secondary");
+                    activeFilter = btn.dataset.filter;
+                    applyFilters();
+                });
+            });
+
+            if (searchInput) searchInput.addEventListener("input", applyFilters);
+        })();
+    </script>
+}

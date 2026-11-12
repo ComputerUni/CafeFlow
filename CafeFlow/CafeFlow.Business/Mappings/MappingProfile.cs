@@ -2,6 +2,7 @@
 using CafeFlow.DTO.Category;
 using CafeFlow.DTO.Comment;
 using CafeFlow.DTO.Customer;
+using CafeFlow.DTO.Notification;
 using CafeFlow.DTO.Order;
 using CafeFlow.DTO.OrderDetail;
 using CafeFlow.DTO.OrderStatusHistory;
@@ -83,6 +84,8 @@ namespace CafeFlow.Business.Mappings
                 .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => src.CreatedAt));
             CreateMap<UpdateCommentDto, Comment>();
             CreateMap<CreateCommentDto, Comment>();
+
+            CreateMap<Notification, NotificationListDto>();
 
 
         }

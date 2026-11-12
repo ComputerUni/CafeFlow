@@ -1,8 +1,8 @@
-﻿using CafeFlow.Business;
-using CafeFlow.Business.Abstract;
+﻿using CafeFlow.Business.Abstract;
 using CafeFlow.Business.Concrete;
 using CafeFlow.Business.DesignPatterns.ChainOfResponsibility;
 using CafeFlow.Business.DesignPatterns.Observer;
+using CafeFlow.Business.Settings;
 using CafeFlow.DataAccess.Repositories.Categories;
 using CafeFlow.DataAccess.Repositories.Comments;
 using CafeFlow.DataAccess.Repositories.Customers;
@@ -26,6 +26,7 @@ namespace CafeFlow.WebUI.Extensions
             services.AddScoped<ICommentService, CommentService>();
             services.AddScoped<ICustomerService, CustomerService>();
             services.AddScoped<ISmsService, SmsService>();
+            services.AddScoped<INotificationService, NotificationService>();
         }
 
         public static void AddRepositories(this IServiceCollection services)
