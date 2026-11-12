@@ -8,5 +8,6 @@ namespace CafeFlow.Business.Abstract
     public interface ICustomerService
     {
         Task<CustomerListDto?> GetByAppUserIdAsync(int appUserId);
+        Task<List<CustomerListDto>> GetAllAsync();
     }
 }

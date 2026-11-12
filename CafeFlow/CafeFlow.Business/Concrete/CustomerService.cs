@@ -10,6 +10,12 @@ namespace CafeFlow.Business.Concrete
 {
     public class CustomerService(ICustomerRepository _customerRepository, IMapper _mapper) : ICustomerService
     {
+        public async Task<List<CustomerListDto>> GetAllAsync()
+        {
+            var customers = await _customerRepository.GetAllAsync();
+            return _mapper.Map<List<CustomerListDto>>(customers);
+        }
+
         public async Task<CustomerListDto?> GetByAppUserIdAsync(int appUserId)
         {
             var customer = await _customerRepository.GetByAppUserIdAsync(appUserId);
