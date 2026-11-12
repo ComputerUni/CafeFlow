@@ -15,6 +15,11 @@ namespace CafeFlow.DataAccess.Repositories.Comments
         {
         }
 
+        public Task<List<Comment>> GetAllWithDetailsAsync()
+        {
+            return _context.Comments.Include(x => x.Customer).Include(x => x.Product).ToListAsync();
+        }
+
         public Task<List<Comment>> GetCommentsByProductId(int id)
         {
             return _context.Comments.Include(x => x.Customer).Include(x => x.Product).Where(x => x.ProductId == id && x.IsApproved).OrderByDescending(x => x.CreatedAt).ToListAsync();

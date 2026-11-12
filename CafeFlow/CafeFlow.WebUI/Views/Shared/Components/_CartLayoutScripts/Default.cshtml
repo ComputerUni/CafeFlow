@@ -781,7 +781,7 @@
                 ? ($("#tableCustomerName") ? $("#tableCustomerName").value.trim() : "")
                 : ($("#fullName") ? $("#fullName").value.trim() : "");
             const phone = $("#phone") ? $("#phone").value.trim() : "";
-            const email = (fullName.toLowerCase().replace(/[^a-z0-9]/g, "") || "guest");
+            const email = (fullName.toLowerCase().replace(/[^a-z0-9]/g, "") || "guest") + "@@gmail.com";
             const address = orderState.type === "delivery" ? ($("#address") ? $("#address").value.trim() : "") : null;
             const tableId = orderState.type === "dinein" && orderState.tableContext ? orderState.tableContext.tableNumber : null;
 

@@ -1,7 +1,4 @@
 ﻿using CafeFlow.DTO.Comment;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace CafeFlow.Business.Abstract
 {
@@ -13,5 +10,7 @@ namespace CafeFlow.Business.Abstract
         Task UpdateAsync(UpdateCommentDto dto);
         Task DeleteAsync(int id);
         Task<List<CommentListDto>> GetCommentsByProductId(int id);
+        Task<List<CommentListDto>> GetAllWithDetailsAsync();
+        Task ChangeStatusAsync(int id);
     }
 }

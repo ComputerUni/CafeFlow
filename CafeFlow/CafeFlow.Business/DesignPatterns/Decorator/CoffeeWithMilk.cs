@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace CafeFlow.Business.DesignPatterns.Decorator
+﻿namespace CafeFlow.Business.DesignPatterns.Decorator
 {
     public class CoffeeWithMilk : CoffeeDecorator
     {

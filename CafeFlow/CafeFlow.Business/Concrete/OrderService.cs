@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CafeFlow.Business.Abstract;
 using CafeFlow.Business.DesignPatterns.ChainOfResponsibility;
+using CafeFlow.Business.DesignPatterns.Decorator;
 using CafeFlow.Business.DesignPatterns.FactoryMethod;
 using CafeFlow.Business.DesignPatterns.Observer;
 using CafeFlow.Business.DesignPatterns.State;
@@ -16,7 +17,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace CafeFlow.Business.Concrete
 {
-    public class OrderService(IOrderRepository _orderRepository, IProductRepository _productRepository, IMapper _mapper, OrderValidationHandler _orderValidatonHandler, OrderObserverObject _orderObserverObject, IOrderStatusHistoryRepository _orderStatusHistoryRepository, ICustomerRepository _customerRepository) : IOrderService
+    public class OrderService(IOrderRepository _orderRepository, IProductRepository _productRepository, IMapper _mapper, OrderObserverObject _orderObserverObject, IOrderStatusHistoryRepository _orderStatusHistoryRepository, ICustomerRepository _customerRepository) : IOrderService
     {
         public async Task<string> CreateOrderAsync(CreateOrderDto createOrderDto)
         {
@@ -39,7 +40,7 @@ namespace CafeFlow.Business.Concrete
                     TotalAmount = createOrderDto.TotalAmount
                 };
 
-                await _orderValidatonHandler.Validate(validationRequest);
+                await availabilityHandler.Validate(validationRequest);
             }
 
             Customer customer;
@@ -93,6 +94,34 @@ namespace CafeFlow.Business.Concrete
                 product.Stock -= d.Quantity;
                 if (product.Stock < 0) product.Stock = 0;
                 await _productRepository.UpdateAsync(product);
+
+                ICoffee coffee = new BaseProduct(product.Name, basePrice);
+
+                if(!string.IsNullOrWhiteSpace(d.SelectedOptions))
+                {
+                    if (d.SelectedOptions.Contains("Orta (Medium)"))
+                        coffee = new CoffeeWithSize(coffee, "Orta (Medium)", 15);
+                    else if (d.SelectedOptions.Contains("Büyük (Large)"))
+                        coffee = new CoffeeWithSize(coffee, "Büyük (Large)", 25);
+
+                    if (d.SelectedOptions.Contains("Yulaf Sütü"))
+                        coffee = new CoffeeWithMilk(coffee, "Yulaf Sütü", 15);
+                    else if (d.SelectedOptions.Contains("Badem Sütü"))
+                        coffee = new CoffeeWithMilk(coffee, "Badem Sütü", 15);
+                    else if (d.SelectedOptions.Contains("Laktozsuz"))
+                        coffee = new CoffeeWithMilk(coffee, "Laktozsuz", 10);
+
+                    if (d.SelectedOptions.Contains("+1 Shot Espresso"))
+                        coffee = new ExtraShotCoffee(coffee, "+1 Shot Espresso", 20);
+
+                    if (d.SelectedOptions.Contains("Vanilya"))
+                        coffee = new CoffeeWithSyrup(coffee, "Vanilya", 15);
+                    else if (d.SelectedOptions.Contains("Karamel"))
+                        coffee = new CoffeeWithSyrup(coffee, "Karamel", 15);
+                    else if (d.SelectedOptions.Contains("Fındık"))
+                        coffee = new CoffeeWithSyrup(coffee, "Fındık", 15);
+                }
+
 
                 var additional = d.UnitPrice > basePrice ? (d.UnitPrice - basePrice) : d.AdditionalPrice;
 

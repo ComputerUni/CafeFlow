@@ -11,6 +11,14 @@ namespace CafeFlow.Business.Concrete
 {
     public class CommentService(ICommentRepository _commentRepository, IMapper _mapper) : ICommentService
     {
+        public async Task ChangeStatusAsync(int id)
+        {
+            var comment = await _commentRepository.GetByIdAsync(id);
+            if (comment is null) return;
+            comment.IsApproved = !comment.IsApproved;
+            await _commentRepository.UpdateAsync(comment);
+        }
+
         public async Task CreateAsync(CreateCommentDto dto)
         {
             var comment = _mapper.Map<Comment>(dto);
@@ -27,6 +35,12 @@ namespace CafeFlow.Business.Concrete
         public async Task<List<CommentListDto>> GetAllAsync()
         {
             var comments = await _commentRepository.GetAllAsync();
+            return _mapper.Map<List<CommentListDto>>(comments);
+        }
+
+        public async Task<List<CommentListDto>> GetAllWithDetailsAsync()
+        {
+            var comments = await _commentRepository.GetAllWithDetailsAsync();
             return _mapper.Map<List<CommentListDto>>(comments);
         }
 

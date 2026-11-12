@@ -16,17 +16,6 @@ namespace CafeFlow.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> Index([FromBody] CreateOrderDto dto)
         {
-            if (!ModelState.IsValid)
-            {
-                var errors = ModelState
-                    .Where(x => x.Value.Errors.Any())
-                    .ToDictionary(
-                        k => k.Key,
-                        v => v.Value.Errors.Select(e => e.ErrorMessage).ToList()
-                    );
-                return BadRequest(new { success = false, message = "Geçersiz veri.", errors });
-            }
-
             if (User.Identity.IsAuthenticated)
             {
                 dto.AppUserId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));

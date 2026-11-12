@@ -79,6 +79,7 @@ namespace CafeFlow.Business.Mappings
 
             CreateMap<Comment, CommentListDto>()
                 .ForMember(dest => dest.CustomerName, opt => opt.MapFrom(src => src.Customer.FullName))
+                .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product.Name))
                 .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => src.CreatedAt));
             CreateMap<UpdateCommentDto, Comment>();
             CreateMap<CreateCommentDto, Comment>();

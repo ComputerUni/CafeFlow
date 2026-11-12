@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CafeFlow.DTO")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7325140e37da5dbcd42683ebdcd4630337c5bd52")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+74a7cfb10b02e1109ea00b031386c4c00c4a3de0")]
 [assembly: System.Reflection.AssemblyProductAttribute("CafeFlow.DTO")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CafeFlow.DTO")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
