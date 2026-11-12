@@ -1,0 +1,59 @@
+﻿@model CafeFlow.DTO.Table.UpdateTableDto
+
+@{
+    ViewData["Title"] = "Masa Güncelle";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="adm-content mw-100">
+    <div class="adm-page-head">
+        <div>
+            <h1 class="adm-page-title">Masa Güncelle</h1>
+            <p class="adm-page-sub">Masa numarası, QR kod veya müsaitlik durumunu düzenleyin.</p>
+        </div>
+        <a asp-area="Admin" asp-controller="Table" asp-action="Index" class="adm-btn adm-btn-light">
+            <i class="bi bi-arrow-left"></i>
+            <span>Listeye Dön</span>
+        </a>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
+            <div class="adm-card p-4">
+                <form asp-area="Admin" asp-controller="Table" asp-action="Update" method="post">
+                    <input type="hidden" asp-for="Id" />
+
+                    <div class="mb-3">
+                        <label asp-for="TableNumber" class="adm-label">
+                            Masa Numarası <span class="req">*</span>
+                        </label>
+                        <input asp-for="TableNumber" type="number" min="1" class="adm-input" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="QRCode" class="adm-label">
+                            QR Kod Değeri <span class="req">*</span>
+                        </label>
+                        <input asp-for="QRCode" type="text" class="adm-input" required />
+                    </div>
+
+                    <div class="mb-4 pt-1">
+                        <label class="adm-switch lg">
+                            <input asp-for="IsAvailable" type="checkbox" />
+                            <span class="adm-switch-track"></span>
+                            <span>Masa Müsait (Siparişe Açık)</span>
+                        </label>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2 pt-2 border-top">
+                        <a asp-area="Admin" asp-controller="Table" asp-action="Index" class="adm-btn adm-btn-light">İptal</a>
+                        <button type="submit" class="adm-btn adm-btn-primary">
+                            <i class="bi bi-check-lg"></i>
+                            <span>Değişiklikleri Kaydet</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

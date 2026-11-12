@@ -72,7 +72,7 @@ namespace CafeFlow.Business.Mappings
             CreateMap<CreateCustomerDto, Customer>();
 
             CreateMap<Table, TableListDto>();
-            CreateMap<UpdateTableDto, Table>();
+            CreateMap<UpdateTableDto, Table>().ReverseMap();
             CreateMap<CreateTableDto, Table>();
 
             CreateMap<OrderStatusHistory, OrderStatusHistoryListDto>();

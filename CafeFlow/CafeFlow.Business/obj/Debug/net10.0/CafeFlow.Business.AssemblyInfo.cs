@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CafeFlow.Business")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7d9cacfc40f3e54c514e535dbefaaa3df602dd2f")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+25cc35de9e9794bd5dd9fc7ce8238df56fbcac9c")]
 [assembly: System.Reflection.AssemblyProductAttribute("CafeFlow.Business")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CafeFlow.Business")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
