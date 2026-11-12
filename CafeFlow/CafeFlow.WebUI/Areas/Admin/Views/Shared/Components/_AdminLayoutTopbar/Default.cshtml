@@ -17,11 +17,11 @@
 
         <!-- Quick actions -->
         <div class="dropdown">
-            <button type="button" class="adm-icon-btn" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Quick actions" title="Quick actions">
+            <button type="button" class="adm-icon-btn" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Hızlı İşlemler" title="Hızlı İşlemler">
                 <i class="bi bi-lightning-charge"></i>
             </button>
             <ul class="dropdown-menu dropdown-menu-end">
-                <li><h6 class="dropdown-header">Quick actions</h6></li>
+                <li><h6 class="dropdown-header">Hızlı İşlemler</h6></li>
                 <li><button class="dropdown-item" type="button" data-action="add-category"><i class="bi bi-plus-circle"></i> Add Category</button></li>
                 <li><button class="dropdown-item" type="button" data-placeholder="Products"><i class="bi bi-cup-straw"></i> View Products</button></li>
                 <li><button class="dropdown-item" type="button" data-placeholder="Orders"><i class="bi bi-receipt"></i> View Orders</button></li>
@@ -62,10 +62,10 @@
         <!-- Profile -->
         <div class="dropdown">
             <button type="button" class="adm-user-btn" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Account menu">
-                <span class="adm-avatar">SA</span>
+                <span class="adm-avatar">@ViewBag.Initials</span>
                 <span class="adm-user-meta">
-                    <strong>Selin Aydın</strong>
-                    <small>Cafe Manager</small>
+                    <strong>@ViewBag.FullName</strong>
+                    <small>@ViewBag.Role</small>
                 </span>
                 <i class="bi bi-chevron-down small text-muted adm-hide-sm"></i>
             </button>

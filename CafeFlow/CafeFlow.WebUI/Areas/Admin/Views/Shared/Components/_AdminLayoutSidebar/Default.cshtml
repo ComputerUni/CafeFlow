@@ -1,39 +1,42 @@
-﻿<aside class="adm-sidebar" id="admSidebar" aria-label="Admin navigation">
-    <a href="admin-categories.html" class="adm-brand" aria-label="CafeFlow Management Studio">
+﻿@{
+    bool IsActive(string segment) => Context.Request.Path.StartsWithSegments(segment, StringComparison.OrdinalIgnoreCase);
+}
+
+<aside class="adm-sidebar" id="admSidebar" aria-label="Admin navigation">
+    <a href="/Admin/Dashboard/Index" class="adm-brand" aria-label="CafeFlow Management Studio">
         <span class="adm-brand-mark"><i class="bi bi-cup-hot-fill"></i></span>
         <span class="adm-brand-text">
             <strong>Cafe<span>Flow</span></strong>
-            <small>Management Studio</small>
+            <small>Admin Paneli</small>
         </span>
     </a>
 
     <nav class="adm-nav">
         <div class="adm-nav-group">
-            <div class="adm-nav-label">Overview</div>
-            <a href="#" class="adm-nav-link" data-placeholder="Dashboard" title="Dashboard"><i class="bi bi-grid-1x2"></i><span>Dashboard</span><em class="adm-nav-tag">Soon</em></a>
+            <div class="adm-nav-label">Genel</div>
+            <a href="/Admin/Dashboard/Index" class="adm-nav-link" @(IsActive("/Admin/Dashboard") ? "active" : "")" aria-current="@(IsActive("/Admin/Dashboard") ? "page" : null)" title="Dashboard"><i class="bi bi-grid-1x2"></i><span>Dashboard</span></a>
         </div>
         <div class="adm-nav-group">
-            <div class="adm-nav-label">Management</div>
-            <a href="/Admin/Category/Index" class="adm-nav-link active" aria-current="page" title="Categories"><i class="bi bi-tags"></i><span>Categories</span><em class="adm-nav-count" id="navCategoryCount">0</em></a>
-            <a href="#" class="adm-nav-link" data-placeholder="Products" title="Products"><i class="bi bi-cup-straw"></i><span>Products</span><em class="adm-nav-tag">Soon</em></a>
-            <a href="/Admin/Order/Index" class="adm-nav-link" data-placeholder="Orders" title="Orders"><i class="bi bi-receipt"></i><span>Orders</span><em class="adm-nav-tag">Next</em></a>
-            <a href="#" class="adm-nav-link" data-placeholder="Tables" title="Tables"><i class="bi bi-qr-code"></i><span>Tables</span><em class="adm-nav-tag">Soon</em></a>
-            <a href="#" class="adm-nav-link" data-placeholder="Customers" title="Customers"><i class="bi bi-people"></i><span>Customers</span><em class="adm-nav-tag">Soon</em></a>
+            <div class="adm-nav-label">Yönetim</div>
+            <a href="/Admin/Category/Index" class="adm-nav-link" @(IsActive("/Admin/Category") ? "active" : "")" aria-current="@(IsActive("/Admin/Category") ? "page" : null)" title="Categories"><i class="bi bi-tags"></i><span>Kategoriler</span><em class="adm-nav-count" id="navCategoryCount">0</em></a>
+            <a href="/Admin/Product/Index" class="adm-nav-link" @(IsActive("/Admin/Product") ? "active" : "")" aria-current="@(IsActive("/Admin/Product") ? "page" : null)" title="Products"><i class="bi bi-cup-straw"></i><span>Ürünler</span></a>
+            <a href="/Admin/Order/Index" @(IsActive("/Admin/Order") ? "active" : "")" aria-current="@(IsActive("/Admin/Order") ? "page" : null)" class="adm-nav-link" title="Orders"><i class="bi bi-receipt"></i><span>Siparişler</span></a>
+            <a href="/Admin/Table/Index" @(IsActive("/Admin/Table") ? "active" : "")" aria-current="@(IsActive("/Admin/Table") ? "page" : null)" class="adm-nav-link" title="Tables"><i class="bi bi-qr-code"></i><span>Masalar</span></a>
+            <a href="/Admin/Customer/Index" @(IsActive("/Admin/Customer") ? "active" : "")" aria-current="@(IsActive("/Admin/Customer") ? "page" : null)" class="adm-nav-link" title="Customers"><i class="bi bi-people"></i><span>Müşteriler</span></a>
         </div>
         <div class="adm-nav-group">
-            <div class="adm-nav-label">System</div>
-            <a href="#" class="adm-nav-link" data-placeholder="Notifications" title="Notifications"><i class="bi bi-bell"></i><span>Notifications</span><em class="adm-nav-tag">Soon</em></a>
-            <a href="#" class="adm-nav-link" data-placeholder="Settings" title="Settings"><i class="bi bi-gear"></i><span>Settings</span><em class="adm-nav-tag">Soon</em></a>
+            <div class="adm-nav-label">Sistem</div>
+            <a href="/Admin/Notification/Index" @(IsActive("/Admin/Notification") ? "active" : "")" aria-current="@(IsActive("/Admin/Notification") ? "page" : null)" class="adm-nav-link" title="Notifications"><i class="bi bi-bell"></i><span>Bildirimler</span></a>
         </div>
     </nav>
 
     <div class="adm-profile">
-        <span class="adm-avatar">SA</span>
+        <span class="adm-avatar">@ViewBag.Initials</span>
         <div class="adm-profile-text">
-            <strong>Selin Aydın</strong>
-            <small>Cafe Manager</small>
+            <strong>@ViewBag.FullName</strong>
+            <small>@ViewBag.Role</small>
         </div>
-        <button type="button" class="adm-icon-btn" data-action="logout" title="Log out" aria-label="Log out"><i class="bi bi-box-arrow-right"></i></button>
+        <a href="/Auth/Logout" class="adm-icon-btn" data-action="logout" title="Log out" aria-label="Log out"><i class="bi bi-box-arrow-right"></i></a>
     </div>
 </aside>
 <div class="adm-backdrop" id="admBackdrop"></div>

@@ -31,7 +31,7 @@ namespace CafeFlow.DataAccess.Repositories.Orders
 
         public async Task<List<Order>> GetOrdersWithCustomerAsync()
         {
-            return await _context.Orders.Include(x => x.Customer).OrderByDescending(x => x.CreatedAt).ToListAsync();
+            return await _context.Orders.Include(x => x.Customer).OrderBy(x => x.CreatedAt).ToListAsync();
         }
     }
 }
