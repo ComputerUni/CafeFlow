@@ -131,7 +131,11 @@
                                 <td class="cell-desc" data-label="Detay">
                                     @if (item.OrderType == OrderType.Table)
                                     {
-                                        <span class="adm-order">Masa @(item.TableId?.ToString() ?? "—")</span>
+                                        <span class="adm-badge text-nowrap"
+                                              style="background-color: #faf6f3; color: #4a352f; border: 1px solid #e6dad1;">
+                                            <i class="bi bi-geo-alt-fill" style="color: #b85d6f;"></i>
+                                            Masa @(item.TableId?.ToString() ?? "—")
+                                        </span>
                                     }
                                     else if (!string.IsNullOrEmpty(item.Address))
                                     {

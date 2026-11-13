@@ -3,48 +3,40 @@
   "WorkspaceRootPath": "C:\\Users\\BURHAN\\Desktop\\CafeFlow\\CafeFlow\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{16F8DD61-9107-BF61-1C2E-9CE42A4A1E26}|CafeFlow.Business\\CafeFlow.Business.csproj|c:\\users\\burhan\\desktop\\cafeflow\\cafeflow\\cafeflow.business\\concrete\\orderservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{16F8DD61-9107-BF61-1C2E-9CE42A4A1E26}|CafeFlow.Business\\CafeFlow.Business.csproj|solutionrelative:cafeflow.business\\concrete\\orderservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C1EBBC1D-74F9-1D22-800F-FF5AA4C05C71}|CafeFlow.DataAccess\\CafeFlow.DataAccess.csproj|c:\\users\\burhan\\desktop\\cafeflow\\cafeflow\\cafeflow.dataaccess\\unitofwork\\unitofwork.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C1EBBC1D-74F9-1D22-800F-FF5AA4C05C71}|CafeFlow.DataAccess\\CafeFlow.DataAccess.csproj|solutionrelative:cafeflow.dataaccess\\unitofwork\\unitofwork.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C1EBBC1D-74F9-1D22-800F-FF5AA4C05C71}|CafeFlow.DataAccess\\CafeFlow.DataAccess.csproj|c:\\users\\burhan\\desktop\\cafeflow\\cafeflow\\cafeflow.dataaccess\\unitofwork\\iunitofwork.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C1EBBC1D-74F9-1D22-800F-FF5AA4C05C71}|CafeFlow.DataAccess\\CafeFlow.DataAccess.csproj|solutionrelative:cafeflow.dataaccess\\unitofwork\\iunitofwork.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{16F8DD61-9107-BF61-1C2E-9CE42A4A1E26}|CafeFlow.Business\\CafeFlow.Business.csproj|c:\\users\\burhan\\desktop\\cafeflow\\cafeflow\\cafeflow.business\\concrete\\customerservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{16F8DD61-9107-BF61-1C2E-9CE42A4A1E26}|CafeFlow.Business\\CafeFlow.Business.csproj|solutionrelative:cafeflow.business\\concrete\\customerservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F124C957-C800-6EA8-D9D7-6309B117E440}|CafeFlow.WebUI\\CafeFlow.WebUI.csproj|c:\\users\\burhan\\desktop\\cafeflow\\cafeflow\\cafeflow.webui\\areas\\admin\\views\\customer\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{F124C957-C800-6EA8-D9D7-6309B117E440}|CafeFlow.WebUI\\CafeFlow.WebUI.csproj|solutionrelative:cafeflow.webui\\areas\\admin\\views\\customer\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C1EBBC1D-74F9-1D22-800F-FF5AA4C05C71}|CafeFlow.DataAccess\\CafeFlow.DataAccess.csproj|c:\\users\\burhan\\desktop\\cafeflow\\cafeflow\\cafeflow.dataaccess\\repositories\\customers\\customerrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C1EBBC1D-74F9-1D22-800F-FF5AA4C05C71}|CafeFlow.DataAccess\\CafeFlow.DataAccess.csproj|solutionrelative:cafeflow.dataaccess\\repositories\\customers\\customerrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F124C957-C800-6EA8-D9D7-6309B117E440}|CafeFlow.WebUI\\CafeFlow.WebUI.csproj|c:\\users\\burhan\\desktop\\cafeflow\\cafeflow\\cafeflow.webui\\areas\\admin\\views\\order\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{F124C957-C800-6EA8-D9D7-6309B117E440}|CafeFlow.WebUI\\CafeFlow.WebUI.csproj|solutionrelative:cafeflow.webui\\areas\\admin\\views\\order\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F124C957-C800-6EA8-D9D7-6309B117E440}|CafeFlow.WebUI\\CafeFlow.WebUI.csproj|c:\\users\\burhan\\desktop\\cafeflow\\cafeflow\\cafeflow.webui\\areas\\admin\\views\\notification\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{F124C957-C800-6EA8-D9D7-6309B117E440}|CafeFlow.WebUI\\CafeFlow.WebUI.csproj|solutionrelative:cafeflow.webui\\areas\\admin\\views\\notification\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{F124C957-C800-6EA8-D9D7-6309B117E440}|CafeFlow.WebUI\\CafeFlow.WebUI.csproj|c:\\users\\burhan\\desktop\\cafeflow\\cafeflow\\cafeflow.webui\\views\\auth\\login.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{F124C957-C800-6EA8-D9D7-6309B117E440}|CafeFlow.WebUI\\CafeFlow.WebUI.csproj|solutionrelative:cafeflow.webui\\views\\auth\\login.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{F124C957-C800-6EA8-D9D7-6309B117E440}|CafeFlow.WebUI\\CafeFlow.WebUI.csproj|c:\\users\\burhan\\desktop\\cafeflow\\cafeflow\\cafeflow.webui\\areas\\admin\\views\\dashboard\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{F124C957-C800-6EA8-D9D7-6309B117E440}|CafeFlow.WebUI\\CafeFlow.WebUI.csproj|solutionrelative:cafeflow.webui\\areas\\admin\\views\\dashboard\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{F124C957-C800-6EA8-D9D7-6309B117E440}|CafeFlow.WebUI\\CafeFlow.WebUI.csproj|c:\\users\\burhan\\desktop\\cafeflow\\cafeflow\\cafeflow.webui\\controllers\\ordercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{F124C957-C800-6EA8-D9D7-6309B117E440}|CafeFlow.WebUI\\CafeFlow.WebUI.csproj|solutionrelative:cafeflow.webui\\controllers\\ordercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{F124C957-C800-6EA8-D9D7-6309B117E440}|CafeFlow.WebUI\\CafeFlow.WebUI.csproj|c:\\users\\burhan\\desktop\\cafeflow\\cafeflow\\cafeflow.webui\\areas\\admin\\controllers\\ordercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{F124C957-C800-6EA8-D9D7-6309B117E440}|CafeFlow.WebUI\\CafeFlow.WebUI.csproj|solutionrelative:cafeflow.webui\\areas\\admin\\controllers\\ordercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{F124C957-C800-6EA8-D9D7-6309B117E440}|CafeFlow.WebUI\\CafeFlow.WebUI.csproj|c:\\users\\burhan\\desktop\\cafeflow\\cafeflow\\cafeflow.webui\\areas\\admin\\controllers\\dashboardcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{F124C957-C800-6EA8-D9D7-6309B117E440}|CafeFlow.WebUI\\CafeFlow.WebUI.csproj|solutionrelative:cafeflow.webui\\areas\\admin\\controllers\\dashboardcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{07D7B8C4-20F9-3F22-A697-7039D9E65408}|CafeFlow.DTO\\CafeFlow.DTO.csproj|c:\\users\\burhan\\desktop\\cafeflow\\cafeflow\\cafeflow.dto\\dashboard\\admindashboarddto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{07D7B8C4-20F9-3F22-A697-7039D9E65408}|CafeFlow.DTO\\CafeFlow.DTO.csproj|solutionrelative:cafeflow.dto\\dashboard\\admindashboarddto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{F124C957-C800-6EA8-D9D7-6309B117E440}|CafeFlow.WebUI\\CafeFlow.WebUI.csproj|c:\\users\\burhan\\desktop\\cafeflow\\cafeflow\\cafeflow.webui\\extensions\\serviceextensions.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{F124C957-C800-6EA8-D9D7-6309B117E440}|CafeFlow.WebUI\\CafeFlow.WebUI.csproj|solutionrelative:cafeflow.webui\\extensions\\serviceextensions.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{16F8DD61-9107-BF61-1C2E-9CE42A4A1E26}|CafeFlow.Business\\CafeFlow.Business.csproj|c:\\users\\burhan\\desktop\\cafeflow\\cafeflow\\cafeflow.business\\concrete\\dashboardservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{16F8DD61-9107-BF61-1C2E-9CE42A4A1E26}|CafeFlow.Business\\CafeFlow.Business.csproj|solutionrelative:cafeflow.business\\concrete\\dashboardservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{C1EBBC1D-74F9-1D22-800F-FF5AA4C05C71}|CafeFlow.DataAccess\\CafeFlow.DataAccess.csproj|c:\\users\\burhan\\desktop\\cafeflow\\cafeflow\\cafeflow.dataaccess\\repositories\\dashboard\\dashboardrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C1EBBC1D-74F9-1D22-800F-FF5AA4C05C71}|CafeFlow.DataAccess\\CafeFlow.DataAccess.csproj|solutionrelative:cafeflow.dataaccess\\repositories\\dashboard\\dashboardrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{16F8DD61-9107-BF61-1C2E-9CE42A4A1E26}|CafeFlow.Business\\CafeFlow.Business.csproj|c:\\users\\burhan\\desktop\\cafeflow\\cafeflow\\cafeflow.business\\abstract\\idashboardservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{16F8DD61-9107-BF61-1C2E-9CE42A4A1E26}|CafeFlow.Business\\CafeFlow.Business.csproj|solutionrelative:cafeflow.business\\abstract\\idashboardservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{C1EBBC1D-74F9-1D22-800F-FF5AA4C05C71}|CafeFlow.DataAccess\\CafeFlow.DataAccess.csproj|c:\\users\\burhan\\desktop\\cafeflow\\cafeflow\\cafeflow.dataaccess\\repositories\\dashboard\\idashboardrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C1EBBC1D-74F9-1D22-800F-FF5AA4C05C71}|CafeFlow.DataAccess\\CafeFlow.DataAccess.csproj|solutionrelative:cafeflow.dataaccess\\repositories\\dashboard\\idashboardrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -54,7 +46,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 592,
-          "SelectedChildIndex": 6,
+          "SelectedChildIndex": 12,
           "Children": [
             {
               "$type": "Bookmark",
@@ -74,151 +66,119 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "OrderController.cs",
-              "DocumentMoniker": "C:\\Users\\BURHAN\\Desktop\\CafeFlow\\CafeFlow\\CafeFlow.WebUI\\Areas\\Admin\\Controllers\\OrderController.cs",
-              "RelativeDocumentMoniker": "CafeFlow.WebUI\\Areas\\Admin\\Controllers\\OrderController.cs",
-              "ToolTip": "C:\\Users\\BURHAN\\Desktop\\CafeFlow\\CafeFlow\\CafeFlow.WebUI\\Areas\\Admin\\Controllers\\OrderController.cs",
-              "RelativeToolTip": "CafeFlow.WebUI\\Areas\\Admin\\Controllers\\OrderController.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABgAAABDAAAAAAAAAA==",
+              "DocumentIndex": 1,
+              "Title": "UnitOfWork.cs",
+              "DocumentMoniker": "C:\\Users\\BURHAN\\Desktop\\CafeFlow\\CafeFlow\\CafeFlow.DataAccess\\UnitOfWork\\UnitOfWork.cs",
+              "RelativeDocumentMoniker": "CafeFlow.DataAccess\\UnitOfWork\\UnitOfWork.cs",
+              "ToolTip": "C:\\Users\\BURHAN\\Desktop\\CafeFlow\\CafeFlow\\CafeFlow.DataAccess\\UnitOfWork\\UnitOfWork.cs",
+              "RelativeToolTip": "CafeFlow.DataAccess\\UnitOfWork\\UnitOfWork.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-11-13T08:40:07.018Z",
+              "WhenOpened": "2026-11-13T10:52:30.814Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "OrderController.cs",
-              "DocumentMoniker": "C:\\Users\\BURHAN\\Desktop\\CafeFlow\\CafeFlow\\CafeFlow.WebUI\\Controllers\\OrderController.cs",
-              "RelativeDocumentMoniker": "CafeFlow.WebUI\\Controllers\\OrderController.cs",
-              "ToolTip": "C:\\Users\\BURHAN\\Desktop\\CafeFlow\\CafeFlow\\CafeFlow.WebUI\\Controllers\\OrderController.cs",
-              "RelativeToolTip": "CafeFlow.WebUI\\Controllers\\OrderController.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABcAAAAAAAAAAAAAAA==",
+              "Title": "IUnitOfWork.cs",
+              "DocumentMoniker": "C:\\Users\\BURHAN\\Desktop\\CafeFlow\\CafeFlow\\CafeFlow.DataAccess\\UnitOfWork\\IUnitOfWork.cs",
+              "RelativeDocumentMoniker": "CafeFlow.DataAccess\\UnitOfWork\\IUnitOfWork.cs",
+              "ToolTip": "C:\\Users\\BURHAN\\Desktop\\CafeFlow\\CafeFlow\\CafeFlow.DataAccess\\UnitOfWork\\IUnitOfWork.cs",
+              "RelativeToolTip": "CafeFlow.DataAccess\\UnitOfWork\\IUnitOfWork.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-11-13T08:40:01.124Z",
+              "WhenOpened": "2026-11-13T10:51:18.031Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "Login.cshtml",
-              "DocumentMoniker": "C:\\Users\\BURHAN\\Desktop\\CafeFlow\\CafeFlow\\CafeFlow.WebUI\\Views\\Auth\\Login.cshtml",
-              "RelativeDocumentMoniker": "CafeFlow.WebUI\\Views\\Auth\\Login.cshtml",
-              "ToolTip": "C:\\Users\\BURHAN\\Desktop\\CafeFlow\\CafeFlow\\CafeFlow.WebUI\\Views\\Auth\\Login.cshtml",
-              "RelativeToolTip": "CafeFlow.WebUI\\Views\\Auth\\Login.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB4AAAAjAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-11-13T08:36:31.72Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "Index.cshtml",
-              "DocumentMoniker": "C:\\Users\\BURHAN\\Desktop\\CafeFlow\\CafeFlow\\CafeFlow.WebUI\\Areas\\Admin\\Views\\Dashboard\\Index.cshtml",
-              "RelativeDocumentMoniker": "CafeFlow.WebUI\\Areas\\Admin\\Views\\Dashboard\\Index.cshtml",
-              "ToolTip": "C:\\Users\\BURHAN\\Desktop\\CafeFlow\\CafeFlow\\CafeFlow.WebUI\\Areas\\Admin\\Views\\Dashboard\\Index.cshtml",
-              "RelativeToolTip": "CafeFlow.WebUI\\Areas\\Admin\\Views\\Dashboard\\Index.cshtml",
-              "ViewState": "AgIAACkBAAAAAAAAAAAawEMBAABQAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-11-13T08:34:24.211Z",
+              "DocumentIndex": 3,
+              "Title": "CustomerService.cs",
+              "DocumentMoniker": "C:\\Users\\BURHAN\\Desktop\\CafeFlow\\CafeFlow\\CafeFlow.Business\\Concrete\\CustomerService.cs",
+              "RelativeDocumentMoniker": "CafeFlow.Business\\Concrete\\CustomerService.cs",
+              "ToolTip": "C:\\Users\\BURHAN\\Desktop\\CafeFlow\\CafeFlow\\CafeFlow.Business\\Concrete\\CustomerService.cs",
+              "RelativeToolTip": "CafeFlow.Business\\Concrete\\CustomerService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-11-13T10:46:21.362Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 4,
-              "Title": "DashboardController.cs",
-              "DocumentMoniker": "C:\\Users\\BURHAN\\Desktop\\CafeFlow\\CafeFlow\\CafeFlow.WebUI\\Areas\\Admin\\Controllers\\DashboardController.cs",
-              "RelativeDocumentMoniker": "CafeFlow.WebUI\\Areas\\Admin\\Controllers\\DashboardController.cs",
-              "ToolTip": "C:\\Users\\BURHAN\\Desktop\\CafeFlow\\CafeFlow\\CafeFlow.WebUI\\Areas\\Admin\\Controllers\\DashboardController.cs",
-              "RelativeToolTip": "CafeFlow.WebUI\\Areas\\Admin\\Controllers\\DashboardController.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAArAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-11-13T08:31:14.094Z",
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "C:\\Users\\BURHAN\\Desktop\\CafeFlow\\CafeFlow\\CafeFlow.WebUI\\Areas\\Admin\\Views\\Customer\\Index.cshtml",
+              "RelativeDocumentMoniker": "CafeFlow.WebUI\\Areas\\Admin\\Views\\Customer\\Index.cshtml",
+              "ToolTip": "C:\\Users\\BURHAN\\Desktop\\CafeFlow\\CafeFlow\\CafeFlow.WebUI\\Areas\\Admin\\Views\\Customer\\Index.cshtml",
+              "RelativeToolTip": "CafeFlow.WebUI\\Areas\\Admin\\Views\\Customer\\Index.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-11-13T10:45:34.189Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 5,
-              "Title": "AdminDashboardDto.cs",
-              "DocumentMoniker": "C:\\Users\\BURHAN\\Desktop\\CafeFlow\\CafeFlow\\CafeFlow.DTO\\Dashboard\\AdminDashboardDto.cs",
-              "RelativeDocumentMoniker": "CafeFlow.DTO\\Dashboard\\AdminDashboardDto.cs",
-              "ToolTip": "C:\\Users\\BURHAN\\Desktop\\CafeFlow\\CafeFlow\\CafeFlow.DTO\\Dashboard\\AdminDashboardDto.cs",
-              "RelativeToolTip": "CafeFlow.DTO\\Dashboard\\AdminDashboardDto.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAAAAAAAAAAAAA==",
+              "Title": "CustomerRepository.cs",
+              "DocumentMoniker": "C:\\Users\\BURHAN\\Desktop\\CafeFlow\\CafeFlow\\CafeFlow.DataAccess\\Repositories\\Customers\\CustomerRepository.cs",
+              "RelativeDocumentMoniker": "CafeFlow.DataAccess\\Repositories\\Customers\\CustomerRepository.cs",
+              "ToolTip": "C:\\Users\\BURHAN\\Desktop\\CafeFlow\\CafeFlow\\CafeFlow.DataAccess\\Repositories\\Customers\\CustomerRepository.cs",
+              "RelativeToolTip": "CafeFlow.DataAccess\\Repositories\\Customers\\CustomerRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-11-13T08:30:17.325Z",
+              "WhenOpened": "2026-11-13T10:45:03.473Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 6,
-              "Title": "ServiceExtensions.cs",
-              "DocumentMoniker": "C:\\Users\\BURHAN\\Desktop\\CafeFlow\\CafeFlow\\CafeFlow.WebUI\\Extensions\\ServiceExtensions.cs",
-              "RelativeDocumentMoniker": "CafeFlow.WebUI\\Extensions\\ServiceExtensions.cs",
-              "ToolTip": "C:\\Users\\BURHAN\\Desktop\\CafeFlow\\CafeFlow\\CafeFlow.WebUI\\Extensions\\ServiceExtensions.cs",
-              "RelativeToolTip": "CafeFlow.WebUI\\Extensions\\ServiceExtensions.cs",
-              "ViewState": "AgIAAAwAAAAAAAAAAAAAADIAAABCAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-11-13T08:29:09.799Z",
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "C:\\Users\\BURHAN\\Desktop\\CafeFlow\\CafeFlow\\CafeFlow.WebUI\\Areas\\Admin\\Views\\Order\\Index.cshtml",
+              "RelativeDocumentMoniker": "CafeFlow.WebUI\\Areas\\Admin\\Views\\Order\\Index.cshtml",
+              "ToolTip": "C:\\Users\\BURHAN\\Desktop\\CafeFlow\\CafeFlow\\CafeFlow.WebUI\\Areas\\Admin\\Views\\Order\\Index.cshtml",
+              "RelativeToolTip": "CafeFlow.WebUI\\Areas\\Admin\\Views\\Order\\Index.cshtml",
+              "ViewState": "AgIAAHEAAAAAAAAAAAAqwJIAAAAlAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-11-13T10:41:10.909Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 7,
-              "Title": "DashboardService.cs",
-              "DocumentMoniker": "C:\\Users\\BURHAN\\Desktop\\CafeFlow\\CafeFlow\\CafeFlow.Business\\Concrete\\DashboardService.cs",
-              "RelativeDocumentMoniker": "CafeFlow.Business\\Concrete\\DashboardService.cs",
-              "ToolTip": "C:\\Users\\BURHAN\\Desktop\\CafeFlow\\CafeFlow\\CafeFlow.Business\\Concrete\\DashboardService.cs",
-              "RelativeToolTip": "CafeFlow.Business\\Concrete\\DashboardService.cs",
-              "ViewState": "AgIAAA0AAAAAAAAAAAAuwDoAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-11-13T08:22:30.327Z",
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "C:\\Users\\BURHAN\\Desktop\\CafeFlow\\CafeFlow\\CafeFlow.WebUI\\Areas\\Admin\\Views\\Notification\\Index.cshtml",
+              "RelativeDocumentMoniker": "CafeFlow.WebUI\\Areas\\Admin\\Views\\Notification\\Index.cshtml",
+              "ToolTip": "C:\\Users\\BURHAN\\Desktop\\CafeFlow\\CafeFlow\\CafeFlow.WebUI\\Areas\\Admin\\Views\\Notification\\Index.cshtml",
+              "RelativeToolTip": "CafeFlow.WebUI\\Areas\\Admin\\Views\\Notification\\Index.cshtml",
+              "ViewState": "AgIAACIAAAAAAAAAAAAAAEsAAABWAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-11-13T10:39:30.598Z",
               "EditorCaption": ""
             },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "IDashboardService.cs",
-              "DocumentMoniker": "C:\\Users\\BURHAN\\Desktop\\CafeFlow\\CafeFlow\\CafeFlow.Business\\Abstract\\IDashboardService.cs",
-              "RelativeDocumentMoniker": "CafeFlow.Business\\Abstract\\IDashboardService.cs",
-              "ToolTip": "C:\\Users\\BURHAN\\Desktop\\CafeFlow\\CafeFlow\\CafeFlow.Business\\Abstract\\IDashboardService.cs",
-              "RelativeToolTip": "CafeFlow.Business\\Abstract\\IDashboardService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-11-13T08:22:16.548Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "IDashboardRepository.cs",
-              "DocumentMoniker": "C:\\Users\\BURHAN\\Desktop\\CafeFlow\\CafeFlow\\CafeFlow.DataAccess\\Repositories\\Dashboard\\IDashboardRepository.cs",
-              "RelativeDocumentMoniker": "CafeFlow.DataAccess\\Repositories\\Dashboard\\IDashboardRepository.cs",
-              "ToolTip": "C:\\Users\\BURHAN\\Desktop\\CafeFlow\\CafeFlow\\CafeFlow.DataAccess\\Repositories\\Dashboard\\IDashboardRepository.cs",
-              "RelativeToolTip": "CafeFlow.DataAccess\\Repositories\\Dashboard\\IDashboardRepository.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAABJAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-11-13T07:55:19.987Z",
-              "EditorCaption": ""
-            }
-          ]
-        },
-        {
-          "DockedWidth": 592,
-          "SelectedChildIndex": 0,
-          "Children": [
             {
               "$type": "Document",
               "DocumentIndex": 8,
-              "Title": "DashboardRepository.cs",
-              "DocumentMoniker": "C:\\Users\\BURHAN\\Desktop\\CafeFlow\\CafeFlow\\CafeFlow.DataAccess\\Repositories\\Dashboard\\DashboardRepository.cs",
-              "RelativeDocumentMoniker": "CafeFlow.DataAccess\\Repositories\\Dashboard\\DashboardRepository.cs",
-              "ToolTip": "C:\\Users\\BURHAN\\Desktop\\CafeFlow\\CafeFlow\\CafeFlow.DataAccess\\Repositories\\Dashboard\\DashboardRepository.cs",
-              "RelativeToolTip": "CafeFlow.DataAccess\\Repositories\\Dashboard\\DashboardRepository.cs",
-              "ViewState": "AgIAAA0AAAAAAAAAAAAgwCkAAAA2AAAAAAAAAA==",
+              "Title": "Login.cshtml",
+              "DocumentMoniker": "C:\\Users\\BURHAN\\Desktop\\CafeFlow\\CafeFlow\\CafeFlow.WebUI\\Views\\Auth\\Login.cshtml",
+              "RelativeDocumentMoniker": "CafeFlow.WebUI\\Views\\Auth\\Login.cshtml",
+              "ToolTip": "C:\\Users\\BURHAN\\Desktop\\CafeFlow\\CafeFlow\\CafeFlow.WebUI\\Views\\Auth\\Login.cshtml",
+              "RelativeToolTip": "CafeFlow.WebUI\\Views\\Auth\\Login.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAgAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-11-13T10:26:39.813Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "OrderService.cs",
+              "DocumentMoniker": "C:\\Users\\BURHAN\\Desktop\\CafeFlow\\CafeFlow\\CafeFlow.Business\\Concrete\\OrderService.cs",
+              "RelativeDocumentMoniker": "CafeFlow.Business\\Concrete\\OrderService.cs",
+              "ToolTip": "C:\\Users\\BURHAN\\Desktop\\CafeFlow\\CafeFlow\\CafeFlow.Business\\Concrete\\OrderService.cs",
+              "RelativeToolTip": "CafeFlow.Business\\Concrete\\OrderService.cs",
+              "ViewState": "AgIAAHAAAAAAAAAAAAAqwJIAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-11-13T07:52:23.488Z",
+              "WhenOpened": "2026-11-13T08:50:48.759Z",
               "EditorCaption": ""
             }
           ]
