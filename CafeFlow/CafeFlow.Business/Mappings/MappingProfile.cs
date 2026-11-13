@@ -2,6 +2,7 @@
 using CafeFlow.DTO.Category;
 using CafeFlow.DTO.Comment;
 using CafeFlow.DTO.Customer;
+using CafeFlow.DTO.Favorite;
 using CafeFlow.DTO.Notification;
 using CafeFlow.DTO.Order;
 using CafeFlow.DTO.OrderDetail;
@@ -87,7 +88,15 @@ namespace CafeFlow.Business.Mappings
 
             CreateMap<Notification, NotificationListDto>();
 
-
+            CreateMap<Favorite, FavoriteProductDto>()
+                .ForMember(dest => dest.FavoriteId, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.ProductId, opt => opt.MapFrom(src => src.ProductId))
+                .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product.Name))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Product.Description))
+                .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.Product.ImageUrl))
+                .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Product.Price))
+                .ForMember(dest => dest.Stock, opt => opt.MapFrom(src => src.Product.Stock))
+                .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Product.Category.Name));
         }
     }
 }

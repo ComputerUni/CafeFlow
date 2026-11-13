@@ -2,6 +2,8 @@
 @model ProductDetailPageViewModel
 
 @{
+    var jsonFavorites = JsonSerializer.Serialize(ViewBag.FavoriteProductIds ?? new HashSet<int>());
+    var isAuthenticated = User.Identity?.IsAuthenticated == true ? "true" : "false";
     var dynamicCategories = new List<object>
     {
         new{id="all", label="Tüm Menü", icon="bi-grid"}
@@ -187,14 +189,25 @@
             subtotal() { return this.items.reduce((sum, l) => sum + l.unitPrice * l.quantity, 0); },
         };
 
+        const IS_AUTHENTICATED = @isAuthenticated;
+
         const Favorites = {
-            ids: new Set(storage.read(STORAGE_KEYS.favorites, [])),
-            toggle(id) {
-                this.ids.has(id) ? this.ids.delete(id) : this.ids.add(id);
-                storage.write(STORAGE_KEYS.favorites, [...this.ids]);
-                return this.ids.has(id);
-            },
-            has(id) { return this.ids.has(id); },
+            ids: new Set(@Html.Raw(jsonFavorites)),
+            has(id) { return this.ids.has(Number(id)); },
+                async toggle(id) {
+                    if(!IS_AUTHENTICATED){
+                        showToast("Favorilere eklemek için giriş yapmalısınız.");
+                        return null;
+                    }
+                    
+                    const res = await fetch(`/Favorite/Toggle?productId=${id}`, {method: "POST"});
+                    if (!res.ok || res.redirected) return null;
+
+                    const data = await res.json();
+                    if(data.isFavorited) this.ids.add(Number(id));
+                    else this.ids.delete(Number(id));
+                    return data.isFavorited;
+            }
         };
 
         /* ---------- 4. UI HELPERS ---------- */
@@ -274,10 +287,10 @@
             const meta = document.querySelector('meta[name="description"]');
             if (meta) meta.content = product.description;
             $("#breadcrumb").insertAdjacentHTML("beforeend", `
-                                      <i class="bi bi-chevron-right"></i>
-                                      <a href="products.html?category=${product.category}">${cat.label}</a>
-                                      <i class="bi bi-chevron-right"></i>
-                                      <span aria-current="page">${product.name}</span>`);
+                                          <i class="bi bi-chevron-right"></i>
+                                          <a href="products.html?category=${product.category}">${cat.label}</a>
+                                          <i class="bi bi-chevron-right"></i>
+                                          <span aria-current="page">${product.name}</span>`);
         }
 
         /**
@@ -310,9 +323,9 @@
             const thumbs = $("#galleryThumbs");
             if (thumbs && images.length > 1) {
                 thumbs.innerHTML = images.map((img, i) => `
-                        <button type="button" class="cf-thumb${i === 0 ? " active" : ""}" data-index="${i}" aria-label="${img.label}">
-                            <img src="${img.thumb}" alt="" loading="lazy" />
-                        </button>`).join("");
+                            <button type="button" class="cf-thumb${i === 0 ? " active" : ""}" data-index="${i}" aria-label="${img.label}">
+                                <img src="${img.thumb}" alt="" loading="lazy" />
+                            </button>`).join("");
             }
         }
 
@@ -334,9 +347,9 @@
             $("#productShortDesc").textContent = content.short || product.description;
             $("#ratingStars").innerHTML = starsHtml(avgRating);
             $("#ratingValue").textContent = avgRating.toFixed(1);
-            $("#reviewCountLabel").textContent = `(${demoReviewCount(product)} reviews)`;
+            $("#reviewCountLabel").textContent = `(${totalReviews} değerlendirme)`;
             $("#basePrice").textContent = formatMoney(product.price);
-            $("#priceLabel").textContent = product.customizable ? "Starting from" : "Price";
+            $("#priceLabel").textContent = product.customizable ? "Başlangıç Fiyatı" : "Price";
             $("#customNote")?.classList.toggle("d-none", !product.customizable);
         }
 
@@ -345,9 +358,9 @@
             const totalReviews = @Model.TotalComments;
 
             $("#descContent").innerHTML = `
-            <h3>About ${product.name}</h3>
-            <p>${product.description || ""}</p>
-            ${product.customizable ? `<p class="mb-0">Make it yours with a choice of size, milk, an extra espresso shot or a touch of syrup. Your selections are saved with your order.</p>` : ""}`;
+                <h3>${product.name} Hakkında</h3>
+                <p>${product.description || ""}</p>
+                    ${product.customizable ? `<p class="mb-0">Boyut, süt, ekstra espresso shot veya aromalı şurup seçenekleriyle içeceğinizi kendinize göre özelleştirin. Seçimleriniz siparişinizle birlikte kaydedilir.</p>` : ""}`;
 
             const scoreEl = $("#reviewScore");
             if (scoreEl) scoreEl.textContent = totalReviews > 0 ? avgRating.toFixed(1) : "0.0";
@@ -362,27 +375,27 @@
             if (reviewList) {
                 if (COMMENTS.length === 0) {
                     reviewList.innerHTML = `
-                    <div class="col-12 text-center py-4">
-                        <div class="text-muted">
-                            <i class="bi bi-chat-square-heart fs-1 d-block mb-2" style="color: #ffd1dc;"></i>
-                            <p class="mb-0">Henüz değerlendirme yapılmamış. İlk yorumu yukarıdaki formdan siz yapın!</p>
-                        </div>
-                    </div>`;
+                        <div class="col-12 text-center py-4">
+                            <div class="text-muted">
+                                <i class="bi bi-chat-square-heart fs-1 d-block mb-2" style="color: #ffd1dc;"></i>
+                                <p class="mb-0">Henüz değerlendirme yapılmamış. İlk yorumu yukarıdaki formdan siz yapın!</p>
+                            </div>
+                        </div>`;
                 } else {
                     reviewList.innerHTML = COMMENTS.map((r) => `
-                    <div class="col-md-4">
-                        <figure class="cf-review">
-                            <div class="cf-stars text-warning" aria-label="${r.rating} out of 5 stars">${starsHtml(r.rating)}</div>
-                            <blockquote>“${r.text}”</blockquote>
-                            <figcaption>
-                                <span class="cf-avatar">${r.name.charAt(0).toUpperCase()}</span>
-                                <div>
-                                    <strong>${r.name}</strong>
-                                    <small class="cf-review-date">${r.date}</small>
-                                </div>
-                            </figcaption>
-                        </figure>
-                    </div>`).join("");
+                        <div class="col-md-4">
+                            <figure class="cf-review">
+                                <div class="cf-stars text-warning" aria-label="${r.rating} out of 5 stars">${starsHtml(r.rating)}</div>
+                                <blockquote>“${r.text}”</blockquote>
+                                <figcaption>
+                                    <span class="cf-avatar">${r.name.charAt(0).toUpperCase()}</span>
+                                    <div>
+                                        <strong>${r.name}</strong>
+                                        <small class="cf-review-date">${r.date}</small>
+                                    </div>
+                                </figcaption>
+                            </figure>
+                        </div>`).join("");
                 }
             }
         }
@@ -402,24 +415,24 @@
             const sizeGroup = optionGroup("size");
             if (sizeGroup && $("#sizeOptions")) {
                 $("#sizeOptions").innerHTML = sizeGroup.choices.map((c) => `
-                        <label class="cf-size" data-size="${c.value}">
-                            <input type="radio" name="size" value="${c.value}" ${c.value === state.options.size ? "checked" : ""} />
-                            <span class="cf-size-card">
-                                <span class="cf-cup" aria-hidden="true"><i class="bi bi-cup-straw"></i></span>
-                                <span class="cf-size-name">${c.value}</span>
-                                <span class="cf-size-price">${priceTag(c.price, "Standart")}</span>
-                            </span>
-                        </label>`).join("");
+                            <label class="cf-size" data-size="${c.value}">
+                                <input type="radio" name="size" value="${c.value}" ${c.value === state.options.size ? "checked" : ""} />
+                                <span class="cf-size-card">
+                                    <span class="cf-cup" aria-hidden="true"><i class="bi bi-cup-straw"></i></span>
+                                    <span class="cf-size-name">${c.value}</span>
+                                    <span class="cf-size-price">${priceTag(c.price, "Standart")}</span>
+                                </span>
+                            </label>`).join("");
             }
 
             // 2. Süt Seçenekleri (MILK_LABELS kaldırıldı, doğrudan c.value kullanılıyor)
             const milkGroup = optionGroup("milk");
             if (milkGroup && $("#milkOptions")) {
                 $("#milkOptions").innerHTML = milkGroup.choices.map((c) => `
-                        <label class="cf-milk">
-                            <input type="radio" name="milk" value="${c.value}" ${c.value === state.options.milk ? "checked" : ""} />
-                            <span>${c.value} ${c.price ? `<small>+${formatMoney(c.price)}</small>` : ""}</span>
-                        </label>`).join("");
+                            <label class="cf-milk">
+                                <input type="radio" name="milk" value="${c.value}" ${c.value === state.options.milk ? "checked" : ""} />
+                                <span>${c.value} ${c.price ? `<small>+${formatMoney(c.price)}</small>` : ""}</span>
+                            </label>`).join("");
             }
 
             // 3. Ekstra Dokunuşlar (Extra Shot & Şurup)
@@ -430,24 +443,24 @@
 
             if ($("#addonOptions")) {
                 $("#addonOptions").innerHTML = `
-                        <label class="cf-addon">
-                            <input type="checkbox" name="extraShot" value="+1 Shot Espresso" />
-                            <span class="cf-addon-card">
-                                <span class="cf-addon-icon"><i class="bi bi-lightning-charge"></i></span>
-                                <span class="cf-addon-text"><strong>+1 Shot Espresso</strong><small>+${formatMoney(shotPrice)}</small></span>
-                                <span class="cf-check"><i class="bi bi-check-lg"></i></span>
-                            </span>
-                        </label>
-                        <span class="cf-addon-group-label w-100 mt-3 mb-2">Aroma Şurubu Tercihi <span class="text-lowercase fw-normal">(en fazla 1 adet)</span></span>
-                        ${syrups.map((c) => `
                             <label class="cf-addon">
-                                <input type="checkbox" name="syrup" value="${c.value}" />
+                                <input type="checkbox" name="extraShot" value="+1 Shot Espresso" />
                                 <span class="cf-addon-card">
-                                    <span class="cf-addon-icon"><i class="bi bi-droplet-half"></i></span>
-                                    <span class="cf-addon-text"><strong>${c.value} Şurubu</strong><small>+${formatMoney(c.price)}</small></span>
+                                    <span class="cf-addon-icon"><i class="bi bi-lightning-charge"></i></span>
+                                    <span class="cf-addon-text"><strong>+1 Shot Espresso</strong><small>+${formatMoney(shotPrice)}</small></span>
                                     <span class="cf-check"><i class="bi bi-check-lg"></i></span>
                                 </span>
-                            </label>`).join("")}`;
+                            </label>
+                            <span class="cf-addon-group-label w-100 mt-3 mb-2">Aroma Şurubu Tercihi <span class="text-lowercase fw-normal">(en fazla 1 adet)</span></span>
+                            ${syrups.map((c) => `
+                                <label class="cf-addon">
+                                    <input type="checkbox" name="syrup" value="${c.value}" />
+                                    <span class="cf-addon-card">
+                                        <span class="cf-addon-icon"><i class="bi bi-droplet-half"></i></span>
+                                        <span class="cf-addon-text"><strong>${c.value} Şurubu</strong><small>+${formatMoney(c.price)}</small></span>
+                                        <span class="cf-check"><i class="bi bi-check-lg"></i></span>
+                                    </span>
+                                </label>`).join("")}`;
             }
         }
 
@@ -469,9 +482,9 @@
             state.options = readOptions();
             const unitPrice = priceWithOptions(product, state.options);
             const total = unitPrice * state.quantity;
-            const rows = [`<li><span>Base Price</span><span>${formatMoney(product.price)}</span></li>`];
+            const rows = [`<li><span>Ana Fiyat</span><span>${formatMoney(product.price)}</span></li>`];
             if (state.quantity > 1 || state.options) {
-                rows.push(`<li class="cf-bd-unit"><span>Price per item${state.quantity > 1 ? ` × ${state.quantity}` : ""}</span><span>${formatMoney(unitPrice)}</span></li>`);
+                rows.push(`<li class="cf-bd-unit"><span>Eklenen ürünlerle fiyat${state.quantity > 1 ? ` × ${state.quantity}` : ""}</span><span>${formatMoney(unitPrice)}</span></li>`);
             }
 
             $("#breakdownList").innerHTML = rows.join("");
@@ -539,30 +552,30 @@
             $("#relatedGrid").innerHTML = relatedProducts().map((p) => {
                 const liked = Favorites.has(p.id);
                 return `
-                                        <div class="col-12 col-sm-6 col-lg-3">
-                                          <article class="cf-product-card">
-                                            <div class="cf-product-img">
-                                              <a href="${detailUrl(p.id)}" class="cf-product-img-link" aria-label="View ${p.name} details">
-                                                <img src="${p.image}" alt="${p.name}" loading="lazy" data-fallback="${p.category}" />
-                                              </a>
-                                              ${p.badge ? `<span class="cf-tag ${BADGES[p.badge]}">${p.badge}</span>` : ""}
-                                              <button type="button" class="cf-fav${liked ? " liked" : ""}" data-fav="${p.id}" aria-pressed="${liked}" aria-label="${liked ? "Remove from" : "Add to"} favorites">
-                                                <i class="bi ${liked ? "bi-heart-fill" : "bi-heart"}"></i>
-                                              </button>
-                                            </div>
-                                            <div class="cf-product-body">
-                                              <div class="cf-product-meta"><span class="cf-cat-label">${category(p.category).label}</span></div>
-                                              <h3><a href="${detailUrl(p.id)}">${p.name}</a></h3>
-                                              <p>${p.description}</p>
-                                              <div class="cf-product-foot">
-                                                <span class="cf-price">${p.customizable ? "<small>from</small>" : ""}${formatMoney(p.price)}</span>
-                                                ${p.customizable
+                                            <div class="col-12 col-sm-6 col-lg-3">
+                                              <article class="cf-product-card">
+                                                <div class="cf-product-img">
+                                                  <a href="${detailUrl(p.id)}" class="cf-product-img-link" aria-label="View ${p.name} details">
+                                                    <img src="${p.image}" alt="${p.name}" loading="lazy" data-fallback="${p.category}" />
+                                                  </a>
+                                                  ${p.badge ? `<span class="cf-tag ${BADGES[p.badge]}">${p.badge}</span>` : ""}
+                                                  <button type="button" class="cf-fav${liked ? " liked" : ""}" data-fav="${p.id}" aria-pressed="${liked}" aria-label="${liked ? "Remove from" : "Add to"} favorites">
+                                                    <i class="bi ${liked ? "bi-heart-fill" : "bi-heart"}"></i>
+                                                  </button>
+                                                </div>
+                                                <div class="cf-product-body">
+                                                  <div class="cf-product-meta"><span class="cf-cat-label">${category(p.category).label}</span></div>
+                                                  <h3><a href="${detailUrl(p.id)}">${p.name}</a></h3>
+                                                  <p>${p.description}</p>
+                                                  <div class="cf-product-foot">
+                                                    <span class="cf-price">${p.customizable ? "<small>from</small>" : ""}${formatMoney(p.price)}</span>
+                                                    ${p.customizable
                         ? `<a href="${detailUrl(p.id)}" class="btn cf-add-btn"><i class="bi bi-sliders"></i> Customize</a>`
                         : `<button type="button" class="btn cf-add-btn" data-add="${p.id}"><i class="bi bi-bag-plus"></i> Add</button>`}
-                                              </div>
-                                            </div>
-                                          </article>
-                                        </div>`;
+                                                  </div>
+                                                </div>
+                                              </article>
+                                            </div>`;
             }).join("");
             applyFallbacks($("#relatedGrid"));
         }
@@ -589,26 +602,26 @@
             $("#cartItems").innerHTML = Cart.items.map((line) => {
                 const p = findProduct(line.productId);
                 return `
-                                        <li class="cf-cart-line" data-line="${line.lineId}">
-                                          <a href="${detailUrl(line.productId)}" class="cf-cart-thumb">
-                                            <img src="${line.image}" alt="${line.name}" data-fallback="${p ? p.category : "coffee"}" />
-                                          </a>
-                                          <div>
-                                            <div class="cf-cart-line-top">
-                                              <h6>${line.name}</h6>
-                                              <button type="button" class="cf-cart-remove" data-action="remove" aria-label="Remove ${line.name}"><i class="bi bi-trash3"></i></button>
-                                            </div>
-                                            <div class="cf-cart-opts">${describeOptions(line.options) || `${formatMoney(line.unitPrice)} each`}</div>
-                                            <div class="cf-cart-line-bottom">
-                                              <div class="cf-stepper">
-                                                <button type="button" data-action="dec" aria-label="Decrease ${line.name}"><i class="bi bi-dash"></i></button>
-                                                <span>${line.quantity}</span>
-                                                <button type="button" data-action="inc" aria-label="Increase ${line.name}"><i class="bi bi-plus"></i></button>
+                                            <li class="cf-cart-line" data-line="${line.lineId}">
+                                              <a href="${detailUrl(line.productId)}" class="cf-cart-thumb">
+                                                <img src="${line.image}" alt="${line.name}" data-fallback="${p ? p.category : "coffee"}" />
+                                              </a>
+                                              <div>
+                                                <div class="cf-cart-line-top">
+                                                  <h6>${line.name}</h6>
+                                                  <button type="button" class="cf-cart-remove" data-action="remove" aria-label="Remove ${line.name}"><i class="bi bi-trash3"></i></button>
+                                                </div>
+                                                <div class="cf-cart-opts">${describeOptions(line.options) || `${formatMoney(line.unitPrice)} each`}</div>
+                                                <div class="cf-cart-line-bottom">
+                                                  <div class="cf-stepper">
+                                                    <button type="button" data-action="dec" aria-label="Decrease ${line.name}"><i class="bi bi-dash"></i></button>
+                                                    <span>${line.quantity}</span>
+                                                    <button type="button" data-action="inc" aria-label="Increase ${line.name}"><i class="bi bi-plus"></i></button>
+                                                  </div>
+                                                  <span class="cf-line-price">${formatMoney(line.unitPrice * line.quantity)}</span>
+                                                </div>
                                               </div>
-                                              <span class="cf-line-price">${formatMoney(line.unitPrice * line.quantity)}</span>
-                                            </div>
-                                          </div>
-                                        </li>`;
+                                            </li>`;
             }).join("");
             applyFallbacks($("#cartItems"));
         }

@@ -7,5 +7,6 @@ namespace CafeFlow.WebUI.Models
     {
         public List<ProductListDto> Products { get; set; }
         public List<CategoryListDto> Categories { get; set; }
+        public HashSet<int> FavoriteProductIds { get; set; }
     }
 }

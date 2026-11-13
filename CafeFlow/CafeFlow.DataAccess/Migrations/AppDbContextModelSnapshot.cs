@@ -264,9 +264,10 @@ namespace CafeFlow.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CustomerId");
-
                     b.HasIndex("ProductId");
+
+                    b.HasIndex("CustomerId", "ProductId")
+                        .IsUnique();
 
                     b.ToTable("Favorites");
                 });

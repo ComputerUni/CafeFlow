@@ -1,0 +1,155 @@
+﻿@using System.Globalization
+@model List<CafeFlow.DTO.Favorite.FavoriteProductDto>
+
+@{
+    ViewData["Title"] = "Favorilerim";
+    Layout = "~/Views/Shared/_CustomerLayout.cshtml";
+}
+
+<style>
+    .cf-fav-cat {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.24rem 0.68rem;
+        font-size: 0.72rem;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: #b8566f;
+        background-color: #fdf0f3;
+        border: 1px solid #f4d6de;
+        border-radius: 50rem;
+        margin-bottom: 0.45rem;
+    }
+</style>
+
+<section class="py-5 mt-5">
+    <div class="container">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+            <div>
+                <div class="d-flex align-items-center gap-2 mb-1">
+                    <h2 class="fw-bold mb-0">Favorilerim</h2>
+                    <span class="badge rounded-pill bg-light text-dark border px-3 py-2" id="favCountWrapper">
+                        <strong id="favCountBadge">@Model.Count</strong> ürün
+                    </span>
+                </div>
+                <p class="text-muted mb-0">Beğendiğiniz lezzetleri buradan inceleyebilir, sepetinize ekleyebilir veya listenizden çıkarabilirsiniz.</p>
+            </div>
+            <a asp-controller="Menu" asp-action="Index" class="btn btn-outline-dark rounded-pill px-4">
+                <i class="bi bi-grid me-1"></i> Menüye Dön
+            </a>
+        </div>
+
+        <div id="favoritesEmpty" class="text-center py-5 my-4 @(Model.Any() ? "d-none" : "")">
+            <div class="mb-3">
+                <i class="bi bi-heart text-muted" style="font-size: 3rem;"></i>
+            </div>
+            <h4 class="fw-semibold">Henüz favori ürününüz bulunmuyor</h4>
+            <p class="text-muted mb-4">Menüdeki ürünlerin sağ üst köşesindeki kalp ikonuna tıklayarak favori listenizi oluşturabilirsiniz.</p>
+            <a asp-controller="Menu" asp-action="Index" class="btn cf-add-btn px-4 py-2">
+                <i class="bi bi-cup-hot me-1"></i> Menüyü Keşfet
+            </a>
+        </div>
+
+        <div class="row g-4 @(Model.Any() ? "" : "d-none")" id="favoritesGrid">
+            @foreach (var item in Model)
+            {
+                <div class="col-12 col-sm-6 col-lg-4 col-xl-3" data-fav-card="@item.ProductId" style="transition: opacity 0.2s ease, transform 0.2s ease;">
+                    <article class="cf-product-card">
+                        <div class="cf-product-img">
+                            <a href="/Product/Detail/@item.ProductId" class="cf-product-img-link" aria-label="@item.ProductName detayını görüntüle">
+                                <img src="@item.ImageUrl" alt="@item.ProductName" loading="lazy" data-fallback="coffee" />
+                            </a>
+                            <button type="button"
+                                    class="cf-fav liked"
+                                    data-remove-fav="@item.ProductId"
+                                    data-name="@item.ProductName"
+                                    aria-pressed="true"
+                                    aria-label="Favorilerden çıkar">
+                                <i class="bi bi-heart-fill"></i>
+                            </button>
+                        </div>
+                        <div class="cf-product-body">
+                            <div class="cf-fav-cat">
+                                <span class="cf-cat-label">@item.CategoryName</span>
+                            </div>
+                            <h3><a href="/Product/Detail/@item.ProductId">@item.ProductName</a></h3>
+                            <p>@item.Description</p>
+                            <div class="cf-product-foot">
+                                <span class="cf-price">₺@item.Price.ToString("N2")</span>
+                                <button type="button"
+                                        class="btn cf-add-btn"
+                                        data-id="@item.ProductId"
+                                        data-name="@item.ProductName"
+                                        data-price="@item.Price.ToString(CultureInfo.InvariantCulture)"
+                                        data-image="@item.ImageUrl">
+                                    <i class="bi bi-bag-plus"></i> Ekle
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        (() => {
+            const grid = document.getElementById("favoritesGrid");
+            const emptyState = document.getElementById("favoritesEmpty");
+            const countBadge = document.getElementById("favCountBadge");
+            const toastEl = document.getElementById("cfToast");
+            const toastText = document.getElementById("cfToastText");
+            let toastTimer;
+
+            function notify(msg) {
+                if (!toastEl || !toastText) return;
+                toastText.textContent = msg;
+                toastEl.classList.add("show");
+                clearTimeout(toastTimer);
+                toastTimer = setTimeout(() => toastEl.classList.remove("show"), 2400);
+            }
+
+            grid?.addEventListener("click", async (e) => {
+                const btn = e.target.closest("[data-remove-fav]");
+                if (!btn) return;
+
+                btn.disabled = true;
+                const productId = btn.dataset.removeFav;
+                const productName = btn.dataset.name || "Ürün";
+
+                try {
+                    const res = await fetch(`/Favorite/Toggle?productId=${productId}`, { method: "POST" });
+                    if (!res.ok) {
+                        btn.disabled = false;
+                        return;
+                    }
+
+                    const data = await res.json();
+                    if (!data.isFavorited) {
+                        const card = document.querySelector(`[data-fav-card="${productId}"]`);
+                        if (card) {
+                            card.style.opacity = "0";
+                            card.style.transform = "scale(0.95)";
+                            setTimeout(() => {
+                                card.remove();
+                                const remaining = document.querySelectorAll("[data-fav-card]").length;
+                                if (countBadge) countBadge.textContent = remaining;
+
+                                if (remaining === 0) {
+                                    grid.classList.add("d-none");
+                                    emptyState?.classList.remove("d-none");
+                                }
+                            }, 200);
+                        }
+                        notify(`${productName} favorilerden çıkarıldı`);
+                    }
+                } catch {
+                    btn.disabled = false;
+                }
+            });
+        })();
+    </script>
+}

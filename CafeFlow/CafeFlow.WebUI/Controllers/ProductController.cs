@@ -4,10 +4,11 @@ using CafeFlow.DTO.Comment;
 using CafeFlow.DTO.Product;
 using CafeFlow.WebUI.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace CafeFlow.WebUI.Controllers
 {
-    public class ProductController(IProductService _productService, ICommentService _commentService, ICategoryService _categoryService, ICustomerService _customerService) : Controller
+    public class ProductController(IProductService _productService, ICommentService _commentService, ICategoryService _categoryService, ICustomerService _customerService, IFavoriteService _favoriteService) : Controller
     {
         public async Task<IActionResult> Detail(int id)
         {
@@ -17,7 +18,17 @@ namespace CafeFlow.WebUI.Controllers
 
             var comments = await _commentService.GetCommentsByProductId(id);
             var products = await _productService.GetAllAsync();        
-            var categories = await _categoryService.GetAllAsync();     
+            var categories = await _categoryService.GetAllAsync();
+
+            HashSet<int> favoriteIds = [];
+            if(User.Identity?.IsAuthenticated == true)
+            {
+                var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+                favoriteIds = await _favoriteService.GetUserFavoriteProductIdsAsync(userId);
+            }
+
+            ViewBag.FavoriteProductIds = favoriteIds;
+
 
             var viewModel = new ProductDetailPageViewModel
             {

@@ -1,7 +1,4 @@
 ﻿using CafeFlow.Entity.Common;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace CafeFlow.Entity
 {
