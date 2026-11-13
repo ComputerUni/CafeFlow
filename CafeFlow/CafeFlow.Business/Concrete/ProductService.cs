@@ -4,15 +4,33 @@ using CafeFlow.DataAccess.Repositories.Products;
 using CafeFlow.DTO.Product;
 using CafeFlow.DTO.ProductDetail;
 using CafeFlow.Entity;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using System;
-using System.Collections.Generic;
-using System.Text;
+
 
 namespace CafeFlow.Business.Concrete
 {
     public class ProductService(IProductRepository _productRepository, IMapper _mapper) : IProductService
     {
+        public async Task ChangeActiveAsync(int id)
+        {
+            var product = await _productRepository.GetByIdAsync(id);
+            product.IsActive = !product.IsActive;
+            await _productRepository.UpdateAsync(product);
+        }
+
+        public async Task ChangeCustomizableAsync(int id)
+        {
+            var product = await _productRepository.GetByIdAsync(id);
+            product.IsCustomizable = !product.IsCustomizable;
+            await _productRepository.UpdateAsync(product);
+        }
+
+        public async Task ChangeFeatureAsync(int id)
+        {
+            var product = await _productRepository.GetByIdAsync(id);
+            product.IsFeatured = !product.IsFeatured;
+            await _productRepository.UpdateAsync(product);
+        }
+
         public async Task CreateAsync(CreateProductDto dto)
         {
             var product = _mapper.Map<Product>(dto);

@@ -1,0 +1,416 @@
+﻿@model CafeFlow.DTO.Dashboard.AdminDashboardDto
+@using System.Text.Json
+@using CafeFlow.Business.Extensions
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Dashboard";
+
+    var categoryLabels = JsonSerializer.Serialize(Model.ProductCountByCategory.Keys);
+    var categoryValues = JsonSerializer.Serialize(Model.ProductCountByCategory.Values);
+}
+
+<style>
+    .btn-cf-primary {
+        background-color: #b85d6f;
+        border: 1px solid #b85d6f;
+        color: #ffffff !important;
+        transition: all 0.2s ease;
+    }
+
+        .btn-cf-primary:hover {
+            background-color: #a14c5d;
+            border-color: #a14c5d;
+            color: #ffffff !important;
+        }
+
+    .btn-cf-espresso {
+        background-color: #4a352f;
+        border: 1px solid #4a352f;
+        color: #ffffff !important;
+        transition: all 0.2s ease;
+    }
+
+        .btn-cf-espresso:hover {
+            background-color: #382722;
+            border-color: #382722;
+            color: #ffffff !important;
+        }
+
+    .btn-cf-soft {
+        background-color: #fdf2f4;
+        border: 1px solid #f3d5dc;
+        color: #b85d6f !important;
+        transition: all 0.2s ease;
+    }
+
+        .btn-cf-soft:hover {
+            background-color: #b85d6f;
+            border-color: #b85d6f;
+            color: #ffffff !important;
+        }
+
+    .btn-cf-latte {
+        background-color: #faf6f3;
+        border: 1px solid #e6dad1;
+        color: #4a352f !important;
+        transition: all 0.2s ease;
+    }
+
+        .btn-cf-latte:hover {
+            background-color: #efe5dd;
+            border-color: #d9c8bc;
+            color: #4a352f !important;
+        }
+</style>
+
+<div class="adm-content mw-100">
+    <!-- Üst Başlık & Hızlı Erişim -->
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+        <div>
+            <h1 class="h4 mb-1 fw-bold" style="color: #2f221e;">Dashboard</h1>
+            <p class="text-muted small mb-0">CafeFlow işletme özeti, günlük ciro, stok durumu ve son siparişler.</p>
+        </div>
+        <div class="d-flex flex-wrap align-items-center gap-2">
+            <a asp-area="Admin" asp-controller="Notification" asp-action="Index"
+               class="btn btn-sm btn-cf-latte rounded-3 d-inline-flex align-items-center gap-2 px-3 py-2 fw-medium">
+                <i class="bi bi-bell"></i>
+                <span>Bildirimler</span>
+                @if (Model.UnreadNotificationCount > 0)
+                {
+                    <span class="badge rounded-pill text-white" style="background-color: #b85d6f;">
+                        @Model.UnreadNotificationCount
+                    </span>
+                }
+            </a>
+            <a asp-area="Admin" asp-controller="Product" asp-action="Create"
+               class="btn btn-sm btn-cf-primary rounded-3 d-inline-flex align-items-center gap-1 px-3 py-2 fw-medium">
+                <i class="bi bi-plus-lg"></i>
+                <span>Yeni Ürün Ekle</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- 1. Satır: KPI Özet Kartları -->
+    <div class="row g-3 mb-4">
+        <div class="col-sm-6 col-xl-3">
+            <div class="adm-card p-3 h-100">
+                <div class="d-flex align-items-start justify-content-between">
+                    <div>
+                        <span class="text-muted small fw-medium d-block mb-1">Toplam Ciro</span>
+                        <h3 class="h4 fw-bold mb-2 text-dark">₺@Model.TotalRevenue.ToString("N2")</h3>
+                        <span class="badge rounded-pill fw-medium px-2 py-1"
+                              style="background-color: #eef6f2; color: #2f6f51; border: 1px solid #cde4d8;">
+                            <i class="bi bi-graph-up-arrow me-1"></i>Bugün: ₺@Model.TodayRevenue.ToString("N2")
+                        </span>
+                    </div>
+                    <div class="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0"
+                         style="width: 44px; height: 44px; background-color: #fdf2f4; color: #b85d6f;">
+                        <i class="bi bi-wallet2 fs-5"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-xl-3">
+            <div class="adm-card p-3 h-100">
+                <div class="d-flex align-items-start justify-content-between">
+                    <div>
+                        <span class="text-muted small fw-medium d-block mb-1">Toplam Sipariş</span>
+                        <h3 class="h4 fw-bold mb-2 text-dark">@Model.TotalOrderCount</h3>
+                        <a asp-area="Admin" asp-controller="Order" asp-action="Index"
+                           class="small text-decoration-none fw-medium" style="color: #b85d6f;">
+                            Siparişleri yönet <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+                    <div class="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0"
+                         style="width: 44px; height: 44px; background-color: #f6efe8; color: #8c5e3c;">
+                        <i class="bi bi-bag-check fs-5"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-xl-3">
+            <div class="adm-card p-3 h-100">
+                <div class="d-flex align-items-start justify-content-between">
+                    <div>
+                        <span class="text-muted small fw-medium d-block mb-1">Aktif Menü Ürünü</span>
+                        <h3 class="h4 fw-bold mb-2 text-dark">@Model.ActiveProductCount</h3>
+                        @if (Model.LowStockProducts.Any())
+                        {
+                            <span class="badge rounded-pill fw-medium px-2 py-1"
+                                  style="background-color: #fdf6ec; color: #9c6626; border: 1px solid #f2dec2;">
+                                <i class="bi bi-exclamation-triangle me-1"></i>@Model.LowStockProducts.Count kritik stok
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="badge rounded-pill bg-light text-muted border fw-normal">Stok seviyeleri iyi</span>
+                        }
+                    </div>
+                    <div class="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0"
+                         style="width: 44px; height: 44px; background-color: #fdf6ec; color: #b67b38;">
+                        <i class="bi bi-cup-hot fs-5"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-xl-3">
+            <div class="adm-card p-3 h-100">
+                <div class="d-flex align-items-start justify-content-between">
+                    <div>
+                        <span class="text-muted small fw-medium d-block mb-1">Kayıtlı Müşteri</span>
+                        <h3 class="h4 fw-bold mb-2 text-dark">@Model.CustomerCount</h3>
+                        <a asp-area="Admin" asp-controller="Customer" asp-action="Index"
+                           class="small text-decoration-none fw-medium" style="color: #6e564d;">
+                            Müşteri listesi <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+                    <div class="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0"
+                         style="width: 44px; height: 44px; background-color: #eef6f2; color: #3d7a5c;">
+                        <i class="bi bi-people fs-5"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Satır: Kategori Dağılımı Grafiği & Kritik Stoklar -->
+    <div class="row g-4 mb-4">
+        <div class="col-lg-5">
+            <div class="adm-card p-4 h-100 d-flex flex-column">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <div>
+                        <h2 class="h6 fw-bold mb-0">Kategori Bazlı Ürün Dağılımı</h2>
+                        <span class="text-muted small">Menüdeki ürünlerin kategorilere göre sayısı</span>
+                    </div>
+                </div>
+
+                @if (Model.ProductCountByCategory.Any())
+                {
+                    <div class="position-relative my-auto" style="height: 250px;">
+                        <canvas id="categoryDistributionChart"></canvas>
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center text-muted my-auto py-5">
+                        <i class="bi bi-pie-chart fs-3 d-block mb-2"></i>
+                        Grafik için henüz kategori verisi bulunmuyor.
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="col-lg-7">
+            <div class="adm-card h-100 d-flex flex-column">
+                <div class="p-3 px-4 border-bottom d-flex align-items-center justify-content-between">
+                    <div>
+                        <h2 class="h6 fw-bold mb-0">Kritik Stoktaki Ürünler</h2>
+                        <span class="text-muted small">Stok adedi 10 ve altına düşen ürünler</span>
+                    </div>
+                    <a asp-area="Admin" asp-controller="Product" asp-action="Index"
+                       class="btn btn-sm btn-cf-latte rounded-3 fw-medium px-3">
+                        Tüm Ürünler
+                    </a>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table adm-table align-middle mb-0 w-100">
+                        <thead>
+                            <tr>
+                                <th>Ürün</th>
+                                <th>Kategori</th>
+                                <th>Fiyat</th>
+                                <th>Kalan Stok</th>
+                                <th class="text-end">İşlem</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.LowStockProducts.Any())
+                            {
+                                foreach (var item in Model.LowStockProducts)
+                                {
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center gap-2">
+                                                @if (!string.IsNullOrWhiteSpace(item.ImageUrl))
+                                                {
+                                                    <img src="@item.ImageUrl" alt="@item.Name"
+                                                         class="rounded border object-fit-cover flex-shrink-0"
+                                                         style="width: 36px; height: 36px;"
+                                                         onerror="this.style.display='none'" />
+                                                }
+                                                <span class="fw-semibold text-dark">@item.Name</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="badge rounded-pill fw-medium px-2 py-1"
+                                                  style="background-color: #fdf2f4; color: #b85d6f; border: 1px solid #f5d0d8;">
+                                                @item.CategoryName
+                                            </span>
+                                        </td>
+                                        <td class="fw-medium">₺@item.Price.ToString("N2")</td>
+                                        <td>
+                                            @if (item.Stock == 0)
+                                            {
+                                                <span class="badge rounded-pill bg-danger-subtle text-danger border border-danger-subtle fw-medium">
+                                                    Tükendi (0)
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge rounded-pill fw-medium"
+                                                      style="background-color: #fdf6ec; color: #9c6626; border: 1px solid #f2dec2;">
+                                                    @item.Stock adet
+                                                </span>
+                                            }
+                                        </td>
+                                        <td class="text-end">
+                                            <a asp-area="Admin" asp-controller="Product" asp-action="Update" asp-route-id="@item.Id"
+                                               class="btn btn-sm btn-cf-soft rounded-3" title="Stok Güncelle">
+                                                <i class="bi bi-pencil-square"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="5" class="text-center py-5 text-muted">
+                                        <i class="bi bi-check-circle text-success fs-3 d-block mb-2"></i>
+                                        Kritik stok seviyesinde ürün bulunmuyor.
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="adm-card">
+        <div class="p-3 px-4 border-bottom d-flex align-items-center justify-content-between">
+            <div>
+                <h2 class="h6 fw-bold mb-0">Son Siparişler</h2>
+                <span class="text-muted small">Sisteme düşen en güncel sipariş kayıtları</span>
+            </div>
+            <a asp-area="Admin" asp-controller="Order" asp-action="Index"
+               class="btn btn-sm btn-cf-espresso rounded-3 fw-medium px-3">
+                Tüm Siparişleri Gör
+            </a>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table adm-table align-middle mb-0 w-100">
+                <thead>
+                    <tr>
+                        <th style="width: 110px;">Sipariş #</th>
+                        <th>Tarih</th>
+                        <th>Tutar</th>
+                        <th>Durum</th>
+                        <th class="text-end" style="width: 140px;">Detay</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.RecentOrders.Any())
+                    {
+                        foreach (var order in Model.RecentOrders)
+                        {
+                            var statusText = order.OrderStatus.GetDisplayName();
+                            var statusStyle = statusText switch
+                            {
+                                "Hazır" or "Teslim Edildi" => "background-color: #eef6f2; color: #2f6f51; border: 1px solid #cde4d8;",
+                                "Hazırlanıyor" => "background-color: #eef3fa; color: #365c8d; border: 1px solid #cddbee;",
+                                "İptal" or "İptal Edildi" => "background-color: #fdf0f0; color: #b43c3c; border: 1px solid #f4cccc;",
+                                _ => "background-color: #fdf6ec; color: #9c6626; border: 1px solid #f2dec2;"
+                            };
+
+                            <tr>
+                                <td class="fw-semibold text-dark">#@order.Id</td>
+                                <td class="text-muted small">@order.CreatedAt.ToString("dd.MM.yyyy HH:mm")</td>
+                                <td class="fw-bold text-dark">₺@order.TotalAmount.ToString("N2")</td>
+                                <td>
+                                    <span class="badge rounded-pill fw-medium px-3 py-1" style="@statusStyle">
+                                        @statusText
+                                    </span>
+                                </td>
+                                <td class="text-end">
+                                    <a asp-area="Admin"
+                                       asp-controller="Order"
+                                       asp-action="Detail"
+                                       asp-route-id="@order.Id"
+                                       class="btn btn-sm btn-cf-soft rounded-3 fw-medium px-3">
+                                        İncele
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center py-5 text-muted">
+                                <i class="bi bi-receipt fs-3 d-block mb-2"></i>
+                                Henüz sipariş kaydı bulunmuyor.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+    <script>
+        (() => {
+            const canvas = document.getElementById("categoryDistributionChart");
+            if (!canvas) return;
+
+            const labels = @Html.Raw(categoryLabels);
+            const data = @Html.Raw(categoryValues);
+
+            new Chart(canvas, {
+                type: "doughnut",
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: [
+                            "#b85d6f",
+                            "#4a352f",
+                            "#d4a373",
+                            "#e07a5f",
+                            "#81b29a",
+                            "#6d597a",
+                            "#f2cc8f"
+                        ],
+                        borderWidth: 2,
+                        borderColor: "#ffffff"
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: "66%",
+                    plugins: {
+                        legend: {
+                            position: "right",
+                            labels: {
+                                usePointStyle: true,
+                                padding: 14,
+                                font: { size: 12 }
+                            }
+                        }
+                    }
+                }
+            });
+        })();
+    </script>
+}

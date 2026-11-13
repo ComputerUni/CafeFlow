@@ -6,6 +6,7 @@ using CafeFlow.Business.Settings;
 using CafeFlow.DataAccess.Repositories.Categories;
 using CafeFlow.DataAccess.Repositories.Comments;
 using CafeFlow.DataAccess.Repositories.Customers;
+using CafeFlow.DataAccess.Repositories.Dashboard;
 using CafeFlow.DataAccess.Repositories.Notifications;
 using CafeFlow.DataAccess.Repositories.Orders;
 using CafeFlow.DataAccess.Repositories.OrderStatusHistoryRepositories;
@@ -27,6 +28,8 @@ namespace CafeFlow.WebUI.Extensions
             services.AddScoped<ICustomerService, CustomerService>();
             services.AddScoped<ISmsService, SmsService>();
             services.AddScoped<INotificationService, NotificationService>();
+            services.AddScoped<IDashboardService, DashboardService>();
+
         }
 
         public static void AddRepositories(this IServiceCollection services)
@@ -39,6 +42,7 @@ namespace CafeFlow.WebUI.Extensions
             services.AddScoped<ICustomerRepository, CustomerRepository>();
             services.AddScoped<ITableRepository,  TableRepository>();
             services.AddScoped<ICommentRepository,  CommentRepository>();
+            services.AddScoped<IDashboardRepository,  DashboardRepository>();
         }
 
         public static void AddDesignPatterns(this IServiceCollection services)

@@ -49,7 +49,7 @@ namespace CafeFlow.Business.Mappings
                 .ForMember(dest => dest.UnitPrice, opt => opt.MapFrom(src => src.UnitPrice));
 
             CreateMap<Product, ProductListDto>().ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.Name));
-            CreateMap<UpdateProductDto, Product>();
+            CreateMap<UpdateProductDto, Product>().ReverseMap();
             CreateMap<CreateProductDto, Product>();
             CreateMap<Product, ResultProductDetailDto>()
                 .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.Name))
