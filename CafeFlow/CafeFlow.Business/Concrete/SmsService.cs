@@ -6,7 +6,9 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.Json;
 using Twilio;
+using Twilio.Exceptions;
 using Twilio.Rest.Api.V2010.Account;
+using Twilio.TwiML.Messaging;
 using Twilio.Types;
 
 namespace CafeFlow.Business.Concrete
@@ -26,12 +28,13 @@ namespace CafeFlow.Business.Concrete
             try
             {
                 var formattedNumber = FormatPhoneNumber(phoneNumber);
+                if (string.IsNullOrEmpty(formattedNumber)) return false;
 
                 var messageResource = await MessageResource.CreateAsync(
                     from: new PhoneNumber($"whatsapp:{_twilioSettings.PhoneNumber}"),
                     to: new PhoneNumber($"whatsapp:{formattedNumber}"),
                     contentSid: contentSid,
-                    contentVariables: variables != null ? JsonSerializer.Serialize(variables) : null
+                    contentVariables: variables != null && variables.Count > 0 ? JsonSerializer.Serialize(variables) : null
                 );
 
                 return messageResource.Status != MessageResource.StatusEnum.Failed;
@@ -39,7 +42,8 @@ namespace CafeFlow.Business.Concrete
             catch (Exception ex)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine($"[Twilio SMS Hatası]: {ex.Message}");
+                var code = ex is ApiException apiEx ? $" (Kod: {apiEx.Code})" : "";
+                Console.WriteLine($"[Twilio SMS Hatası]{code}: {ex.Message}");
                 Console.ResetColor();
                 return false;
             }
