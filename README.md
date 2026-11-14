@@ -5,15 +5,15 @@
 ## 📋 İçindekiler
 
 - [Proje Hakkında](#proje-hakkında)
-- [Teknoloji Yığını](#teknoloji-yığını)
-- [Veritabanı Şeması](#veritabanı-şeması)
-- [Design Pattern'ler](#design-patterns)
-- [Kullanılan Servisler](#kullanılan-servisler)
-- [Repository Pattern](#repository-pattern)
-- [Kurulum Adımları](#kurulum-adımları)
-- [Örnek Test Verileri](#örnek-test-verileri)
-- [Çalıştırma Talimatları](#çalıştırma-talimatları)
-- [Ekran Görüntüleri](#ekran-görüntüleri)
+- [Teknoloji Yığını](#️-teknoloji-yığını)
+- [Veritabanı Şeması](#-veritabanı-şeması)
+- [Design Patternler](#-design-patternler)
+- [Kullanılan Servisler](#-kullanılan-servisler)
+- [Repository Pattern](#-repository-pattern-yapısı)
+- [Kurulum Adımları](#-kurulum-adımları)
+- [Örnek Test Verileri](#-örnek-test-verileri)
+- [Çalıştırma Talimatları](#️-çalıştırma-talimatları)
+- [Ekran Görüntüleri](#-ekran-görüntüleri)
 
 ---
 
@@ -882,62 +882,23 @@ dotnet run
 
 ## 📸 Ekran Görüntüleri
 
-### 🏠 Müşteri Paneli
-
-#### Ana Sayfa
-![Ana Sayfa](screenshots/Ekran\ görüntüsü\ 2026-11-14\ 211906.png)
-
-#### Menü Sayfası
-![Menü](screenshots/Ekran\ görüntüsü\ 2026-11-14\ 211940.png)
-
-#### Ürün Detay ve Özelleştirme
-![Ürün Detay](screenshots/Ekran\ görüntüsü\ 2026-11-14\ 211957.png)
-
-#### Sepet
-![Sepet](screenshots/Ekran\ görüntüsü\ 2026-11-14\ 212013.png)
-
-#### Siparişlerim
-![Siparişlerim](screenshots/Ekran\ görüntüsü\ 2026-11-14\ 212027.png)
-
-#### Sipariş Takip
-![Takip](screenshots/Ekran\ görüntüsü\ 2026-11-14\ 212055.png)
-
-#### Favoriler
-![Favoriler](screenshots/Ekran\ görüntüsü\ 2026-11-14\ 212152.png)
-
----
-
-### 🔧 Admin Paneli
-
-#### Admin Dashboard
-![Admin Dashboard](screenshots/Ekran\ görüntüsü\ 2026-11-14\ 212205.png)
-
-#### Sipariş Yönetimi
-![Sipariş Yönetimi](screenshots/Ekran\ görüntüsü\ 2026-11-14\ 212226.png)
-
-#### Sipariş Detayı
-![Sipariş Detayı](screenshots/Ekran\ görüntüsü\ 2026-11-14\ 212312.png)
-
-#### Ürün Yönetimi
-![Ürün Yönetimi](screenshots/Ekran\ görüntüsü\ 2026-11-14\ 212330.png)
-
-#### Kategori Yönetimi
-![Kategori Yönetimi](screenshots/Ekran\ görüntüsü\ 2026-11-14\ 212405.png)
-
-#### Masa Yönetimi
-![Masa Yönetimi](screenshots/Ekran\ görüntüsü\ 2026-11-14\ 212420.png)
-
-#### Müşteri Yönetimi
-![Müşteri Yönetimi](screenshots/Ekran\ görüntüsü\ 2026-11-14\ 212459.png)
-
-#### Yorum Moderation
-![Yorum Moderation](screenshots/Ekran\ görüntüsü\ 2026-11-14\ 212535.png)
-
-#### Bildirim Sistemi
-![Bildirimler](screenshots/Ekran\ görüntüsü\ 2026-11-14\ 212630.png)
-
-#### Müşteri Detayı
-![Müşteri Detay](screenshots/Ekran\ görüntüsü\ 2026-11-14\ 212645.png)
+![](<screenshots/Ekran görüntüsü 2026-11-14 211906.png>)
+![](<screenshots/Ekran görüntüsü 2026-11-14 211940.png>)
+![](<screenshots/Ekran görüntüsü 2026-11-14 211957.png>)
+![](<screenshots/Ekran görüntüsü 2026-11-14 212013.png>)
+![](<screenshots/Ekran görüntüsü 2026-11-14 212027.png>)
+![](<screenshots/Ekran görüntüsü 2026-11-14 212055.png>)
+![](<screenshots/Ekran görüntüsü 2026-11-14 212152.png>)
+![](<screenshots/Ekran görüntüsü 2026-11-14 212205.png>)
+![](<screenshots/Ekran görüntüsü 2026-11-14 212226.png>)
+![](<screenshots/Ekran görüntüsü 2026-11-14 212312.png>)
+![](<screenshots/Ekran görüntüsü 2026-11-14 212330.png>)
+![](<screenshots/Ekran görüntüsü 2026-11-14 212405.png>)
+![](<screenshots/Ekran görüntüsü 2026-11-14 212420.png>)
+![](<screenshots/Ekran görüntüsü 2026-11-14 212459.png>)
+![](<screenshots/Ekran görüntüsü 2026-11-14 212535.png>)
+![](<screenshots/Ekran görüntüsü 2026-11-14 212630.png>)
+![](<screenshots/Ekran görüntüsü 2026-11-14 212645.png>)
 
 ---
 

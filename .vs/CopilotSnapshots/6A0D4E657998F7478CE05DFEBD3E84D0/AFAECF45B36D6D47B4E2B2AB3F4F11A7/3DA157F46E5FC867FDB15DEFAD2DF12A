@@ -1,0 +1,1104 @@
+﻿# CafeFlow - Kafe Yönetim ve Sipariş Sistemi
+
+---
+
+## 📋 İçindekiler
+
+- [Proje Hakkında](#proje-hakkında)
+- [Teknoloji Yığını](#teknoloji-yığını)
+- [Veritabanı Şeması](#veritabanı-şeması)
+- [Design Pattern'ler](#design-patterns)
+- [Kullanılan Servisler](#kullanılan-servisler)
+- [Repository Pattern](#repository-pattern)
+- [Kurulum Adımları](#kurulum-adımları)
+- [Örnek Test Verileri](#örnek-test-verileri)
+- [Çalıştırma Talimatları](#çalıştırma-talimatları)
+- [Ekran Görüntüleri](#ekran-görüntüleri)
+
+---
+
+## Proje Hakkında
+
+**CafeFlow**, modern bir kafe işletmesi için tasarlanmış, kapsamlı bir web tabanlı yönetim sistemidir. Müşteriler masadan sipariş verebilir, online sipariş oluşturabilir, paket servisi talep edebilir, ürünleri özelleştirebilir ve favorilerine ekleyebilir. Admin paneli ise full kontrol sağlayan bir dashboard, sipariş yönetimi, ürün/kategori/masa yönetimi, müşteri takibi, yorum moderation ve bildirim sistemi ile donatılmıştır.
+
+### 🎯 Temel Özellikler
+
+✅ **Müşteri Paneli**
+- Masadan sipariş (Table Order)
+- Online sipariş (Online Order)
+- Paket servisi (Take Away)
+- Ürün arama ve filtreleme
+- Ürün özelleştirme (Aksesuar ekleme)
+- Favoriler
+- Yorum ve değerlendirme
+- Sipariş takibi
+
+✅ **Admin Paneli**
+- Dashboard ile satış metriksleri
+- Sipariş yönetimi ve durum takibi
+- Ürün/Kategori yönetimi
+- Masa yönetimi
+- Müşteri veritabanı
+- Yorum yönetimi
+- Bildirim sistemi
+- WhatsApp entegrasyonu
+
+✅ **İleri Teknolojiler**
+- 6 Design Pattern implementasyonu
+- Asenkron işlem işleme
+- Transaction yönetimi
+- Observer pattern ile real-time bildirimler
+
+---
+
+## 🛠️ Teknoloji Yığını
+
+### Backend
+- **.NET 10**: Modern ve yüksek performanslı framework
+- **ASP.NET Core Razor Pages**: MVC mimarisinde web arayüzü
+- **Entity Framework Core**: ORM ve migrations
+- **SQL Server**: Güvenilir ilişkisel veritabanı
+- **AutoMapper**: Varlık - DTO mapping
+- **FluentValidation**: Doğrulama
+- **Twilio**: WhatsApp/SMS entegrasyonu
+
+### Mimari Katmanlar
+```
+CafeFlow.Entity (Domain Models)
+	↓
+CafeFlow.DTO (Data Transfer Objects)
+	↓
+CafeFlow.Business (Service & Pattern Logic)
+	↓
+CafeFlow.DataAccess (Repository & Database)
+	↓
+CafeFlow.WebUI (Presentation / Razor Pages)
+```
+
+---
+
+## 📊 Veritabanı Şeması
+
+### Varlık Diyagramı
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                         Veritabanı Yapısı                          │
+└─────────────────────────────────────────────────────────────────┘
+
+Kullanıcı Yönetimi (Identity)
+├── AspNetUsers
+├── AspNetRoles
+└── AspNetUserRoles
+
+Ana Varlıklar
+├── Categories (Kategoriler)
+├── Products (Ürünler)
+├── ProductOptions (Ürün Aksesuar/Seçenekleri)
+├── Tables (Masalar)
+├── Customers (Müşteriler)
+├── Orders (Siparişler) ⭐ Ana Varlık
+│   ├── OrderDetails (Sipariş Detayları)
+│   ├── OrderStatusHistories (Sipariş Durum Geçmişi)
+│   └── Notifications (Bildirimler)
+├── Favorites (Favoriler)
+└── Comments (Yorumlar)
+```
+
+### Tablolar ve Özellikleri
+
+#### **Orders (Siparişler)**
+```sql
+CREATE TABLE Orders (
+	Id INT PRIMARY KEY IDENTITY,
+	OrderType NVARCHAR(50),           -- Enum: Online, TableOrder, TakeAway
+	OrderStatus NVARCHAR(50),         -- Enum: Received, Preparing, Ready, Delivered, Cancelled
+	OrderCode NVARCHAR(100) UNIQUE,   -- Takip kodu (örn: ORD-001)
+	Address NVARCHAR(500) NULL,       -- Teslimat adresi
+	TableId INT NULL,                 -- Masa numarası (table order için)
+	CustomerId INT NOT NULL,          -- Müşteri ID (FK)
+	TotalAmount DECIMAL(18,2),        -- Toplam tutar
+	OrderNote NVARCHAR(MAX) NULL,     -- Özel not/talep
+	EstimatedPickupTime NVARCHAR(50), -- Tahmini hazırlama süresi
+	CreatedDate DATETIME DEFAULT GETDATE()
+);
+```
+
+#### **OrderDetails (Sipariş Detayları)**
+```sql
+CREATE TABLE OrderDetails (
+	Id INT PRIMARY KEY IDENTITY,
+	OrderId INT NOT NULL (FK -> Orders),
+	ProductId INT NOT NULL (FK -> Products),
+	Quantity INT,
+	UnitPrice DECIMAL(18,2),
+	TotalPrice DECIMAL(18,2)
+);
+```
+
+#### **OrderStatusHistories (Sipariş Durum Geçmişi)**
+```sql
+CREATE TABLE OrderStatusHistories (
+	Id INT PRIMARY KEY IDENTITY,
+	OrderId INT NOT NULL (FK -> Orders),
+	OldStatus NVARCHAR(50),
+	NewStatus NVARCHAR(50),
+	ChangedDate DATETIME DEFAULT GETDATE(),
+	Note NVARCHAR(MAX) NULL
+);
+```
+
+#### **Products (Ürünler)**
+```sql
+CREATE TABLE Products (
+	Id INT PRIMARY KEY IDENTITY,
+	Name NVARCHAR(200),
+	Description NVARCHAR(MAX),
+	Price DECIMAL(18,2),
+	CategoryId INT NOT NULL (FK -> Categories),
+	ImageUrl NVARCHAR(500),
+	IsActive BIT DEFAULT 1,
+	IsCustomizable BIT DEFAULT 0  -- Özelleştirilebilir mi?
+);
+```
+
+#### **ProductOptions (Aksesuar/Seçenekler)**
+```sql
+CREATE TABLE ProductOptions (
+	Id INT PRIMARY KEY IDENTITY,
+	ProductId INT NOT NULL (FK -> Products),
+	Name NVARCHAR(200),           -- İçerik: Süt, Krem, Şurup vb.
+	Price DECIMAL(18,2),          -- Ek ücret
+	OptionType NVARCHAR(50)       -- Enum: Addition, Size, Extra
+);
+```
+
+#### **Favorites (Favoriler)**
+```sql
+CREATE TABLE Favorites (
+	Id INT PRIMARY KEY IDENTITY,
+	CustomerId INT NOT NULL (FK -> Customers),
+	ProductId INT NOT NULL (FK -> Products),
+	CreatedDate DATETIME DEFAULT GETDATE(),
+	UNIQUE INDEX IX_Favorite_CustomerProduct ON (CustomerId, ProductId)
+);
+```
+
+---
+
+## 🎨 Design Pattern'ler
+
+Projede 6 adet kurumsal design pattern uygulanmıştır. Her pattern'in amaç, sınıfları ve tetiklenen iş akışı detaylı şekilde açıklanmıştır.
+
+### 1️⃣ **Observer Pattern** - Gerçek Zamanlı Bildirimler
+
+**📌 Amaç:**
+Sipariş durumu değişikliğinde birden fazla gözlemciyi (Observer) otomatik olarak bilgilendirmek. Mutfak, kasiyer, müşteri ve SMS sistemi sırasıyla güncellenir.
+
+**🔧 Kullanılan Sınıflar:**
+```
+IOrderObserver (Interface)
+  ├── KitchenObserver → Mutfağa hazırlık görevi gönder
+  ├── CashierObserver → Kasiyere durum göster
+  ├── NotificationObserver → Veritabanında bildiri kaydet
+  ├── SmsObserver → WhatsApp mesajı gönder
+  └── OrderObserverObject → Tüm gözlemcileri yönet
+```
+
+**⚙️ Tetiklenen İş Akışı:**
+```
+1. Sipariş durumu "Received" → "Preparing" olur
+2. OrderObserverObject tüm observers'ı bilgilendirir
+3. KitchenObserver: Mutfağa yeni hazırlık
+4. CashierObserver: Sistem güncellenmiş siparişi gösterir
+5. NotificationObserver: Veritabanında record oluşturur
+6. SmsObserver: WhatsApp ile müşteriye mesaj gönderir
+
+Tüm işlemler asenkron ve paralel şekilde gerçekleşir.
+```
+
+---
+
+### 2️⃣ **State Pattern** - Sipariş Durum Yönetimi
+
+**📌 Amaç:**
+Siparişin her durumu için farklı davranış tanımlamak (Received, Preparing, Ready, Delivered, Cancelled). Her durum geçişi için özel validasyonlar ve kurallar uygulamak.
+
+**🔧 Kullanılan Sınıflar:**
+```
+IOrderStatusState (Interface)
+  ├── ReceivedState → Yeni sipariş alındı
+  ├── PreparingState → Hazırlık devam ediyor
+  ├── ReadyState → Hazır, teslim edilmeye bekliyor
+  ├── DeliveredState → Teslim edildi
+  ├── CancelledState → İptal edildi
+  └── OrderStatusState → Durum geçişlerini kontrol et
+```
+
+**⚙️ Tetiklenen İş Akışı:**
+```
+Sipariş Yaratılır (ReceivedState)
+┌─→ await state.Handle(order) → Validation + Database Update
+│
+Mutfak Hazırlamaya Başlar (PreparingState)
+├─→ await state.Handle(order) → OrderStatusHistory kaydı
+├─→ Notifications oluşturulur
+└─→ Observers bilgilendirilir
+│
+Ürün Hazır (ReadyState)
+├─→ EstimatedPickupTime hesaplanır
+└─→ Müşteri mesaj alır
+│
+Teslim (DeliveredState)
+└─→ Final status, sipariş kapanır
+```
+
+---
+
+### 3️⃣ **Strategy Pattern** - Kargo Hesaplama Stratejileri
+
+**📌 Amaç:**
+Sipariş türüne göre farklı kargo ücret hesaplama algoritması uygulamak. Her sipariş türü (Online, Masa, Paket) için özel kurallar.
+
+**🔧 Kullanılan Sınıflar:**
+```
+IOrderShippingStrategy (Interface)
+  ├── OnlineShipping → Online siparişler için teslimat ücreti
+  │   (Uzaklığa göre 10-25 TL)
+  ├── TableOrderShipping → Masa siparişleri (Ücretsiz)
+  └── TakeAwayShipping → Paket servisi (Ek ücret: 5 TL)
+```
+
+**⚙️ Tetiklenen İş Akışı:**
+```
+Müşteri Sipariş Oluştur (OrderType seç)
+	↓
+Strategy seç: CreateOrderDto.OrderType
+	├─→ "Online" → OnlineShipping.CalculateOrderShipping()
+	├─→ "Table" → TableOrderShipping.CalculateOrderShipping()
+	└─→ "TakeAway" → TakeAwayShipping.CalculateOrderShipping()
+	↓
+Kargo ücreti hesapla
+	↓
+TotalAmount = Ürün Fiyatı + Kargo Ücreti
+	↓
+Sipariş Kaydet
+```
+
+**Örnek Kod:**
+```csharp
+if (createOrderDto.OrderType == OrderType.Online)
+{
+	shippingStrategy = new OnlineShipping();
+	shippingCost = shippingStrategy.CalculateOrderShipping(totalAmount);
+}
+```
+
+---
+
+### 4️⃣ **Chain of Responsibility Pattern** - Sipariş Validasyonu
+
+**📌 Amaç:**
+Sipariş sırasında sıralı olarak birden fazla validasyon kontrolü yapabilmeyi sağlamak. Her handler'ın kendi sorumluluğu vardır: ürün var mı, minimum tutar, teslimat bilgileri vb.
+
+**🔧 Kullanılan Sınıflar:**
+```
+OrderValidationHandler (Abstract)
+  ├── ProductAvailabilityHandler → Ürün stok kontrolü
+  ├── MinimumAmountHandler → Minimum sipariş tutarı
+  └── DeliveryInfoHandler → Teslimat bilgisi kontrolü
+
+OrderValidationRequest (İstek Nesnesi)
+  ├── ProductId
+  ├── Quantity
+  ├── OrderType
+  ├── Address
+  ├── TableId
+  └── TotalAmount
+```
+
+**⚙️ Tetiklenen İş Akışı:**
+```
+Sipariş Oluştur → CreateOrderDto
+	↓
+1️⃣ ProductAvailabilityHandler
+   └─→ ProductId ve Quantity ile ürün var mı kontrol et
+   └─→ Eğer yok → Exception throw et
+   └─→ Eğer var → Sonraki handler'a gönder
+	↓
+2️⃣ MinimumAmountHandler
+   └─→ TotalAmount >= 50 TL mi kontrol et
+   └─→ Kontrol et → Sonraki handler'a gönder
+	↓
+3️⃣ DeliveryInfoHandler
+   └─→ Eğer OrderType="Online" ise Address boş mu kontrol et
+   └─→ Eğer OrderType="Table" ise TableId var mı kontrol et
+   └─→ Tüm kontroller geçti → Sipariş oluştur
+```
+
+**Örnek Kod:**
+```csharp
+var availabilityHandler = new ProductAvailabilityHandler(_productRepository);
+var minimumHandler = new MinimumAmountHandler();
+var deliveryHandler = new DeliveryInfoHandler();
+
+availabilityHandler.SetNextHandler(minimumHandler);
+minimumHandler.SetNextHandler(deliveryHandler);
+
+await availabilityHandler.Validate(validationRequest);
+```
+
+---
+
+### 5️⃣ **Decorator Pattern** - Ürün Özelleştirmesi
+
+**📌 Amaç:**
+Temel bir ürüne (Kahve) dinamik olarak aksesuar ekleyerek yeni ürünler oluşturmak. Her aksesuar fiyat ve açıklamayı değiştirir.
+
+**🔧 Kullanılan Sınıflar:**
+```
+ICoffee (Interface - Ürün Başlantı Noktası)
+  ├── BaseProduct → Temel ürün: Espresso 45 TL
+  └── CoffeeDecorator (Abstract Decorator)
+	  ├── CoffeeWithMilk → Süt ekle (+5 TL)
+	  ├── CoffeeWithCream → Krem ekle (+8 TL)
+	  ├── CoffeeWithSyrup → Şurup ekle (+3 TL)
+	  ├── CoffeeWithSize → Boy değiştir (+2-5 TL)
+	  └── ExtraShotCoffee → Extra shot (+7 TL)
+```
+
+**⚙️ Tetiklenen İş Akışı:**
+```
+Örnek: "Espresso + Süt + Krem + Extra Shot"
+
+1. BaseProduct("Espresso", 45)
+   │ Price: 45, Desc: "Espresso"
+   │
+2. CoffeeWithMilk(baseProduct)
+   │ Price: 45 + 5 = 50, Desc: "Espresso with Milk"
+   │
+3. CoffeeWithCream(withMilk)
+   │ Price: 50 + 8 = 58, Desc: "Espresso with Milk and Cream"
+   │
+4. ExtraShotCoffee(finalProduct)
+   │ Price: 58 + 7 = 65, Desc: "Espresso with Milk, Cream and Extra Shot"
+   │
+Final Ürün: 65 TL
+```
+
+**Avantajlar:**
+- Yeni aksesuar eklemek kolay
+- Ürünü runtime'da değiştir
+- Kombinasyonlar sınırsız
+
+---
+
+### 6️⃣ **Factory Method Pattern** - Sipariş Türüne Göre Oluşturma
+
+**📌 Amaç:**
+Farklı sipariş türleri (Online, Masa, Paket) için uygun Order nesnesi oluşturmak. Her türün kendi özel başlangıç kuralları vardır.
+
+**🔧 Kullanılan Sınıflar:**
+```
+IOrderFactory (Interface)
+  ├── OnlineOrderFactory → Online siparişler oluştur
+  ├── TableOrderFactory → Masa siparişleri oluştur
+  └── TakeAwayOrderFactory → Paket siparişleri oluştur
+
+Order (Ürünü)
+  └── OrderFactory'den oluşturulur
+```
+
+**⚙️ Tetiklenen İş Akışı:**
+```
+Müşteri Sipariş Oluştur (OrderType seç)
+	│
+	├─→ OrderType.Online
+	│   └─→ OnlineOrderFactory.CreateOrder()
+	│       └─→ Order {
+	│           OrderType: Online,
+	│           Address: Müşteri adresi (Gerekli),
+	│           TableId: null,
+	│           EstimatedPickupTime: 30 min
+	│       }
+	│
+	├─→ OrderType.Table
+	│   └─→ TableOrderFactory.CreateOrder()
+	│       └─→ Order {
+	│           OrderType: Table,
+	│           Address: null,
+	│           TableId: 5 (Seçili masa),
+	│           EstimatedPickupTime: 15 min
+	│       }
+	│
+	└─→ OrderType.TakeAway
+		└─→ TakeAwayOrderFactory.CreateOrder()
+			└─→ Order {
+				OrderType: TakeAway,
+				Address: null,
+				TableId: null,
+				EstimatedPickupTime: 20 min
+			}
+```
+
+---
+
+### 7️⃣ **Repository Pattern** - Veri Erişim Soyutlaması
+
+**📌 Amaç:**
+Veritabanı işlemleri için soyut bir interface oluşturmak. CRUD operasyonları ve özel sorgular merkezi yerde yönetmek.
+
+**🔧 Kullanılan Sınıflar:**
+```
+IGenericRepository<TEntity> (Generic Interface)
+  ├── GetAllAsync() → Tüm kayıtları getir
+  ├── GetByIdAsync(id) → ID'ye göre getir
+  ├── CreateAsync(entity) → Yeni ekle
+  ├── UpdateAsync(entity) → Güncelle
+  └── DeleteAsync(entity) → Sil
+
+Spesifik Repositories
+  ├── IOrderRepository → Özel order işlemleri
+  │   └── GetOrdersByCustomerAsync(customerId)
+  │   └── GetOrderByCodeAsync(code)
+  ├── IProductRepository → Ürün operasyonları
+  │   └── GetProductsByCategory(categoryId)
+  ├── IFavoriteRepository
+  ├── ICommentRepository
+  ├── INotificationRepository
+  └── ... diğer repositories
+```
+
+**⚙️ Tetiklenen İş Akışı:**
+```
+Business Layer (Service)
+		↓
+IOrderRepository.GetByIdAsync(orderId)
+		↓
+OrderRepository (Concrete)
+		↓
+DbContext.Orders.FindAsync(id)
+		↓
+SQL Server Sorgula
+		↓
+Sonuç döndür
+```
+
+---
+
+### 8️⃣ **Unit of Work Pattern** - Transaction Yönetimi
+
+**📌 Amaç:**
+Karmaşık işlemlerde birden fazla repository işleminin atomic olarak (hepsi ya hepsi değil) gerçekleşmesini garantilemek.
+
+**🔧 Kullanılan Sınıflar:**
+```
+IUnitOfWork (Interface)
+  └── BeginTransactionAsync()
+
+UnitOfWork (Concrete)
+  └── Transaction başlat, tüm işlemleri kontrol et, başarılı ise commit et
+```
+
+**⚙️ Tetiklenen İş Akışı:**
+```
+Örnek: Sipariş Oluştur (Karmaşık işlem)
+
+OrderService.CreateOrderAsync()
+	├─→ transaction = await _unitOfWork.BeginTransactionAsync()
+	│
+	├─→ 1. Order kaydı oluştur
+	│
+	├─→ 2. OrderDetails kayıtları
+	│
+	├─→ 3. OrderStatusHistory ilk kaydı
+	│
+	├─→ 4. Notifications oluştur
+	│
+	└─→ 5. Tüm başarılı ise:
+		└─→ transaction.CommitAsync()
+
+	❌ Hata olmuşsa:
+		└─→ transaction.RollbackAsync() → Tüm işlemler geri alındı
+```
+
+---
+
+## 🔌 Kullanılan Servisler
+
+### 1. **OrderService** - Ana Sipariş Işlemleri
+```csharp
+public interface IOrderService
+{
+	Task<string> CreateOrderAsync(CreateOrderDto createOrderDto);
+	Task UpdateOrderAsync(int id);
+	Task<OrderConfirmationDto> GetByCodeAsync(string code);
+	Task<List<OrderConfirmationDto>> GetMyOrders(int appUserId);
+	Task<List<OrderListDto>> GetAllAsync();
+	Task<AdminOrderDetailDto> GetOrderDetailAsync(int id);
+}
+```
+
+**Bileşenler:**
+- Chain of Responsibility Validation
+- Factory Method ile Order oluşturma
+- State Pattern ile durum yönetimi
+- Observer Pattern ile bildirimler
+- Unit of Work ile transcation kontrol
+
+---
+
+### 2. **ProductService** - Ürün Yönetimi
+Ürün CRUD işlemleri, kategori filtreleme, özelleştirme seçenekleri yönetimi
+
+---
+
+### 3. **SmsService** - WhatsApp Entegrasyonu
+**Not:** Hazır implementasyon var ama Twilio credentials olmadan aktif değil
+
+```csharp
+public class SmsService : ISmsService
+{
+	public async Task<bool> SendSmsAsync(
+		string phoneNumber, 
+		string contentSid, 
+		Dictionary<string, string>? variables = null)
+}
+```
+
+**Yapılandırma (appsettings.json):**
+```json
+{
+  "TwilioSettings": {
+	"AccountSid": "BURAYA_ACCOUNT_SID_YAZILACAK",
+	"AuthToken": "BURAYA_AUTH_TOKEN_YAZILACAK",
+	"PhoneNumber": "BURAYA_WHATSAPP_PHONE_YAZILACAK"
+  }
+}
+```
+
+---
+
+### 4. **NotificationService** - Bildirim Sistemi
+Veritabanında bildirim kayıtla, admin panelinde görüntüle
+
+---
+
+### 5. **CommentService** - Yorum Yönetimi
+Ürün yorumları, rating sistemi, moderation
+
+---
+
+### 6. **FavoriteService** - Favoriler
+Müşteri favorileri, beğenilen ürünler listesi
+
+---
+
+### 7. **DashboardService** - Admin Dashboard
+Satış metrikleri, sipariş sayıları, gelir analiz
+
+---
+
+### 8. **CategoryService** - Kategori Yönetimi
+Kafe kategorileri: Espresso, Harita Kahvesi, Çay vb.
+
+---
+
+## 📦 Repository Pattern Yapısı
+
+### Generic Repository Implementasyonu
+
+Tüm repositories `IGenericRepository<TEntity>` interface'i implement eder:
+
+```csharp
+public interface IGenericRepository<TEntity> where TEntity : class
+{
+	Task<List<TEntity>> GetAllAsync();
+	Task<TEntity> GetByIdAsync(int id);
+	Task CreateAsync(TEntity entity);
+	Task UpdateAsync(TEntity entity);
+	Task DeleteAsync(TEntity entity);
+}
+```
+
+### Spesifik Repositories
+
+Her entity için özel repository oluşturulur:
+
+```
+RepositoriesGeneric Hub
+  ├── CategoryRepository (ICategoryRepository)
+  ├── ProductRepository (IProductRepository)
+  ├── OrderRepository (IOrderRepository)
+  ├── CustomerRepository (ICustomerRepository)
+  ├── NotificationRepository (INotificationRepository)
+  ├── FavoriteRepository (IFavoriteRepository)
+  ├── CommentRepository (ICommentRepository)
+  ├── OrderStatusHistoryRepository
+  ├── TableRepository
+  └── DashboardRepository
+```
+
+### Dependency Injection Konfigurasyonu
+
+`ServiceExtensions.cs`'de tüm repositories inject edilir:
+
+```csharp
+public static void AddRepositories(this IServiceCollection services)
+{
+	services.AddScoped<ICategoryRepository, CategoryRepository>();
+	services.AddScoped<IOrderRepository, OrderRepository>();
+	services.AddScoped<IProductRepository, ProductRepository>();
+	// ... diğer repositories
+}
+```
+
+---
+
+## 🚀 Kurulum Adımları
+
+### Ön Koşullar
+- **.NET 10 SDK** - https://dotnet.microsoft.com/download
+- **SQL Server** (Local SQLEXPRESS veya harici)
+- **Visual Studio 2026**
+- **Git**
+
+### Adım 1: Projeyi Klonla
+
+```bash
+git clone https://github.com/ComputerUni/CafeFlow.git
+cd CafeFlow
+```
+
+### Adım 2: Bağımlılıkları Yükle
+
+```bash
+# Her projede gerekli NuGet paketleri restore et
+dotnet restore
+```
+
+### Adım 3: Veritabanını Konfigüre Et
+
+`appsettings.json` dosyasını açıp connection string'i düzenle:
+
+```json
+{
+  "ConnectionStrings": {
+	"DefaultConnection": "Data Source=.\\SQLEXPRESS;Initial Catalog=CafeFlowDb;Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;"
+  }
+}
+```
+
+### Adım 4: Migrations Uygula
+
+```bash
+# WebUI projesinde çalış
+cd CafeFlow.WebUI
+
+# Veritabanını oluştur ve migrationları uygula
+dotnet ef database update
+
+# Eğer hata alırsan:
+dotnet ef database drop --force
+dotnet ef database update
+```
+
+### Adım 5: Örnek Veri Ekle (DataSeeder)
+
+İlk başlatma sırasında `DataSeeder.cs` otomatik olarak örnek veriler yükler:
+
+```csharp
+// Program.cs
+if (app.Environment.IsDevelopment())
+{
+	using (var scope = app.Services.CreateScope())
+	{
+		var seeder = scope.ServiceProvider.GetRequiredService<DataSeeder>();
+		await seeder.SeedAsync();
+	}
+}
+```
+
+### Adım 6: Projeyi Çalıştır
+
+```bash
+# WebUI projesinden başlat
+dotnet run
+
+# veya Visual Studio'dan F5
+```
+
+**Erişim:** http://localhost:5000
+
+---
+
+## 📝 Örnek Test Verileri
+
+### Kategori Örnekleri
+- ☕ Espresso Çeşitleri
+- 🥤 Sıcak İçecekler
+- 🍹 Soğuk İçecekler
+- 🧁 Pasta ve Tatlılar
+- 🍞 Sandviç ve Yiyecekler
+
+### Ürün Örnekleri
+```
+1. Espresso - 45 TL
+   └─ Özelleştirilebilir: Süt (+5 TL), Krem (+8 TL), Şurup (+3 TL)
+
+2. Cappuccino - 55 TL
+   └─ Özelleştirilebilir: Extra Shot (+7 TL)
+
+3. Soğuk Kahve - 65 TL
+   └─ Seçenek: Karışık Krem (+10 TL)
+
+4. Çay Örneği - 25 TL
+```
+
+
+---
+
+## ▶️ Çalıştırma Talimatları
+
+### Müşteri Paneli - Sipariş Oluşturma
+
+1. **Ana Sayfayı Aç**
+   ```
+   URL: http://localhost:5000
+   ```
+
+2. **Sipariş Türü Seç**
+   - 📍 Masa Ordern (Table Order) → Masadan sipariş
+   - 🚗 Online Sipariş (Online Order) → Teslimat
+   - 📦 Paket Servisi (Take Away) → Al Git
+
+3. **Menüyü Gözat**
+   - Kategorileri filtrele
+   - Ürünü seç
+   - Özelleştir (sokup, şurup vb.)
+
+4. **Sepete Ekle**
+   ```
+   [Seçili Ürün: Cappuccino + Süt + Krem]
+   Fiyat: 55 + 5 + 8 = 68 TL
+   [Sepete Ekle] Butonuna Tıkla
+   ```
+
+5. **Ödeme İşlemi**
+   - Sepeti gözden geçir
+   - Toplam tutarı görüntüle
+   - [Sipariş Oluştur] butonuna tıkla
+
+6. **Sipariş Kodu Al**
+   ```
+   Sipariş başarılı oluşturuldu!
+   Sipariş Kodu: ORD-1001
+   Tahmini hazırlama süresi: 15 dakika
+   ```
+
+7. **Sipariş Takibi**
+   - "Siparişlerim" → Tüm siparişler
+   - "Sipariş Takip Et" → Kodu gir, durumu görüntüle
+   - Durum değişince bildirim al
+
+---
+
+### Admin Paneli - Sipariş Yönetimi
+
+1. **Admin Olarak Giriş**
+   ```
+   Email: admin@cafeflow.com
+   Şifre: Admin123!
+   URL: http://localhost:5000/Admin
+   ```
+
+2. **Dashboard**
+   - Günü seyrinde satışlar
+   - Toplam sipariş sayısı
+   - Aktif siparişler
+   - En çok satılan ürünler
+
+3. **Siparişler**
+   ```
+   Admin Panel → Orders
+   └─ Tüm siparişleri listele
+   └─ Durum güncellemesi yap
+	  - Received → Preparing
+	  - Preparing → Ready
+	  - Ready → Delivered
+   └─ Sipariş detayını görüntüle
+   ```
+
+4. **Ürün Yönetimi**
+   ```
+   Admin Panel → Products
+   ├─ Yeni ürün ekle
+   ├─ Ürün güncelle
+   ├─ Ürün optionları (aksesuar) ekle
+   └─ Ürünü deaktive et
+   ```
+
+5. **Kategori Yönetimi**
+   ```
+   Admin Panel → Categories
+   ├─ Yeni kategori ekle
+   ├─ Kategorileri düzenle
+   └─ Kategorileri sil
+   ```
+
+6. **Masa Yönetimi**
+   ```
+   Admin Panel → Tables
+   ├─ Masa numarası
+   ├─ Kapasite
+   └─ Masa durumu (boş/dolu)
+   ```
+
+7. **Müşteriler**
+   ```
+   Admin Panel → Customers
+   ├─ Tüm müşteri listesi
+   ├─ Müşteri geçmişi
+   └─ En sık sipariş alan müşteri
+   ```
+
+8. **Yorumlar**
+   ```
+   Admin Panel → Comments
+   ├─ Tüm ürün yorumlarını moderasyon yap
+   ├─ Uygunsuz yorumları kaldır
+   └─ Rating'leri görüntüle
+   ```
+
+9. **Bildirimler**
+   ```
+   Admin Panel → Notifications
+   ├─ Sistem bildirimlerini görüntüle
+   ├─ Sipariş durumu değişiklikleri
+   └─ Yeni müşteri kaydı bildirimleri
+   ```
+
+---
+
+## 📸 Ekran Görüntüleri
+
+### 🏠 Müşteri Paneli
+
+#### Ana Sayfa
+![Ana Sayfa](screenshots/Ekran%20görüntüsü%202026-11-14%20211906.png)
+
+#### Menü Sayfası
+![Menü](screenshots/Ekran%20görüntüsü%202026-11-14%20211940.png)
+
+#### Ürün Detay ve Özelleştirme
+![Ürün Detay](screenshots/Ekran%20görüntüsü%202026-11-14%20211957.png)
+
+#### Sepet
+![Sepet](screenshots/Ekran%20görüntüsü%202026-11-14%20212013.png)
+
+#### Siparişlerim
+![Siparişlerim](screenshots/Ekran%20görüntüsü%202026-11-14%20212027.png)
+
+#### Sipariş Takip
+![Takip](screenshots/Ekran%20görüntüsü%202026-11-14%20212055.png)
+
+#### Favoriler
+![Favoriler](screenshots/Ekran%20görüntüsü%202026-11-14%20212152.png)
+
+---
+
+### 🔧 Admin Paneli
+
+#### Admin Dashboard
+![Admin Dashboard](screenshots/Ekran\ görüntüsü\ 2026-11-14\ 212205.png)
+
+#### Sipariş Yönetimi
+![Sipariş Yönetimi](screenshots/Ekran\ görüntüsü\ 2026-11-14\ 212226.png)
+
+#### Sipariş Detayı
+![Sipariş Detayı](screenshots/Ekran\ görüntüsü\ 2026-11-14\ 212312.png)
+
+#### Ürün Yönetimi
+![Ürün Yönetimi](screenshots/Ekran\ görüntüsü\ 2026-11-14\ 212330.png)
+
+#### Kategori Yönetimi
+![Kategori Yönetimi](screenshots/Ekran\ görüntüsü\ 2026-11-14\ 212405.png)
+
+#### Masa Yönetimi
+![Masa Yönetimi](screenshots/Ekran\ görüntüsü\ 2026-11-14\ 212420.png)
+
+#### Müşteri Yönetimi
+![Müşteri Yönetimi](screenshots/Ekran\ görüntüsü\ 2026-11-14\ 212459.png)
+
+#### Yorum Moderation
+![Yorum Moderation](screenshots/Ekran\ görüntüsü\ 2026-11-14\ 212535.png)
+
+#### Bildirim Sistemi
+![Bildirimler](screenshots/Ekran\ görüntüsü\ 2026-11-14\ 212630.png)
+
+#### Müşteri Detayı
+![Müşteri Detay](screenshots/Ekran\ görüntüsü\ 2026-11-14\ 212645.png)
+
+---
+
+## 🔗 Proje Yapısı
+
+```
+CafeFlow/
+├── CafeFlow.Entity/
+│   ├── Common/
+│   │   └── BaseEntity.cs
+│   ├── Enums/
+│   │   ├── OrderStatus.cs
+│   │   ├── OrderType.cs
+│   │   ├── OptionType.cs
+│   │   └── NotificationTarget.cs
+│   ├── Order.cs
+│   ├── OrderDetail.cs
+│   ├── OrderStatusHistory.cs
+│   ├── Product.cs
+│   ├── Category.cs
+│   ├── Customer.cs
+│   ├── Favorite.cs
+│   ├── Comment.cs
+│   ├── Notification.cs
+│   └── ...
+│
+├── CafeFlow.DTO/
+│   ├── Order/
+│   │   ├── CreateOrderDto.cs
+│   │   ├── OrderConfirmationDto.cs
+│   │   ├── OrderListDto.cs
+│   │   └── AdminOrderDetailDto.cs
+│   ├── Product/
+│   ├── Customer/
+│   └── ...
+│
+├── CafeFlow.DataAccess/
+│   ├── Context/
+│   │   └── AppDbContext.cs
+│   ├── Migrations/
+│   │   ├── 20261103131109_mig_initals.cs
+│   │   └── ...
+│   ├── Repositories/
+│   │   ├── GenericRepositories/
+│   │   │   ├── IGenericRepository.cs
+│   │   │   └── GenericRepository.cs
+│   │   ├── Orders/
+│   │   │   ├── IOrderRepository.cs
+│   │   │   └── OrderRepository.cs
+│   │   ├── Products/
+│   │   ├── Categories/
+│   │   └── ...
+│   └── UnitOfWork/
+│       ├── IUnitOfWork.cs
+│       └── UnitOfWork.cs
+│
+├── CafeFlow.Business/
+│   ├── Abstract/ (Service Interfaces)
+│   │   ├── IOrderService.cs
+│   │   ├── IProductService.cs
+│   │   └── ...
+│   ├── Concrete/ (Service Implementations)
+│   │   ├── OrderService.cs
+│   │   ├── ProductService.cs
+│   │   └── ...
+│   ├── DesignPatterns/
+│   │   ├── Observer/
+│   │   │   ├── IOrderObserver.cs
+│   │   │   ├── OrderObserverObject.cs
+│   │   │   ├── KitchenObserver.cs
+│   │   │   ├── CashierObserver.cs
+│   │   │   ├── NotificationObserver.cs
+│   │   │   └── SmsObserver.cs
+│   │   ├── State/
+│   │   │   ├── IOrderStatusState.cs
+│   │   │   ├── OrderStatusState.cs
+│   │   │   ├── ReceivedState.cs
+│   │   │   ├── PreparingState.cs
+│   │   │   ├── ReadyState.cs
+│   │   │   ├── DeliveredState.cs
+│   │   │   └── CancelledState.cs
+│   │   ├── Strategy/
+│   │   │   ├── IOrderShippingStrategy.cs
+│   │   │   ├── OnlineShipping.cs
+│   │   │   ├── TableOrderShipping.cs
+│   │   │   └── TakeAwayShipping.cs
+│   │   ├── ChainOfResponsibility/
+│   │   │   ├── OrderValidationHandler.cs
+│   │   │   ├── ProductAvailabilityHandler.cs
+│   │   │   ├── MinimumAmountHandler.cs
+│   │   │   ├── DeliveryInfoHandler.cs
+│   │   │   └── OrderValidationRequest.cs
+│   │   ├── Decorator/
+│   │   │   ├── ICoffee.cs
+│   │   │   ├── BaseProduct.cs
+│   │   │   ├── CoffeeDecorator.cs
+│   │   │   ├── CoffeeWithMilk.cs
+│   │   │   ├── CoffeeWithCream.cs
+│   │   │   ├── CoffeeWithSyrup.cs
+│   │   │   ├── CoffeeWithSize.cs
+│   │   │   └── ExtraShotCoffee.cs
+│   │   └── FactoryMethod/
+│   │       ├── IOrderFactory.cs
+│   │       ├── OnlineOrderFactory.cs
+│   │       ├── TableOrderFactory.cs
+│   │       └── TakeAwayOrderFactory.cs
+│   ├── Settings/
+│   │   └── TwilioSettings.cs
+│   ├── Mappings/
+│   │   └── MappingProfile.cs
+│   └── Extensions/
+│       └── EnumExtensions.cs
+│
+└── CafeFlow.WebUI/
+	├── Program.cs
+	├── Extensions/
+	│   ├── ServiceExtensions.cs
+	│   └── DataSeeder.cs
+	├── Controllers/
+	│   ├── AuthController.cs
+	│   ├── HomeController.cs
+	│   ├── OrderController.cs
+	│   ├── ProductController.cs
+	│   └── ...
+	├── Areas/Admin/
+	│   ├── Controllers/
+	│   │   ├── DashboardController.cs
+	│   │   ├── OrderController.cs
+	│   │   ├── ProductController.cs
+	│   │   └── ...
+	│   ├── Views/
+	│   └── ViewComponents/
+	├── Views/
+	│   ├── Shared/
+	│   ├── Components/ (ViewComponents)
+	│   ├── Home/
+	│   ├── Order/
+	│   ├── Product/
+	│   └── ...
+	├── wwwroot/
+	│   ├── css/
+	│   ├── js/
+	│   └── lib/
+	└── appsettings.json
+```
+
+---
+
+## 👨‍💻 Geliştirici
+
+**Developed by:** Computer University  
+**GitHub:** https://github.com/ComputerUni
+
+---
+
+<div align="center">
+
+**⭐ Eğer projeden faydalandıysanız, lütfen bir star bırakın! ⭐**
+
+---
+
+*Made with ❤️ for Cafes and Coffee Lovers*
+
+</div>
